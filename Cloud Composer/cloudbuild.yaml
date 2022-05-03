@@ -1,5 +1,6 @@
 steps:
 - name: gcr.io/cloud-builders/gsutil
+  dir: "Cloud Composer"
   args:
     - '-m'
     - 'rsync'
