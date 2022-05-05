@@ -1,12 +1,13 @@
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator 
-
+from datetime import datetime
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_CURATED, TRIGGER_RULES
 
 
 with DAG(
-        dag_id= 'data_warehouse_table_creation',
-        schedule_interval= None
+        dag_id= 'dag_get_listed_unlisted_events',
+        schedule_interval= None,
+        start_date= datetime(2021, 1, 1),
     ) as dag:
     
     task_1 = DummyOperator(
@@ -15,9 +16,8 @@ with DAG(
     )
 
     task_2 = DummyOperator(
-        task_id= 'task_update_table'
+        task_id= 'task_update_table',
+        triger_rule= TRIGGER_RULES.ALL_SUCCESS
     )
 
-    
-if __name__ ==  "__main__":
-    print(TRIGGER_RULES.ALL_DONE)
+    task_1 >> task_2
