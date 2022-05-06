@@ -16,3 +16,11 @@ class TRIGGER_RULES:
     NONE_FAILED_MIN_ONE_SUCCESS= 'none_failed_min_one_success'
     NONE_SKIPPED= 'none_skipped'
     ALWAYS= 'always'
+
+class BUSINESS_ROLES:
+    TCC= 'TCC'
+    TCP= 'TCP'
+    BO= 'BO'
+    AP= 'AP'
+    AC= 'AC'
+    AL= 'AL'
