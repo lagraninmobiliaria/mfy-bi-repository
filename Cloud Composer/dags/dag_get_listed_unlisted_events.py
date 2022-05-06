@@ -1,7 +1,8 @@
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator 
+
 from datetime import datetime
-from .dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_CURATED, TRIGGER_RULES
+from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_CURATED, TRIGGER_RULES
 
 
 with DAG(
