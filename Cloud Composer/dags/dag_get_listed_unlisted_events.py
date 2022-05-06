@@ -40,7 +40,7 @@ with DAG(
         task_id= 'bigquery_table_existance',
         project_id= PROJECT_ID, 
         dataset_id= 'DW_Mudafy',
-        table_id= 'FCT_Busquedas',
+        table_id= 'FCT_Busquedas_pero_no_existe',
     )
 
     table_exists = DummyOperator(
