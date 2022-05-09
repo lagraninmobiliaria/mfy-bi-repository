@@ -56,19 +56,10 @@ with DAG(
 
     tasks_2 = []
     for dataset in [DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, DATASET_MUDATA_AGGREGATED]:
-        task = BigQueryCreateEmptyTableOperator(
-            task_id= 'table_creation_in_' + dataset,
-            project_id= PROJECT_ID,
-            dataset_id= dataset,
-            table_id= 'dag_runs',
+        task = BigQueryDeleteTableOperator(
+            task_id= 'table_deletion_in_' + dataset,
+            deletion_dataset_table= f"{PROJECT_ID}.{dataset}.dag_runs", 
             trigger_rule= TriggerRule.ALL_SUCCESS,
-            exists_ok= True, 
-            schema_fields= [
-                {"name": "run_id", "type": "INTEGER", "mode": "REQUIRED"},
-                {"name": "date", "type": "DATE", "mode": "REQUIRED"},
-                {"name": "dag_id", "type": "STRING", "mode": "REQUIRED"},
-                {"name": "successful_run", "type": "BOOL", "mode": "REQUIRED"}
-            ]
         )
 
         tasks_2.append(task)
