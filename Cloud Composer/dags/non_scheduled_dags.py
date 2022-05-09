@@ -9,7 +9,7 @@ from dependencies.keys_and_constants import DATASET_MUDATA_RAW, DATASET_MUDATA_C
 
 with DAG(
     dag_id= "successful_runs_tables_creation",
-    description= "The following DAG creates in each of the datasets a table to log the successful runs of the DAGs created",
+    description= "The following DAG creates in each of the datasets a table to log runs of the DAGs created",
     schedule_interval= None, 
     start_date= datetime(2022, 1, 1),   
 ) as dag:
@@ -21,7 +21,7 @@ with DAG(
     tasks = []
     for dataset in [DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, DATASET_MUDATA_AGGREGATED]:
         task = BigQueryCreateEmptyTableOperator(
-            task_id= 'table_creation_in' + dataset,
+            task_id= 'table_creation_in_' + dataset,
             project_id= PROJECT_ID,
             dataset_id= dataset,
             table_id= 'dags_successful_runs',
