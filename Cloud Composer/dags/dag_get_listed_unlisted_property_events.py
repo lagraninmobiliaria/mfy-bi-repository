@@ -23,7 +23,7 @@ with DAG(
         postgres_conn_id= 'postgres_conn',
         sql= queries.listed_and_unlisted_property_events(date= "{{ ds }}"),
         bucket= EXTERNAL_DATA_BUCKET,
-        filename= f"{{ ds }}.listed_and_unlisted_property_events",
+        filename= f"{ds}.listed_and_unlisted_property_events",
         gzip=False,
         use_server_side_cursor=True,
     )
