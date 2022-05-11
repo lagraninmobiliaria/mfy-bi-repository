@@ -1,3 +1,4 @@
+from fileinput import filename
 from airflow import DAG
 from airflow.utils.trigger_rule import TriggerRule
 from airflow.operators.dummy import DummyOperator
@@ -20,8 +21,9 @@ with DAG(
     from_pgsql_to_gcs = PostgresToGCSOperator(
         task_id= 'from_pgsql_to_gcs',
         postgres_conn_id= 'postgres_conn',
-        sql= queries.listed_and_unlisted_events(date= "{{ ds }}"),
+        sql= queries.listed_and_unlisted_property_events(date= "{{ ds }}"),
         bucket= EXTERNAL_DATA_BUCKET,
+        filename= f"{{ ds }}.listed_and_unlisted_property_events",
         gzip=False,
         use_server_side_cursor=True,
     )

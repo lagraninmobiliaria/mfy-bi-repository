@@ -2,7 +2,7 @@ from datetime import date
 from textwrap import dedent
 from pendulum import datetime 
 
-def listed_and_unlisted_events(date: str = '2021-5-4') -> str:
+def listed_and_unlisted_property_events(date: str = '2021-5-4') -> str:
     return dedent(
         f"""
             SELECT
