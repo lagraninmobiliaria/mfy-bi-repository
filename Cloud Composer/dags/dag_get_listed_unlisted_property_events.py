@@ -18,7 +18,7 @@ with DAG(
 ) as dag:
     # This task fetchs the listed and unlisted propertyevents from pogresql and 
     # it stores them in Google Cloud Storage
-    date = {{ ds }}
+    date = "{{ ds }}"
     from_pgsql_to_gcs = PostgresToGCSOperator(
         task_id= 'from_pgsql_to_gcs',
         postgres_conn_id= 'postgres_conn',
