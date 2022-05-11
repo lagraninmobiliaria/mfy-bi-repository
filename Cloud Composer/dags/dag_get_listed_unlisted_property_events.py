@@ -16,14 +16,15 @@ with DAG(
     schedule_interval= '@daily',
     catchup= False,    
 ) as dag:
-    # This task fetchs the listed and unlisted from pogresql and 
+    # This task fetchs the listed and unlisted propertyevents from pogresql and 
     # it stores them in Google Cloud Storage
+    date = {{ ds }}
     from_pgsql_to_gcs = PostgresToGCSOperator(
         task_id= 'from_pgsql_to_gcs',
         postgres_conn_id= 'postgres_conn',
-        sql= queries.listed_and_unlisted_property_events(date= "{{ ds }}"),
+        sql= queries.listed_and_unlisted_property_events(date= date),
         bucket= EXTERNAL_DATA_BUCKET,
-        filename= f"{ds}.listed_and_unlisted_property_events",
+        filename= f"{date}.listed_and_unlisted_property_events",
         gzip=False,
         use_server_side_cursor=True,
     )
