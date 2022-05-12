@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.providers.google.cloud.operators.bigquery import BigQueryExecuteQueryOperator, BigQueryInsertJobOperator, O
+from airflow.providers.google.cloud.operators.bigquery import BigQueryExecuteQueryOperator, BigQueryInsertJobOperator
  
 from datetime import datetime
 
