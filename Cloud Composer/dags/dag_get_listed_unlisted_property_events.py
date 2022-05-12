@@ -21,7 +21,7 @@ with DAG(
     dag_id= 'get_listed_and_unlisted_propertyevents.py',
     start_date= datetime(2021, 5, 3),   
     schedule_interval= '@daily',
-    default_args= default_args
+    default_args= default_args,
     catchup= False,
 ) as dag:
     # This task is a BigQueryJob that
