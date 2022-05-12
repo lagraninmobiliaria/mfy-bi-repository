@@ -15,17 +15,20 @@ with DAG(
     dag_id= 'get_listed_and_unlisted_property_events.py',
     start_date= datetime(2021, 5, 3),   
     schedule_interval= '@daily',
-    catchup= False,    
+    retries= 0,
+    catchup= False,
 ) as dag:
     # This task is a BigQueryJob that
     # fetchs the listed and unlisted propertyevents from pogresql and 
     # it stores them in the raw dataset 
     date = "{{ ds }}"
+    table_id= "listed_and_unlisted_propertyevents"
     sql = queries.listed_and_unlisted_propertyevents(date= date)
+
     bq_job_get_events = BigQueryExecuteQueryOperator(
         task_id= 'get_listed_unlisted_propertyevents',
         sql= sql,
-        destination_dataset_table= f"{PROJECT_ID}.{DATASET_MUDATA_RAW}.listed_unlisted_propertyevents",
+        destination_dataset_table= f"{PROJECT_ID}.{DATASET_MUDATA_RAW}.{table_id}",
         write_disposition= writeDisposition.WRITE_APPEND,
         create_disposition= createDisposition.CREATE_IF_NEEDED,
     )
