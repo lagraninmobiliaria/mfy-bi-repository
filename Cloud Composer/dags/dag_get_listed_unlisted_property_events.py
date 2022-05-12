@@ -12,7 +12,7 @@ from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, writ
 from include.sql import queries
 
 with DAG(
-    dag_id= 'get_listed_and_unlisted_property_events.py',
+    dag_id= 'get_listed_and_unlisted_propertyevents.py',
     start_date= datetime(2021, 5, 3),   
     schedule_interval= '@daily',
     retries= 0,
