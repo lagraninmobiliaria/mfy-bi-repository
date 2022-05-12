@@ -3,10 +3,10 @@ from textwrap import dedent, wrap
 
 def listed_and_unlisted_propertyevents(date: str = '2021-5-4') -> str:
     return dedent(
-        f"""
+        f'''
         SELECT * 
         FROM EXTERNAL_QUERY("projects/infrastructure-lgi/locations/us/connections/mudafy", 
-            '''
+            """
                 SELECT
                     ee.created_at   event_created_at,
                     ee.prop_id      prop_id,
@@ -19,9 +19,9 @@ def listed_and_unlisted_propertyevents(date: str = '2021-5-4') -> str:
                 WHERE
                         epe.kind IN ('listed', 'unlisted')
                     AND DATE(ee.created_at) = DATE('{date}')
-            '''
+            """
         );
-        """
+        '''
     )
 
 # if __name__ == '__main__':
