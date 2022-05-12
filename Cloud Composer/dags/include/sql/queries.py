@@ -2,7 +2,7 @@ from datetime import date
 from textwrap import dedent, wrap
 
 def listed_and_unlisted_propertyevents(date: str = '2021-5-4') -> str:
-    return wrap(dedent(
+    return dedent(
         f"""
         SELECT * 
         FROM EXTERNAL_QUERY("projects/infrastructure-lgi/locations/us/connections/mudafy", 
@@ -22,7 +22,7 @@ def listed_and_unlisted_propertyevents(date: str = '2021-5-4') -> str:
             '''
         );
         """
-    ))
+    )
 
 # if __name__ == '__main__':
 #     print(listed_and_unlisted_propertyevents())
