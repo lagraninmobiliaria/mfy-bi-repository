@@ -25,6 +25,7 @@ with DAG(
     sql = queries.listed_and_unlisted_propertyevents(date= date)
     
     bq_job_get_events = BigQueryInsertJobOperator(
+        gcp_conn_id= "bigquery_default",
         task_id= 'get_listed_unlisted_propertyevents',
         configuration= {
             "query": {
@@ -38,7 +39,8 @@ with DAG(
                 "writeDisposition": writeDisposition.WRITE_APPEND,
                 "createDisposition": createDisposition.CREATE_IF_NEEDED,
             }
-        }
+        },
+        b
     )
 
     # This task fetchs the listed and unlisted from Google Cloud Storage and 
