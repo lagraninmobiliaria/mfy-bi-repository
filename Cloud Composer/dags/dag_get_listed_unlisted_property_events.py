@@ -29,6 +29,7 @@ with DAG(
         configuration= {
             "query": {
                 "query": sql,
+                "useLegacySql": False,
                 "destinationTable": {
                     "projectId": PROJECT_ID,
                     "datasetId": DATASET_MUDATA_RAW,
