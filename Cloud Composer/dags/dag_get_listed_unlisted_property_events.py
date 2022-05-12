@@ -45,4 +45,4 @@ with DAG(
     # )
 
 
-    from_pgsql_to_gcs
+    bq_job_get_events
