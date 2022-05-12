@@ -21,7 +21,7 @@ with DAG(
     # fetchs the listed and unlisted propertyevents from pogresql and 
     # it stores them in the raw dataset 
     date = "{{ ds }}"
-    sql = queries.listed_and_unlisted_property_events(date= date)
+    sql = queries.listed_and_unlisted_propertyevents(date= date)
     bq_job_get_events = BigQueryExecuteQueryOperator(
         task_id= 'get_listed_unlisted_propertyevents',
         sql= sql,
