@@ -1,14 +1,7 @@
-import logging
-from xml.etree.ElementInclude import include
 from airflow import DAG
-from airflow.utils.trigger_rule import TriggerRule
-from airflow.operators.dummy import DummyOperator
-# from airflow.providers.google.cloud.transfers.postgres_to_gcs import PostgresToGCSOperator
-from airflow.providers.google.cloud.operators.bigquery import BigQueryExecuteQueryOperator
+from airflow.providers.google.cloud.operators.bigquery import BigQueryExecuteQueryOperator, BigQueryInsertJobOperator, O
  
 from datetime import datetime
-
-from pydata_google_auth import default
 
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, writeDisposition, createDisposition
 from include.sql import queries
@@ -30,13 +23,21 @@ with DAG(
     date = "{{ ds }}"
     table_id= "listed_and_unlisted_propertyevents"
     sql = queries.listed_and_unlisted_propertyevents(date= date)
-    print(sql)
-    bq_job_get_events = BigQueryExecuteQueryOperator(
+    
+    bq_job_get_events = BigQueryInsertJobOperator(
         task_id= 'get_listed_unlisted_propertyevents',
-        sql= sql,
-        destination_dataset_table= f"{PROJECT_ID}.{DATASET_MUDATA_RAW}.{table_id}",
-        write_disposition= writeDisposition.WRITE_APPEND,
-        create_disposition= createDisposition.CREATE_IF_NEEDED,
+        configuration= {
+            "query": {
+                "query": sql,
+                "destinationTable": {
+                    "projectId": PROJECT_ID,
+                    "datasetId": DATASET_MUDATA_RAW,
+                    "tableId": table_id
+                }, 
+                "writeDisposition": writeDisposition.WRITE_APPEND,
+                "createDisposition": createDisposition.CREATE_IF_NEEDED,
+            }
+        }
     )
 
     # This task fetchs the listed and unlisted from Google Cloud Storage and 
