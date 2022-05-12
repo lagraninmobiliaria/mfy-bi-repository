@@ -2,12 +2,12 @@ from fileinput import filename
 from airflow import DAG
 from airflow.utils.trigger_rule import TriggerRule
 from airflow.operators.dummy import DummyOperator
-from airflow.providers.google.cloud.transfers.postgres_to_gcs import PostgresToGCSOperator
-from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator 
+# from airflow.providers.google.cloud.transfers.postgres_to_gcs import PostgresToGCSOperator
+from airflow.providers.google.cloud.operators.bigquery import BigQueryExecuteQueryOperator
  
 from datetime import datetime
 
-from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, EXTERNAL_DATA_BUCKET
+from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, writeDisposition, createDisposition
 from include.sql import queries
 
 with DAG(
@@ -16,18 +16,18 @@ with DAG(
     schedule_interval= '@daily',
     catchup= False,    
 ) as dag:
-    # This task fetchs the listed and unlisted propertyevents from pogresql and 
-    # it stores them in Google Cloud Storage
+    # This task is a BigQueryJob that
+    # fetchs the listed and unlisted propertyevents from pogresql and 
+    # it stores them in the raw dataset 
     date = "{{ ds }}"
-    from_pgsql_to_gcs = PostgresToGCSOperator(
-        task_id= 'from_pgsql_to_gcs',
-        postgres_conn_id= 'test-banana',
+    bq_job_get_events = BigQueryExecuteQueryOperator(
+        task_id= 'get_listed_unlisted_propertyevents',
         sql= queries.listed_and_unlisted_property_events(date= date),
-        bucket= EXTERNAL_DATA_BUCKET,
-        filename= f"{date}.listed_and_unlisted_property_events",
-        gzip=False,
-        use_server_side_cursor=True,
+        destination_dataset_table= f"{PROJECT_ID}.{DATASET_MUDATA_RAW}.listed_unlisted_property_events",
+        write_disposition= writeDisposition.WRITE_APPEND,
+        create_disposition= createDisposition.CREATE_IF_NEEDED,
     )
+
     # This task fetchs the listed and unlisted from Google Cloud Storage and 
     # it stores them in Google BigQuery
     
