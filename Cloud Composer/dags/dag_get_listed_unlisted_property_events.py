@@ -1,4 +1,5 @@
 from fileinput import filename
+from xml.etree.ElementInclude import include
 from airflow import DAG
 from airflow.utils.trigger_rule import TriggerRule
 from airflow.operators.dummy import DummyOperator
@@ -11,7 +12,7 @@ from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, writ
 from include.sql import queries
 
 with DAG(
-    dag_id= 'get_listed_unlisted_property_events.py',
+    dag_id= 'get_listed_and_unlisted_property_events.py',
     start_date= datetime(2021, 5, 3),   
     schedule_interval= '@daily',
     catchup= False,    
@@ -20,10 +21,11 @@ with DAG(
     # fetchs the listed and unlisted propertyevents from pogresql and 
     # it stores them in the raw dataset 
     date = "{{ ds }}"
+    sql = queries.listed_and_unlisted_property_events(date= date)
     bq_job_get_events = BigQueryExecuteQueryOperator(
         task_id= 'get_listed_unlisted_propertyevents',
-        sql= queries.listed_and_unlisted_property_events(date= date),
-        destination_dataset_table= f"{PROJECT_ID}.{DATASET_MUDATA_RAW}.listed_unlisted_property_events",
+        sql= sql,
+        destination_dataset_table= f"{PROJECT_ID}.{DATASET_MUDATA_RAW}.listed_unlisted_propertyevents",
         write_disposition= writeDisposition.WRITE_APPEND,
         create_disposition= createDisposition.CREATE_IF_NEEDED,
     )

@@ -1,9 +1,8 @@
 from datetime import date
-from textwrap import dedent
-from pendulum import datetime 
+from textwrap import dedent, wrap
 
-def listed_and_unlisted_property_events(date: str = '2021-5-4') -> str:
-    return dedent(
+def listed_and_unlisted_propertyevents(date: str = '2021-5-4') -> str:
+    return wrap(dedent(
         f"""
         SELECT * 
         FROM EXTERNAL_QUERY("projects/infrastructure-lgi/locations/us/connections/mudafy", 
@@ -23,7 +22,7 @@ def listed_and_unlisted_property_events(date: str = '2021-5-4') -> str:
             '''
         );
         """
-    )
+    ))
 
-if __name__ == '__main__':
-    print(listed_and_unlisted_property_events())
+# if __name__ == '__main__':
+#     print(listed_and_unlisted_propertyevents())
