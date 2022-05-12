@@ -21,7 +21,7 @@ with DAG(
     date = "{{ ds }}"
     from_pgsql_to_gcs = PostgresToGCSOperator(
         task_id= 'from_pgsql_to_gcs',
-        postgres_conn_id= 'postgres_conn',
+        postgres_conn_id= 'test-banana',
         sql= queries.listed_and_unlisted_property_events(date= date),
         bucket= EXTERNAL_DATA_BUCKET,
         filename= f"{date}.listed_and_unlisted_property_events",
