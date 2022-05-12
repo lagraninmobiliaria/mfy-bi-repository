@@ -40,7 +40,6 @@ with DAG(
                 "createDisposition": createDisposition.CREATE_IF_NEEDED,
             }
         },
-        b
     )
 
     # This task fetchs the listed and unlisted from Google Cloud Storage and 
