@@ -1,4 +1,4 @@
-from fileinput import filename
+import logging
 from xml.etree.ElementInclude import include
 from airflow import DAG
 from airflow.utils.trigger_rule import TriggerRule
@@ -30,7 +30,7 @@ with DAG(
     date = "{{ ds }}"
     table_id= "listed_and_unlisted_propertyevents"
     sql = queries.listed_and_unlisted_propertyevents(date= date)
-
+    logging.log(sql)
     bq_job_get_events = BigQueryExecuteQueryOperator(
         task_id= 'get_listed_unlisted_propertyevents',
         sql= sql,
