@@ -37,11 +37,14 @@ with DAG(
     bq_job_get_events = BigQueryInsertJobOperator(
         gcp_conn_id= "bigquery_default",
         task_id= 'get_listed_unlisted_propertyevents',
+        location= 'us',
         configuration= {
             "query": {
                 "query": sql,
                 "useLegacySql": False,
-                "jobReference": "us",
+                "jobReference": {
+                    "projectId": PROJECT_ID,
+                },
                 "destinationTable": {
                     "projectId": PROJECT_ID,
                     "datasetId": DATASET_MUDATA_RAW,
