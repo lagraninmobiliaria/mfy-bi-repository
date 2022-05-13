@@ -55,7 +55,7 @@ with DAG(
     )
 
     end_task = DummyOperator(
-        task_id= 'start_dag',
+        task_id= 'end_dag',
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
