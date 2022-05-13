@@ -25,6 +25,7 @@ with DAG(
     test_task = BigQueryInsertJobOperator(
         gcp_conn_id= "bigquery_default",
         task_id= 'test_task',
+        location= 'us',
         configuration= {
             "query": {
                 "query": sql,
@@ -37,7 +38,6 @@ with DAG(
                     "projectId": PROJECT_ID,
                     "datasetId": DATASET_MUDATA_RAW,
                     "tableId": table_id,
-                    "location": 'us-central1'
                 }, 
                 "writeDisposition": writeDisposition.WRITE_APPEND,
                 "createDisposition": createDisposition.CREATE_IF_NEEDED,
