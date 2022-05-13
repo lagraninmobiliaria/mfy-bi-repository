@@ -24,5 +24,15 @@ def listed_and_unlisted_propertyevents(date: str = '2021-5-4') -> str:
         '''
     )
 
+
+def test_bquery():
+    return dedent(
+        f'''
+        SELECT *
+        FROM `infrastructure-lgi.DW_Mudafy.LKP_Clientes`
+        LIMIT 50
+        '''
+    )
+
 # if __name__ == '__main__':
-#     print(listed_and_unlisted_propertyevents())
+#     print(test_bquery())

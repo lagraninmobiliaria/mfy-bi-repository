@@ -1,6 +1,6 @@
 from airflow import DAG
-from airflow.providers.google.cloud.operators.bigquery import BigQueryExecuteQueryOperator, BigQueryInsertJobOperator
- 
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from airflow.operators.python import PythonOperator
 from datetime import datetime
 
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, writeDisposition, createDisposition
@@ -23,7 +23,17 @@ with DAG(
     date = "{{ ds }}"
     table_id= "listed_and_unlisted_propertyevents"
     sql = queries.listed_and_unlisted_propertyevents(date= date)
+
+    def print_sql_query(**context):
+        print(context)
+        return context
     
+    run_this = PythonOperator(
+        task_id='print_the_context',
+        provide_context=True,
+        python_callable=print_sql_query,
+    )
+
     bq_job_get_events = BigQueryInsertJobOperator(
         gcp_conn_id= "bigquery_default",
         task_id= 'get_listed_unlisted_propertyevents',
