@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator, BigQueryCreateEmptyDatasetOperator
 
 from datetime import datetime
 
@@ -12,7 +12,7 @@ default_args = {
 
 
 with DAG(
-    dag_id= 'dag_test.py',
+    dag_id= 'dag_test',
     start_date= datetime(2021, 5, 3),   
     schedule_interval= '@daily',
     default_args= default_args,
