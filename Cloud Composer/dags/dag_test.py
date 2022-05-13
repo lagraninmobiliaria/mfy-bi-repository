@@ -32,11 +32,10 @@ with DAG(
                 "useLegacySql": False,
                 "jobReference": {
                     "projectId": PROJECT_ID,
-                    "location": 'us'
                 },
                 "destinationTable": {
                     "projectId": PROJECT_ID,
-                    "datasetId": DATASET_MUDATA_RAW,
+                    "datasetId": 'test_dataset',
                     "tableId": table_id,
                 }, 
                 "writeDisposition": writeDisposition.WRITE_APPEND,
