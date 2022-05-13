@@ -12,7 +12,7 @@ default_args = {
 
 
 with DAG(
-    dag_id= 'get_listed_and_unlisted_propertyevents.py',
+    dag_id= 'dag_test.py',
     start_date= datetime(2021, 5, 3),   
     schedule_interval= '@daily',
     default_args= default_args,
