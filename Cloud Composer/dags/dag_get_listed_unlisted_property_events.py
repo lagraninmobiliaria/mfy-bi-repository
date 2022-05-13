@@ -41,6 +41,7 @@ with DAG(
             "query": {
                 "query": sql,
                 "useLegacySql": False,
+                "jobReference": "us",
                 "destinationTable": {
                     "projectId": PROJECT_ID,
                     "datasetId": DATASET_MUDATA_RAW,
