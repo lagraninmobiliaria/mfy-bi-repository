@@ -1,5 +1,4 @@
-from datetime import date
-from textwrap import dedent, wrap
+from textwrap import dedent
 
 def listed_and_unlisted_propertyevents(date: str = '2021-5-4') -> str:
     return dedent(
@@ -8,9 +7,9 @@ def listed_and_unlisted_propertyevents(date: str = '2021-5-4') -> str:
         FROM EXTERNAL_QUERY("projects/infrastructure-lgi/locations/us/connections/mudafy", 
             """
                 SELECT
-                    ee.created_at   event_created_at,
+                    ee.created_at   created_at,
                     ee.prop_id      prop_id,
-                    epe.kind        event_kind
+                    epe.kind        kind
 
                 FROM events_propertyevent epe
                     LEFT JOIN events_event ee
@@ -34,5 +33,5 @@ def test_bquery():
         '''
     )
 
-# if __name__ == '__main__':
-#     print(test_bquery())
+if __name__ == '__main__':
+    print(test_bquery())
