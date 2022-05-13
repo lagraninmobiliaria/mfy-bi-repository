@@ -25,6 +25,7 @@ with DAG(
     test_task = BigQueryInsertJobOperator(
         gcp_conn_id= "bigquery_default",
         task_id= 'test_task',
+        location= 'us',
         configuration= {
             "query": {
                 "query": sql,
