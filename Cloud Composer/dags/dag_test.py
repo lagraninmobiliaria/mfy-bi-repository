@@ -30,7 +30,7 @@ with DAG(
             "query": {
                 "query": sql,
                 "useLegacySql": False,
-                "": {
+                "jobReference": {
                     "projectId": PROJECT_ID,
                     "location": 'us'
                 },
