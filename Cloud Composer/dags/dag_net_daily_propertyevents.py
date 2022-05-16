@@ -4,6 +4,8 @@ from dependencies.keys_and_constants import PROJECT_ID
 
 from include.sql import queries
 
+import pandas as pd
+
 from airflow import DAG
 from airflow.utils.trigger_rule import TriggerRule
 from airflow.operators.python import PythonOperator
@@ -20,7 +22,7 @@ def net_daily_propertyevents(ti):
     bq_client = Client(project= PROJECT_ID, location= 'US')
     job_id = ti.xcom_pull(task_ids= 'query_daily_propertyevents')
     bq_job = bq_client.get_job(job_id= job_id)
-    print(f"!!BQ JOB: {bq_job.job_id}!!")
+    print(f"!!BQ JOB: {bq_job.to_dataframe().shape}!!")
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
