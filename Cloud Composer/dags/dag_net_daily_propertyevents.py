@@ -18,7 +18,7 @@ default_args = {
 
 def net_daily_propertyevents(ti):
     bq_client = Client(project= PROJECT_ID, location= 'US')
-    job_id = ti.xcom_pull(task_id= 'query_daily_propertyevents')
+    job_id = ti.xcom_pull(task_ids= 'query_daily_propertyevents')
     bq_job = bq_client.get_job(job_id= job_id)
     print(f"!!BQ JOB: {bq_job.job_id}!!")
 
