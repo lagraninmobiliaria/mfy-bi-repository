@@ -46,8 +46,8 @@ def task_net_daily_propertyevents(ti):
         dataframe= df_to_append,
         destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.intermediate_daily_net_property_events",
         job_config= LoadJobConfig(
-            createDisposition= createDisposition.CREATE_IF_NEEDED,  
-            writeDisposition= writeDisposition.WRITE_APPEND
+            create_disposition= createDisposition.CREATE_IF_NEEDED,  
+            write_disposition= writeDisposition.WRITE_APPEND
         )
     )
 
