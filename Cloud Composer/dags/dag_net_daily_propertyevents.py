@@ -31,10 +31,8 @@ def task_net_daily_propertyevents(ti):
     bq_job = bq_client.get_job(job_id= job_id)
     
     query_results = bq_job.to_dataframe()
-    print(query_results.info())
 
     properties = query_results.prop_id.unique()
-    print(f"{len(properties)} with a property event")
 
     data = []
 
@@ -42,7 +40,7 @@ def task_net_daily_propertyevents(ti):
         prop_events_df = query_results[query_results.prop_id == prop].copy().reset_index(drop= True).sort_values(by= 'created_at', ascending= True)
         events_balance_result = net_daily_propertyevents(prop_df= prop_events_df)
         if events_balance_result != ():
-            data.append((ti.execution_date, prop) + events_balance_result)
+            data.append((ti.execution_date.date(), prop) + events_balance_result)
 
     print(data[:5])
 
