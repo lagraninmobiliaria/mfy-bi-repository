@@ -4,18 +4,19 @@ from datetime import datetime, timedelta
 
 from sqlalchemy import asc
 
-from dependencies.keys_and_constants import PROJECT_ID
+from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_CURATED, createDisposition, writeDisposition
 
 from include.sql import queries
 
 import pandas as pd
 
-from airflow import DAG
-from airflow.utils.trigger_rule import TriggerRule
-from airflow.operators.python import PythonOperator
-from airflow.operators.dummy import DummyOperator
-from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
-from google.cloud.bigquery import Client
+from airflow                                            import DAG
+from airflow.utils.trigger_rule                         import TriggerRule
+from airflow.operators.python                           import PythonOperator
+from airflow.operators.dummy                            import DummyOperator
+from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
+
+from google.cloud.bigquery import Client, LoadJobConfig
 
 from dependencies.net_daily_propertyevents_funcs import net_daily_propertyevents
 
@@ -41,7 +42,16 @@ def task_net_daily_propertyevents(ti):
         if events_balance_result != ():
             data.append((ti.execution_date.date(), prop) + events_balance_result)
 
-    print(pd.DataFrame(data, columns= ['date', 'prop_id', 'is_listing', 'is_unlisting']).head(3))
+    df_to_append = pd.DataFrame(data, columns= ['registered_date', 'prop_id', 'is_listing', 'is_unlisting'])
+
+    bq_client.load_table_from_dataframe(
+        dataframe= df_to_append,
+        destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.intermediate_daily_net_property_events",
+        job_config= LoadJobConfig(
+            createDisposition= createDisposition.CREATE_IF_NEEDED,  
+            writeDisposition= writeDisposition.WRITE_APPEND
+        )
+    )
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
