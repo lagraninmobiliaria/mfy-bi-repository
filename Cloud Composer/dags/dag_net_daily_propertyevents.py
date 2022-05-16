@@ -2,8 +2,6 @@
 
 from datetime import datetime, timedelta
 
-from sqlalchemy import asc
-
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_CURATED, createDisposition, writeDisposition
 
 from include.sql import queries
