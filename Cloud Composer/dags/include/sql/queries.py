@@ -23,6 +23,19 @@ def listed_and_unlisted_propertyevents(date: str = '2021-5-4') -> str:
         '''
     )
 
+def get_daily_propertyevents(date: str = '2021-5-4') -> str:
+    return dedent(
+        f'''
+        SELECT 
+            listed_and_unlisted_propertyevents.created_at   created_at,
+            listed_and_unlisted_propertyevents.prop_id      prop_id,
+            listed_and_unlisted_propertyevents.kind         kind
+
+        FROM `infrastructure-lgi.stg_mudata_raw.listed_and_unlisted_propertyevents` listed_and_unlisted_propertyevents
+        WHERE
+            DATE(listed_and_unlisted_propertyevents.created_at) = DATE("{date}")
+        '''
+    )
 
 def test_bquery():
     return dedent(
@@ -34,4 +47,4 @@ def test_bquery():
     )
 
 if __name__ == '__main__':
-    print(test_bquery())
+    print(get_daily_propertyevents())
