@@ -1,4 +1,8 @@
+#TODO Align imports to make it look nicer
+
 from datetime import datetime, timedelta
+
+from sqlalchemy import asc
 
 from dependencies.keys_and_constants import PROJECT_ID
 
@@ -13,16 +17,34 @@ from airflow.operators.dummy import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from google.cloud.bigquery import Client
 
+from dependencies.net_daily_propertyevents_funcs import net_daily_propertyevents
+
 default_args = {
     'retries': 2,
     'retry_delay': timedelta(seconds= 60)
 }
 
-def net_daily_propertyevents(ti):
+def task_net_daily_propertyevents(ti):
     bq_client = Client(project= PROJECT_ID, location= 'US')
+    
     job_id = ti.xcom_pull(task_ids= 'query_daily_propertyevents')
     bq_job = bq_client.get_job(job_id= job_id)
-    print(f"!!BQ JOB: {bq_job.to_dataframe().shape}!!")
+    
+    query_results = bq_job.to_dataframe()
+    print(query_results.info())
+
+    properties = query_results.prop_id.unique()
+    print(f"{len(properties)} with a property event")
+
+    data = []
+
+    for prop in properties:
+        prop_events_df = query_results[query_results.prop_id == prop].copy().reset_index(drop= True).sort_values(key= 'created_at', ascending= True)
+        events_balance_result = net_daily_propertyevents(prop_df= prop_events_df)
+        if events_balance_result != ():
+            data.append((ti.execution_date, prop) + events_balance_result)
+
+    print(data[:5])
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
@@ -54,7 +76,7 @@ with DAG(
 
     py_net_daily_propertyevents = PythonOperator(
         task_id= 'net_daily_propertyevents',
-        python_callable= net_daily_propertyevents
+        python_callable= task_net_daily_propertyevents
     )
 
     end_dag = DummyOperator(
