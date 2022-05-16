@@ -44,7 +44,7 @@ def get_properties_daily_net_propertyevents(project_id: str = 'infrastructure-lg
             *
         FROM `{project_id}.{dataset}.properties_daily_net_propertyevents` properties_daily_net_propertyevents
         WHERE 
-            properties_daily_net_propertyevents.registered_date = DATE({date})
+            properties_daily_net_propertyevents.registered_date = DATE("{date}")
         '''
     )
 
