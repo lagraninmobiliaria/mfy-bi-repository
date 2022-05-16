@@ -39,7 +39,7 @@ def task_net_daily_propertyevents(ti):
     data = []
 
     for prop in properties:
-        prop_events_df = query_results[query_results.prop_id == prop].copy().reset_index(drop= True).sort_values(key= 'created_at', ascending= True)
+        prop_events_df = query_results[query_results.prop_id == prop].copy().reset_index(drop= True).sort_values(by= 'created_at', ascending= True)
         events_balance_result = net_daily_propertyevents(prop_df= prop_events_df)
         if events_balance_result != ():
             data.append((ti.execution_date, prop) + events_balance_result)
