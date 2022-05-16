@@ -28,8 +28,7 @@ def task_net_daily_propertyevents(ti):
     bq_client = Client(project= PROJECT_ID, location= 'US')
     
     job_id = ti.xcom_pull(task_ids= 'query_daily_propertyevents')
-    bq_job = bq_client.get_job(job_id= job_id)
-    
+    bq_job = bq_client.get_job(job_id= job_id)    
     query_results = bq_job.to_dataframe()
 
     properties = query_results.prop_id.unique()
@@ -42,7 +41,7 @@ def task_net_daily_propertyevents(ti):
         if events_balance_result != ():
             data.append((ti.execution_date.date(), prop) + events_balance_result)
 
-    print(data[:5])
+    print(pd.DataFrame(data, columns= ['date', 'prop_id', 'is_listing', 'is_unlisting']).head(3))
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
