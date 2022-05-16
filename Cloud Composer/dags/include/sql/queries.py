@@ -23,7 +23,7 @@ def listed_and_unlisted_propertyevents(date: str = '2021-5-4') -> str:
         '''
     )
 
-def get_daily_propertyevents(date: str = '2021-5-4') -> str:
+def get_daily_propertyevents(project_id: str = 'infrastructure-lgi', dataset: str = 'stg_mudata_raw', date: str = '2021-5-4') -> str:
     return dedent(
         f'''
         SELECT 
@@ -31,9 +31,20 @@ def get_daily_propertyevents(date: str = '2021-5-4') -> str:
             listed_and_unlisted_propertyevents.prop_id      prop_id,
             listed_and_unlisted_propertyevents.kind         kind
 
-        FROM `infrastructure-lgi.stg_mudata_raw.listed_and_unlisted_propertyevents` listed_and_unlisted_propertyevents
+        FROM `{project_id}.{dataset}.listed_and_unlisted_propertyevents` listed_and_unlisted_propertyevents
         WHERE
             DATE(listed_and_unlisted_propertyevents.created_at) = DATE("{date}")
+        '''
+    )
+
+def get_properties_daily_net_propertyevents(project_id: str = 'infrastructure-lgi', dataset: str = 'stg_mudata_curated', date: str = '2021-5-4') -> str:
+    return dedent(
+        f'''
+        SELECT
+            *
+        FROM `{project_id}.{dataset}.properties_daily_net_propertyevents` properties_daily_net_propertyevents
+        WHERE 
+            properties_daily_net_propertyevents.registered_date = DATE({date})
         '''
     )
 

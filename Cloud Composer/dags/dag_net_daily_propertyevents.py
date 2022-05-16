@@ -2,9 +2,9 @@
 
 from datetime import datetime, timedelta
 
-from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_CURATED, createDisposition, writeDisposition
+from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, createDisposition, writeDisposition
 
-from include.sql import queries
+from google.cloud.bigquery import Client, LoadJobConfig
 
 import pandas as pd
 
@@ -14,8 +14,8 @@ from airflow.operators.python                           import PythonOperator
 from airflow.operators.dummy                            import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
 
-from google.cloud.bigquery import Client, LoadJobConfig
 
+from include.sql import queries
 from dependencies.net_daily_propertyevents_funcs import net_daily_propertyevents
 
 default_args = {
@@ -44,12 +44,27 @@ def task_net_daily_propertyevents(ti):
 
     bq_client.load_table_from_dataframe(
         dataframe= df_to_append,
-        destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.intermediate_daily_net_property_events",
+        destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.properties_daily_net_propertyevents",
         job_config= LoadJobConfig(
-            create_disposition= createDisposition.CREATE_IF_NEEDED,  
+            create_disposition= createDisposition.CREATE_IF_NEEDED,
             write_disposition= writeDisposition.WRITE_APPEND
         )
     )
+
+def task_validate_net_propertyevents(ti):
+    bq_client = Client(project= PROJECT_ID, location= 'US')
+
+    bq_job = bq_client.query(
+        query= queries.get_properties_daily_net_propertyevents(
+            project_id= PROJECT_ID, 
+            dataset= DATASET_MUDATA_CURATED, 
+            date= str(ti.execution_date.date())
+        )
+    )
+    query_results = bq_job.to_dataframe()
+
+    properties = list(query_results.prop_id.values)
+    print(f"!!{len(properties)} properties with a net propertyevent!!")
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
@@ -70,7 +85,7 @@ with DAG(
         task_id= 'query_daily_propertyevents',
         configuration= {
             "query": {
-                "query": queries.get_daily_propertyevents(date),
+                "query": queries.get_daily_propertyevents(project_id= PROJECT_ID, dataset= DATASET_MUDATA_RAW, date= date),
                 "useLegacySql": False,
                 "jobReference": {
                     "projectId": PROJECT_ID,
@@ -81,7 +96,14 @@ with DAG(
 
     py_net_daily_propertyevents = PythonOperator(
         task_id= 'net_daily_propertyevents',
-        python_callable= task_net_daily_propertyevents
+        python_callable= task_net_daily_propertyevents,
+        trigger_rule= TriggerRule.ALL_SUCCESS
+    )
+
+    py_validate_net_propertyevents = PythonOperator(
+        task_id= 'py_validate_net_propertyevents',
+        python_callable= task_validate_net_propertyevents,
+        trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
     end_dag = DummyOperator(
@@ -89,4 +111,4 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
-    start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> end_dag
+    start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> py_validate_net_propertyevents >> end_dag
