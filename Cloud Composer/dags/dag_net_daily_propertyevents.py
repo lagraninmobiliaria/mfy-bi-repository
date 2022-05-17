@@ -1,6 +1,8 @@
 #TODO Align imports to make it look nicer
 
 from datetime import datetime, timedelta
+from socket import timeout
+from statistics import mode
 
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, createDisposition, writeDisposition
 
@@ -10,10 +12,11 @@ import pandas as pd
 
 from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
+from airflow.utils.state                                import TaskInstanceState
+from airflow.sensors.external_task                      import ExternalTaskSensor
 from airflow.operators.python                           import PythonOperator
 from airflow.operators.dummy                            import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
-
 
 from include.sql import queries
 from dependencies.net_daily_propertyevents_funcs import net_daily_propertyevents
@@ -77,8 +80,14 @@ with DAG(
     date = "{{ ds }}"
 
 
-    start_dag = DummyOperator(
-        task_id= 'start_dag'
+    start_dag = ExternalTaskSensor(
+        task_id= 'start_dag',
+        external_dag_id= 'get_listed_and_unlisted_propertyevents',
+        external_task_id= 'end_dag',
+        poke_interval= 60,
+        timeout= 60 * 5,
+        allowed_states= [TaskInstanceState.SUCCESS.value],
+        mode= 'reschedule'
     )
 
     query_daily_propertyevents = BigQueryInsertJobOperator(
