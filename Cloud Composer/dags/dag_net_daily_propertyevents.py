@@ -16,7 +16,8 @@ from airflow.utils.state                                import TaskInstanceState
 from airflow.sensors.external_task                      import ExternalTaskSensor
 from airflow.operators.python                           import PythonOperator
 from airflow.operators.dummy                            import DummyOperator
-from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
+from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator
+from airflow.providers.google.cloud.sensors.bigquery    import BigQueryTableExistenceSensor
 
 from include.sql import queries
 from dependencies.net_daily_propertyevents_funcs import net_daily_propertyevents
@@ -103,6 +104,15 @@ with DAG(
         }
     )
 
+    check_table_existance = BigQueryTableExistenceSensor(
+        task_id= 'check_table_existance',
+        project_id= PROJECT_ID,
+        dataset_id= DATASET_MUDATA_CURATED,
+        table_id= 'properties_listings_and_unlistings',
+        poke_interval= 30,
+        timeout= 90,
+    )
+
     py_net_daily_propertyevents = PythonOperator(
         task_id= 'net_daily_propertyevents',
         python_callable= task_net_daily_propertyevents,
@@ -120,4 +130,6 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
-    start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> py_validate_net_propertyevents >> end_dag
+    start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> check_table_existance >> py_validate_net_propertyevents >> end_dag
+    # check_table_existance >> py_validate_net_propertyevents >> end_dag
+    # check_table_existance >> py_validate_net_propertyevents >> end_dag
