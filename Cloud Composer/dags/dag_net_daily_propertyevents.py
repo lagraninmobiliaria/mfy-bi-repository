@@ -143,6 +143,7 @@ with DAG(
 
     check_table_existance = BranchPythonOperator(
         task_id= 'branch_based_on_table_existance',
+        python_callable= branch_based_in_bigquery_table_existance,
         op_kwargs= {
             'project_id': PROJECT_ID,
             'dataset_id': DATASET_MUDATA_CURATED,
