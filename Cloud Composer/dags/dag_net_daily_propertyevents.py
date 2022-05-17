@@ -127,8 +127,8 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
-    query_net_propertyevents = BigQueryInsertJobOperator(
-        task_id= 'query_net_propertyevents',
+    query_daily_net_propertyevents = BigQueryInsertJobOperator(
+        task_id= 'query_daily_net_propertyevents',
         configuration= {
             "query": {
                 "query": queries.get_properties_daily_net_propertyevents(
@@ -165,6 +165,6 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
-    start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> check_table_existance >> py_validate_net_propertyevents >> end_dag
+    start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> query_daily_net_propertyevents >> check_table_existance 
     check_table_existance >> py_validate_net_propertyevents >> end_dag
     check_table_existance >> create_table >> end_dag
