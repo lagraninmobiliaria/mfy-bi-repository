@@ -21,6 +21,7 @@ def net_daily_propertyevents(prop_df: pd.DataFrame) -> tuple:
                 to_unlisted += 1
 
     prop_id = prop_df.prop_id.unique()[0]
+    
     print(dedent(
         f"""
         Prop ID:{prop_id:>10}
