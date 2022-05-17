@@ -1,4 +1,5 @@
 import pandas as pd
+from textwrap import dedent
 
 LISTED_EVENT= 'listed'
 UNLISTED_EVENT= 'unlisted'
@@ -18,7 +19,16 @@ def net_daily_propertyevents(prop_df: pd.DataFrame) -> tuple:
                 to_listed += 1
             elif events_kind[i+1] == UNLISTED_EVENT:
                 to_unlisted += 1
-        
+
+    prop_id = prop_df.prop_id.unique()[0]
+    print(dedent(
+        f"""
+        Prop ID:{prop_id:>10}
+        To listed:{to_listed:>10}
+        To unlisted:{to_unlisted:>10}
+        """
+    ))
+
     if to_listed != to_unlisted:
         return (to_listed > to_unlisted, to_unlisted > to_listed)
     else:
