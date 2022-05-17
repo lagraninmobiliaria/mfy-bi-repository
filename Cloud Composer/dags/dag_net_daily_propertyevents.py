@@ -6,18 +6,18 @@ from statistics import mode
 
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, createDisposition, writeDisposition
 
-from google.cloud.bigquery import Client, LoadJobConfig
-
+from google.cloud.exceptions    import NotFound
+from google.cloud.bigquery      import Client, LoadJobConfig
 import pandas as pd
 
 from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.utils.state                                import TaskInstanceState
 from airflow.sensors.external_task                      import ExternalTaskSensor
-from airflow.operators.python                           import PythonOperator
+from airflow.operators.python                           import PythonOperator, BranchPythonOperator
 from airflow.operators.dummy                            import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator
-from airflow.providers.google.cloud.sensors.bigquery    import BigQueryTableExistenceSensor
+from airflow.providers.google.cloud.hooks.bigquery      import BigQueryHook
 
 from include.sql import queries
 from dependencies.net_daily_propertyevents_funcs import net_daily_propertyevents
@@ -46,7 +46,7 @@ def task_net_daily_propertyevents(ti):
 
     df_to_append = pd.DataFrame(data, columns= ['registered_date', 'prop_id', 'is_listing', 'is_unlisting'])
 
-    bq_client.load_table_from_dataframe(
+    bq_load_job = bq_client.load_table_from_dataframe(
         dataframe= df_to_append,
         destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.properties_daily_net_propertyevents",
         job_config= LoadJobConfig(
@@ -54,6 +54,23 @@ def task_net_daily_propertyevents(ti):
             write_disposition= writeDisposition.WRITE_APPEND
         )
     )
+
+    return bq_load_job.job_id
+
+
+def branch_based_in_bigquery_table_existance(project_id, dataset_id, table_id):
+
+    hook = BigQueryHook(
+        gcp_conn_id= 'google_cloud_default',
+    )
+
+    if hook.table_exists(
+        project_id= project_id, dataset_id= dataset_id, table_id= table_id
+    ):
+        return 'py_validate_net_propertyevents'
+    else:
+        return 'create_table_with_properties_listings_and_unlistings'
+
 
 def task_validate_net_propertyevents(ti):
     bq_client = Client(project= PROJECT_ID, location= 'US')
@@ -104,19 +121,33 @@ with DAG(
         }
     )
 
-    check_table_existance = BigQueryTableExistenceSensor(
-        task_id= 'check_table_existance',
-        project_id= PROJECT_ID,
-        dataset_id= DATASET_MUDATA_CURATED,
-        table_id= 'properties_listings_and_unlistings',
-        poke_interval= 30,
-        timeout= 90,
-    )
-
     py_net_daily_propertyevents = PythonOperator(
         task_id= 'net_daily_propertyevents',
         python_callable= task_net_daily_propertyevents,
         trigger_rule= TriggerRule.ALL_SUCCESS
+    )
+
+    query_net_propertyevents = BigQueryInsertJobOperator(
+        task_id= 'query_net_propertyevents',
+        configuration= {
+            "query": {
+                "query": queries.get_properties_daily_net_propertyevents(
+                    project_id= PROJECT_ID,
+                    dataset= DATASET_MUDATA_CURATED,
+                    date= date
+                ),
+                "useLegacySql": False,
+            }
+        }
+    )
+
+    check_table_existance = BranchPythonOperator(
+        task_id= 'branch_based_on_table_existance',
+        op_kwargs= {
+            'project_id': PROJECT_ID,
+            'dataset_id': DATASET_MUDATA_CURATED,
+            'table_id': 'properties_listings_and_unlistings',
+        }
     )
 
     py_validate_net_propertyevents = PythonOperator(
@@ -125,11 +156,15 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
+    create_table = DummyOperator(
+        task_id= 'create_table_with_properties_listings_and_unlistings'
+    )
+
     end_dag = DummyOperator(
         task_id= 'end_dag',
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
     start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> check_table_existance >> py_validate_net_propertyevents >> end_dag
-    # check_table_existance >> py_validate_net_propertyevents >> end_dag
-    # check_table_existance >> py_validate_net_propertyevents >> end_dag
+    check_table_existance >> py_validate_net_propertyevents >> end_dag
+    check_table_existance >> create_table >> end_dag
