@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 from socket import timeout
 from statistics import mode
 
+from pendulum import time
+
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, createDisposition, writeDisposition
 
 from google.cloud.exceptions    import NotFound
@@ -24,7 +26,8 @@ from dependencies.net_daily_propertyevents_funcs import net_daily_propertyevents
 
 default_args = {
     'retries': 2,
-    'retry_delay': timedelta(seconds= 60)
+    'retry_delay': timedelta(seconds= 60),
+    'max_active_runs': 1
 }
 
 def task_net_daily_propertyevents(ti):
@@ -137,7 +140,7 @@ with DAG(
     start_date= datetime(2021, 5, 3),   
     schedule_interval= '@daily',
     default_args= default_args,
-    catchup= True
+    catchup= True,
 ) as dag:
 
     date = "{{ ds }}"
@@ -149,6 +152,17 @@ with DAG(
         external_task_id= 'end_dag',
         poke_interval= 60,
         timeout= 60 * 5,
+        allowed_states= [TaskInstanceState.SUCCESS.value],
+        mode= 'reschedule'
+    )
+
+    previous_dag_run = ExternalTaskSensor(
+        task_id= 'previous_success_run',
+        external_dag_id= dag.dag_id,
+        external_task_id= 'end_dag',
+        poke_interval= 60,
+        timeout= 60 * 5,
+        execution_delta= timedelta(days= 1),
         allowed_states= [TaskInstanceState.SUCCESS.value],
         mode= 'reschedule'
     )
@@ -212,6 +226,6 @@ with DAG(
         trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
-    start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> query_daily_net_propertyevents >> check_table_existance 
+    [start_dag, previous_dag_run] >> query_daily_propertyevents >> py_net_daily_propertyevents >> query_daily_net_propertyevents >> check_table_existance 
     check_table_existance >> py_validate_net_propertyevents >> end_dag
     check_table_existance >> py_create_table >> end_dag
