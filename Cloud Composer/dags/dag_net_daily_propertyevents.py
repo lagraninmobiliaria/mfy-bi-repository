@@ -138,6 +138,7 @@ def task_validate_net_propertyevents(ti):
 with DAG(
     dag_id= 'net_daily_propertyevents',
     start_date= datetime(2021, 5, 3),
+    end_date= datetime(2021, 5, 5),
     schedule_interval= '@daily',
     default_args= default_args,
     catchup= True,
@@ -145,23 +146,13 @@ with DAG(
 
     date = "{{ ds }}"
 
-    previous_dag_completed = ExternalTaskSensor(
-        task_id= 'validate_previous_dag_run',
-        external_dag_id= dag.dag_id,
-        external_task_id= 'end_dag',
-        allowed_states= [TaskInstanceState.SUCCESS.value, 'None'],
-        execution_delta= timedelta(days= 1),
-        poke_interval= 60,
-        timeout= 60 * 2,
-    )
-
     start_dag = ExternalTaskSensor(
         task_id= 'start_dag',
         external_dag_id= 'get_listed_and_unlisted_propertyevents',
         external_task_id= 'end_dag',
         poke_interval= 60,
         timeout= 60 * 5,
-        allowed_states= [TaskInstanceState.SUCCESS.value],
+        allowed_states= [TaskInstanceState.SUCCESS],
         mode= 'reschedule'
     )
 
@@ -225,6 +216,6 @@ with DAG(
         trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
-    previous_dag_completed>> start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> query_daily_net_propertyevents >> check_table_existance 
-    check_table_existance >> py_validate_net_propertyevents >> end_dag
-    check_table_existance >> py_create_table >> end_dag
+    start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> query_daily_net_propertyevents >> check_table_existance 
+    check_table_existance  >> py_validate_net_propertyevents >> end_dag
+    check_table_existance  >> py_create_table >> end_dag
