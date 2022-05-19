@@ -1,5 +1,6 @@
 import pandas as pd
 from textwrap import dedent
+from datetime import date
 
 LISTED_EVENT= 'listed'
 UNLISTED_EVENT= 'unlisted'
@@ -35,12 +36,28 @@ def net_daily_propertyevents(prop_df: pd.DataFrame) -> tuple:
     else:
         return ()
 
+def row_validation(validation_row: dict, to_validate_row: dict) -> bool:
+    return (
+            validation_row.get('prop_id')           == to_validate_row.get('prop_id')
+        and validation_row.get('registered_date')   != to_validate_row.get('registered_date')
+        and validation_row.get('is_listing')        != to_validate_row.get('is_listing')
+        and validation_row.get('is_unlisting')      != to_validate_row.get('is_unlisting')
+    )
 
 if __name__ == "__main__":
-    input_df = pd.DataFrame.from_dict({
-        'prop_id': [1, 1, 1, 1  ],
-        'kind': ['unlisted', 'listed', 'unlisted', 'unlisted']
-    })
+    to_validate_row = {
+        'prop_id': 1,
+        'registered_date': date(2021, 6, 26),
+        'is_listing': True,
+        'is_unlisting': False,
+    }
+    validation_row = {
+        'prop_id': 1,
+        'registered_date': date(2021, 6, 27),
+        'is_listing': True,
+        'is_unlisting': False,
+    }
 
-    print(net_daily_propertyevents(input_df) == ())
+
+    print(row_validation(validation_row, to_validate_row))
 
