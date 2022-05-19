@@ -149,7 +149,7 @@ with DAG(
         task_id= 'validate_previous_dag_run',
         external_dag_id= dag.dag_id,
         external_task_id= 'end_dag',
-        allowed_states= [TaskInstanceState.SUCCESS.value, None],
+        allowed_states= [TaskInstanceState.SUCCESS.value, 'None'],
         execution_delta= timedelta(days= 1),
         poke_interval= 60,
         timeout= 60 * 2,
