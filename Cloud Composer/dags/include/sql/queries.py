@@ -48,6 +48,20 @@ def get_properties_daily_net_propertyevents(project_id: str = 'infrastructure-lg
         '''
     )
 
+def get_prop_last_listing_unlisting_event(prop_id, project_id: str = 'infrastructure-lgi', dataset_id: str = 'stg_mudata_curated'):
+    return dedent(
+        f'''
+        SELECT
+            *
+        FROM `{project_id}.{dataset_id}.properties_listings_and_unlistings` properties_listings_and_unlistings
+        WHERE
+            properties_listings_and_unlistings.prop_id = {prop_id}
+        ORDER BY DESC
+            properties_listings_and_unlistings.registered_date
+        LIMIT 1
+        '''
+    )
+
 def test_bquery():
     return dedent(
         f'''
