@@ -107,7 +107,11 @@ def task_validate_net_propertyevents(ti):
     for prop in properties:
         to_validate_row = dict(query_results[query_results.prop_id == prop].copy().reset_index(drop= True).iloc[0])
         validation_row = dict(bq_client.query(
-                query= queries.get_prop_last_listing_unlisting_event(prop_id= to_validate_row.get('prop_id'), project_id= PROJECT_ID, dataset_id= DATASET_MUDATA_CURATED),
+                query= queries.get_prop_last_listing_unlisting_event(
+                    prop_id= to_validate_row.get('prop_id'), 
+                    project_id= PROJECT_ID, 
+                    dataset_id= DATASET_MUDATA_CURATED
+                ),
                 project= PROJECT_ID
             ).to_dataframe().iloc[0]
         )
@@ -138,7 +142,7 @@ def task_validate_net_propertyevents(ti):
 with DAG(
     dag_id= 'net_daily_propertyevents',
     start_date= datetime(2021, 5, 3),
-    end_date= datetime(2021, 5, 5),
+    end_date= datetime(2021, 5, 3),
     schedule_interval= '@daily',
     default_args= default_args,
     catchup= True,
