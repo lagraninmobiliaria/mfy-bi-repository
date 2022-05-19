@@ -137,7 +137,7 @@ with DAG(
     start_date= datetime(2021, 5, 3),   
     schedule_interval= '@daily',
     default_args= default_args,
-    catchup= False
+    catchup= True
 ) as dag:
 
     date = "{{ ds }}"
