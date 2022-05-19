@@ -156,16 +156,6 @@ with DAG(
         mode= 'reschedule'
     )
 
-    previous_dag_run = ExternalTaskSensor(
-        task_id= 'previous_success_run',
-        external_dag_id= dag.dag_id,
-        external_task_id= 'end_dag',
-        poke_interval= 60,
-        timeout= 60 * 5,
-        execution_delta= timedelta(days= 1),
-        allowed_states= [TaskInstanceState.SUCCESS.value],
-        mode= 'reschedule'
-    )
 
     query_daily_propertyevents = BigQueryInsertJobOperator(
         task_id= 'query_daily_propertyevents',
@@ -226,6 +216,6 @@ with DAG(
         trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
-    [start_dag, previous_dag_run] >> query_daily_propertyevents >> py_net_daily_propertyevents >> query_daily_net_propertyevents >> check_table_existance 
+    start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> query_daily_net_propertyevents >> check_table_existance 
     check_table_existance >> py_validate_net_propertyevents >> end_dag
     check_table_existance >> py_create_table >> end_dag
