@@ -56,8 +56,8 @@ def get_prop_last_listing_unlisting_event(prop_id, project_id: str = 'infrastruc
         FROM `{project_id}.{dataset_id}.properties_listings_and_unlistings` properties_listings_and_unlistings
         WHERE
             properties_listings_and_unlistings.prop_id = {prop_id}
-        ORDER BY DESC
-            properties_listings_and_unlistings.registered_date
+        ORDER BY 
+            properties_listings_and_unlistings.registered_date DESC
         LIMIT 1
         '''
     )
