@@ -62,14 +62,6 @@ def get_prop_last_listing_unlisting_event(prop_id, project_id: str = 'infrastruc
         '''
     )
 
-def test_bquery():
-    return dedent(
-        f'''
-        SELECT *
-        FROM `infrastructure-lgi.DW_Mudafy.LKP_Clientes`
-        LIMIT 50
-        '''
-    )
 
 if __name__ == '__main__':
     print(get_daily_propertyevents())

@@ -202,8 +202,9 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
-    create_table = DummyOperator(
-        task_id= 'create_table_with_properties_listings_and_unlistings'
+    py_create_table = PythonOperator(
+        task_id= 'create_table_with_properties_listings_and_unlistings',
+        python_callable= create_table_with_properties_listings_and_unlistings
     )
 
     end_dag = DummyOperator(
@@ -213,4 +214,4 @@ with DAG(
 
     start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> query_daily_net_propertyevents >> check_table_existance 
     check_table_existance >> py_validate_net_propertyevents >> end_dag
-    check_table_existance >> create_table >> end_dag
+    check_table_existance >> py_create_table >> end_dag
