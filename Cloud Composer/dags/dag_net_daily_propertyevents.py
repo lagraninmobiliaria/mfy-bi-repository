@@ -152,7 +152,7 @@ with DAG(
         external_task_id= 'end_dag',
         poke_interval= 60,
         timeout= 60 * 5,
-        allowed_states= [TaskInstanceState.SUCCESS],
+        allowed_states= [TaskInstanceState.SUCCESS.value],
         mode= 'reschedule'
     )
 
