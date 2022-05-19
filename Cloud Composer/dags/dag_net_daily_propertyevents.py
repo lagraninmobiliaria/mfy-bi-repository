@@ -16,11 +16,11 @@ from airflow.utils.state                                import TaskInstanceState
 from airflow.sensors.external_task                      import ExternalTaskSensor
 from airflow.operators.python                           import PythonOperator, BranchPythonOperator
 from airflow.operators.dummy                            import DummyOperator
-from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator
+from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
 from airflow.providers.google.cloud.hooks.bigquery      import BigQueryHook
 
 from include.sql import queries
-from dependencies.net_daily_propertyevents_funcs import net_daily_propertyevents
+from dependencies.net_daily_propertyevents_funcs import net_daily_propertyevents, row_validation
 
 default_args = {
     'retries': 2,
@@ -72,20 +72,65 @@ def branch_based_in_bigquery_table_existance(project_id, dataset_id, table_id):
         return 'create_table_with_properties_listings_and_unlistings'
 
 
-def task_validate_net_propertyevents(ti):
-    bq_client = Client(project= PROJECT_ID, location= 'US')
+def create_table_with_properties_listings_and_unlistings(ti):
 
-    bq_job = bq_client.query(
-        query= queries.get_properties_daily_net_propertyevents(
-            project_id= PROJECT_ID, 
-            dataset= DATASET_MUDATA_CURATED, 
-            date= str(ti.execution_date.date())
+    bq_client = Client(project= PROJECT_ID)
+    job_id = ti.xcom_pull(task_ids= 'query_daily_net_propertyevents')
+    bq_job = bq_client.get_job(job_id= job_id)
+    query_results = bq_job.to_dataframe()
+
+    bq_load_job = bq_client.load_table_from_dataframe(
+        project= PROJECT_ID,
+        dataframe= query_results, 
+        destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.properties_listings_and_unlistings",
+        job_config= LoadJobConfig(
+            create_disposition= createDisposition.CREATE_IF_NEEDED,
+            write_disposition= writeDisposition.WRITE_APPEND
         )
     )
+
+    return bq_load_job.job_id
+
+def task_validate_net_propertyevents(ti):
+    
+    bq_client = Client(project= PROJECT_ID)
+    job_id = ti.xcom_pull(task_ids= 'query_daily_net_propertyevents')
+    bq_job = bq_client.get_job(job_id= job_id)
     query_results = bq_job.to_dataframe()
 
     properties = list(query_results.prop_id.values)
-    print(f"!!{len(properties)} properties with a net propertyevent!!")
+    data = []
+
+    for prop in properties:
+        to_validate_row = dict(query_results[query_results.prop_id == prop].copy().reset_index(drop= True).iloc[0])
+        validation_row = dict(bq_client.query(
+                query= queries.get_prop_last_listing_unlisting_event(prop_id= to_validate_row.get('prop_id'), project_id= PROJECT_ID, dataset_id= DATASET_MUDATA_CURATED),
+                project= PROJECT_ID
+            ).to_dataframe().iloc[0]
+        )
+        print(
+            f"validation_row:\n{validation_row}",
+            f"to_validate_row:\n{to_validate_row}",
+            sep= '\n'
+        )
+
+        if not validation_row['prop_id'] or row_validation(validation_row, to_validate_row):
+            print("APPENDED")
+            data.append(to_validate_row)
+        else:
+            print("NOT APPENDED")
+
+    bq_client.load_table_from_json(
+        json_rows= data, 
+        project= PROJECT_ID,
+        dataframe= query_results, 
+        destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.properties_listings_and_unlistings",
+        job_config= LoadJobConfig(
+            create_disposition= createDisposition.CREATE_NEVER,
+            write_disposition= writeDisposition.WRITE_APPEND
+        )  
+    )
+
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
@@ -163,7 +208,7 @@ with DAG(
 
     end_dag = DummyOperator(
         task_id= 'end_dag',
-        trigger_rule= TriggerRule.ALL_SUCCESS
+        trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
     start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> query_daily_net_propertyevents >> check_table_existance 
