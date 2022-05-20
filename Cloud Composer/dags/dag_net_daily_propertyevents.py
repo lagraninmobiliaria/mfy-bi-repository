@@ -138,12 +138,12 @@ def task_validate_net_propertyevents(ti):
 
 def is_first_dag_run(**context):
     print(
-        context['ds'],
+        context['ds'].date(),
         context['dag'].start_date.date(),
-        context['ds'] == context['dag'].start_date.date(),
+        context['ds'].date() == context['dag'].start_date.date(),
         sep= '\n'
     )
-    if not (context['ds'] == context['dag'].start_date.date()): exit(1)
+    if not (context['ds'].date() == context['dag'].start_date.date()): exit(1)
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
