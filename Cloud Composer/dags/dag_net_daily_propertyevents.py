@@ -73,7 +73,7 @@ def branch_based_in_bigquery_table_existance(project_id, dataset_id, table_id):
     ):
         return 'py_validate_net_propertyevents'
     else:
-        return 'create_table_with_properties_listings_and_unlistings'
+        return 'create_properties_listings_and_unlistings_table'
 
 
 def create_table_with_properties_listings_and_unlistings(ti):
