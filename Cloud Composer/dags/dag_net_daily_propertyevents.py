@@ -174,7 +174,8 @@ with DAG(
         poke_interval= 60,
         timeout= 60 * 5,
         allowed_states= [TaskInstanceState.SUCCESS.value],
-        mode= 'reschedule'
+        mode= 'reschedule',
+        trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
     query_daily_propertyevents = BigQueryInsertJobOperator(
@@ -192,7 +193,6 @@ with DAG(
                 }
             }
         },
-        trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
     net_daily_propertyevents_py_op = PythonOperator(
