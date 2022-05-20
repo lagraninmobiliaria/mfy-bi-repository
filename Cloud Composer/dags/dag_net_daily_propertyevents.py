@@ -12,7 +12,7 @@ from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.utils.state                                import TaskInstanceState
 from airflow.sensors.external_task                      import ExternalTaskSensor
-from airflow.operators.python                           import PythonOperator, BranchPythonOperator
+from airflow.operators.python                           import PythonOperator, BranchPythonOperator, ShortCircuitOperator
 from airflow.operators.dummy                            import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator, BigQueryJob
 from airflow.providers.google.cloud.hooks.bigquery      import BigQueryHook
@@ -137,13 +137,14 @@ def task_validate_net_propertyevents(ti):
     return bq_load_job.job_id
 
 def is_first_dag_run(**context):
+
     print(
         context['ds'].date(),
         context['dag'].start_date.date(),
         context['ds'].date() == context['dag'].start_date.date(),
         sep= '\n'
     )
-    if not (context['ds'].date() == context['dag'].start_date.date()): exit(1)
+    return context['ds'].date() == context['dag'].start_date.date()
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
@@ -156,7 +157,7 @@ with DAG(
 
     date = "{{ ds }}"
 
-    first_dug_run = PythonOperator(
+    first_dug_run = ShortCircuitOperator(
         task_id= 'first_dag_run',
         python_callable= is_first_dag_run,
     )
