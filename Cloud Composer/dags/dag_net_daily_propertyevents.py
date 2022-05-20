@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from re import M
 from socket import timeout
 from statistics import mode
+from libcst import Return
 
 from pendulum import time
 
@@ -141,6 +142,9 @@ def task_validate_net_propertyevents(ti):
 
     return bq_load_job.job_id
 
+def is_first_dag_run(**context):
+    return (context['ds'] == context['dag'].start_date.date())
+
 with DAG(
     dag_id= 'net_daily_propertyevents',
     start_date= datetime(2021, 5, 3),
@@ -154,7 +158,7 @@ with DAG(
 
     first_dug_run = PythonOperator(
         task_id= 'first_dag_run',
-        python_callable= lambda context: (context['ds'] == dag.start_date.date())
+        python_callable= is_first_dag_run,
     )
 
     previous_dag_run_successful = ExternalTaskSensor(
@@ -169,6 +173,7 @@ with DAG(
     )
 
     start_dag = ExternalTaskSensor(
+        depends_on_past= True,
         task_id= 'start_dag',
         external_dag_id= 'get_listed_and_unlisted_propertyevents',
         external_task_id= 'end_dag',
