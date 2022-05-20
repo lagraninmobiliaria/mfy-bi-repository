@@ -1,6 +1,7 @@
 #TODO Align imports to make it look nicer
 
 from datetime import datetime, timedelta
+from re import M
 from socket import timeout
 from statistics import mode
 
@@ -151,6 +152,21 @@ with DAG(
 
     date = "{{ ds }}"
 
+    first_dug_run = PythonOperator(
+        task_id= 'first_dag_run',
+        python_callable= lambda context: (context['ds'] == dag.start_date.date())
+    )
+
+    previous_dag_run_successful = ExternalTaskSensor(
+        task_id= 'previous_dag_run_successful',
+        external_dag_id= dag.dag_id,
+        external_task_id= 'end_dag',
+        allowed_states= [TaskInstanceState.SUCCESS],
+        poke= 30,
+        timeout= 5 * 60,
+        mode= 'reschedule'
+    )
+
     start_dag = ExternalTaskSensor(
         task_id= 'start_dag',
         external_dag_id= 'get_listed_and_unlisted_propertyevents',
@@ -159,11 +175,6 @@ with DAG(
         timeout= 60 * 5,
         allowed_states= [TaskInstanceState.SUCCESS.value],
         mode= 'reschedule'
-    )
-
-    start_dag_2 = PythonOperator(
-        task_id= 'first_dag_run',
-        python_callable= lambda context: (context['ds'] == dag.start_date.date())
     )
 
     query_daily_propertyevents = BigQueryInsertJobOperator(
@@ -237,6 +248,6 @@ with DAG(
         trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
-    [start_dag, start_dag_2] >> query_daily_propertyevents >> net_daily_propertyevents_py_op >> query_daily_net_propertyevents >> check_table_existance 
+    [first_dug_run, previous_dag_run_successful] >> start_dag >> query_daily_propertyevents >> net_daily_propertyevents_py_op >> query_daily_net_propertyevents >> check_table_existance 
     check_table_existance  >> py_validate_net_propertyevents >> end_dag
-    check_table_existance  >> create_table >> py_validate_net_propertyevents >> end_dag
+    check_table_existance  >> create_table >> py_append_net_propertyevents >> end_dag
