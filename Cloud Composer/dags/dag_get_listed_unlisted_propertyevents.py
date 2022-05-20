@@ -78,7 +78,11 @@ with DAG(
         task_id= 'query_daily_propertyevents',
         configuration= {
             "query": {
-                "query": queries.get_daily_propertyevents(project_id= PROJECT_ID, dataset= DATASET_MUDATA_RAW, date= date),
+                "query": queries.get_daily_propertyevents(
+                    project_id= PROJECT_ID, 
+                    dataset= DATASET_MUDATA_RAW, 
+                    date= date
+                ),
                 "useLegacySql": False,
                 "jobReference": {
                     "projectId": PROJECT_ID,
