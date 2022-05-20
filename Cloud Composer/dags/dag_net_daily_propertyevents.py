@@ -137,6 +137,12 @@ def task_validate_net_propertyevents(ti):
     return bq_load_job.job_id
 
 def is_first_dag_run(**context):
+    print(
+        context['ds'],
+        context['dag'].start_date.date(),
+        context['ds'] == context['dag'].start_date.date(),
+        sep= '\n'
+    )
     if not (context['ds'] == context['dag'].start_date.date()): exit(1)
 
 with DAG(
