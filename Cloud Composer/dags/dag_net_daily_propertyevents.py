@@ -137,7 +137,7 @@ def task_validate_net_propertyevents(ti):
     return bq_load_job.job_id
 
 def is_first_dag_run(**context):
-    return (context['ds'] == context['dag'].start_date.date())
+    if not (context['ds'] == context['dag'].start_date.date()): exit(1)
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
@@ -162,20 +162,20 @@ with DAG(
         external_task_id= 'end_dag',
         allowed_states= [TaskInstanceState.SUCCESS],
         poke_interval= 30,
-        timeout= 5 * 60,
+        timeout= 120,
         mode= 'reschedule'
     )
 
     start_dag = ExternalTaskSensor(
-        depends_on_past= True,
         task_id= 'start_dag',
+        depends_on_past= True,
         external_dag_id= 'get_listed_and_unlisted_propertyevents',
         external_task_id= 'end_dag',
+        trigger_rule= TriggerRule.ONE_SUCCESS,
         poke_interval= 60,
-        timeout= 60 * 5,
+        timeout= 60 * 2,
         allowed_states= [TaskInstanceState.SUCCESS.value],
         mode= 'reschedule',
-        trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
     query_daily_propertyevents = BigQueryInsertJobOperator(
