@@ -1,12 +1,6 @@
 #TODO Align imports to make it look nicer
 
 from datetime import datetime, timedelta
-from re import M
-from socket import timeout
-from statistics import mode
-from libcst import Return
-
-from pendulum import time
 
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, createDisposition, writeDisposition
 
