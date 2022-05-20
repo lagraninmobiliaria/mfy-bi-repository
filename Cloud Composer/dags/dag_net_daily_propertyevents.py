@@ -158,11 +158,12 @@ with DAG(
     )
 
     previous_dag_run_successful = ExternalTaskSensor(
+        execution_delta= timedelta(days=1),
         task_id= 'previous_dag_run_successful',
         external_dag_id= dag.dag_id,
         external_task_id= 'end_dag',
         allowed_states= [TaskInstanceState.SUCCESS],
-        poke= 30,
+        poke_interval= 30,
         timeout= 5 * 60,
         mode= 'reschedule'
     )
