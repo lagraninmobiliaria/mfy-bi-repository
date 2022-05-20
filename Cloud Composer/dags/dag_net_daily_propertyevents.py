@@ -222,8 +222,12 @@ with DAG(
         table_id= 'properties_listings_and_unlistings'
     )
 
+    py_append_net_propertyevents = DummyOperator(
+        task_id= 'append_net_propertyevents'
+    )
+
     py_validate_net_propertyevents = PythonOperator(
-        task_id= 'py_validate_net_propertyevents',
+        task_id= 'validate_net_propertyevents',
         python_callable= task_validate_net_propertyevents,
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
@@ -235,4 +239,4 @@ with DAG(
 
     [start_dag, start_dag_2] >> query_daily_propertyevents >> net_daily_propertyevents_py_op >> query_daily_net_propertyevents >> check_table_existance 
     check_table_existance  >> py_validate_net_propertyevents >> end_dag
-    check_table_existance  >> create_table >> end_dag
+    check_table_existance  >> create_table >> py_validate_net_propertyevents >> end_dag
