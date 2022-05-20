@@ -3,8 +3,8 @@ from textwrap import dedent
 
 import py
 
-from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, writeDisposition, createDisposition
-from include.sql import queries
+from dependencies.keys_and_constants                    import PROJECT_ID, DATASET_MUDATA_RAW, writeDisposition, createDisposition
+from include.dag_get_listed_unlisted_propertyevents     import queries
 
 from google.cloud.bigquery import Client
 

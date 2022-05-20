@@ -21,8 +21,8 @@ from airflow.operators.dummy                            import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
 from airflow.providers.google.cloud.hooks.bigquery      import BigQueryHook
 
-from include.sql import queries
-from dependencies.net_daily_propertyevents_funcs import net_daily_propertyevents, row_validation
+from include.dag_net_daily_propertyevents import queries
+from include.dag_net_daily_propertyevents.functions import net_daily_propertyevents, row_validation
 
 default_args = {
     'retries': 2,
