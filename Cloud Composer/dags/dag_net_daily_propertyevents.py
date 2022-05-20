@@ -18,7 +18,7 @@ from airflow.utils.state                                import TaskInstanceState
 from airflow.sensors.external_task                      import ExternalTaskSensor
 from airflow.operators.python                           import PythonOperator, BranchPythonOperator
 from airflow.operators.dummy                            import DummyOperator
-from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
+from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator, BigQueryJob
 from airflow.providers.google.cloud.hooks.bigquery      import BigQueryHook
 
 from include.dag_net_daily_propertyevents import queries
@@ -127,7 +127,7 @@ def task_validate_net_propertyevents(ti):
         else:
             print("NOT APPENDED")
 
-    bq_client.load_table_from_json(
+    bq_load_job = bq_client.load_table_from_json(
         json_rows= data, 
         project= PROJECT_ID,
         dataframe= query_results, 
@@ -138,11 +138,12 @@ def task_validate_net_propertyevents(ti):
         )  
     )
 
+    return bq_load_job.job_id
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
     start_date= datetime(2021, 5, 3),
-    end_date= datetime(2021, 5, 4),
+    end_date= datetime(2021, 5, 3),
     schedule_interval= '@daily',
     default_args= default_args,
     catchup= True,
@@ -160,21 +161,30 @@ with DAG(
         mode= 'reschedule'
     )
 
+    start_dag_2 = PythonOperator(
+        task_id= 'first_dag_run',
+        python_callable= lambda context: (context['ds'] == dag.start_date.date())
+    )
 
     query_daily_propertyevents = BigQueryInsertJobOperator(
         task_id= 'query_daily_propertyevents',
         configuration= {
             "query": {
-                "query": queries.get_daily_propertyevents(project_id= PROJECT_ID, dataset= DATASET_MUDATA_RAW, date= date),
+                "query": queries.get_daily_propertyevents(
+                    project_id= PROJECT_ID, 
+                    dataset= DATASET_MUDATA_RAW, 
+                    date= date
+                ),
                 "useLegacySql": False,
                 "jobReference": {
                     "projectId": PROJECT_ID,
                 }
             }
-        }
+        },
+        trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
-    py_net_daily_propertyevents = PythonOperator(
+    net_daily_propertyevents_py_op = PythonOperator(
         task_id= 'net_daily_propertyevents',
         python_callable= task_net_daily_propertyevents,
         trigger_rule= TriggerRule.ALL_SUCCESS
@@ -204,15 +214,18 @@ with DAG(
         }
     )
 
+    create_table = BigQueryCreateEmptyTableOperator(
+        task_id= 'create_properties_listings_and_unlistings_table',
+        project_id= PROJECT_ID,
+        dataset_id= DATASET_MUDATA_CURATED,
+        exists_ok= True,
+        table_id= 'properties_listings_and_unlistings'
+    )
+
     py_validate_net_propertyevents = PythonOperator(
         task_id= 'py_validate_net_propertyevents',
         python_callable= task_validate_net_propertyevents,
         trigger_rule= TriggerRule.ALL_SUCCESS
-    )
-
-    py_create_table = PythonOperator(
-        task_id= 'create_table_with_properties_listings_and_unlistings',
-        python_callable= create_table_with_properties_listings_and_unlistings
     )
 
     end_dag = DummyOperator(
@@ -220,6 +233,6 @@ with DAG(
         trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
-    start_dag >> query_daily_propertyevents >> py_net_daily_propertyevents >> query_daily_net_propertyevents >> check_table_existance 
+    [start_dag, start_dag_2] >> query_daily_propertyevents >> net_daily_propertyevents_py_op >> query_daily_net_propertyevents >> check_table_existance 
     check_table_existance  >> py_validate_net_propertyevents >> end_dag
-    check_table_existance  >> py_create_table >> end_dag
+    check_table_existance  >> create_table >> end_dag
