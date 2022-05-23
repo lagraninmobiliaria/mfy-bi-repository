@@ -90,6 +90,27 @@ def create_table_with_properties_listings_and_unlistings(ti):
 
     return bq_load_job.job_id
 
+def append_net_propertyevents(**context):
+    bq_client = Client(project= PROJECT_ID)
+    job_id = context['ti'].xcom_pull(task_ids= 'query_daily_net_propertyevents')
+    bq_job = bq_client.get_job(job_id= job_id)
+    query_results = bq_job.to_dataframe()
+
+    table_id = 'properties_listings_and_unlistings'
+
+    bq_client.load_table_from_dataframe(
+        dataframe= query_results,
+        destination= {
+            "projectId": PROJECT_ID,
+            "datasetId": DATASET_MUDATA_CURATED,
+            "tableId": table_id        
+        },
+        job_config= LoadJobConfig(
+            create_disposition= createDisposition.CREATE_NEVER,
+            write_disposition= writeDisposition.WRITE_APPEND
+        )
+    )
+
 def task_validate_net_propertyevents(ti):
     
     bq_client = Client(project= PROJECT_ID)
@@ -240,8 +261,9 @@ with DAG(
         table_id= 'properties_listings_and_unlistings'
     )
 
-    py_append_net_propertyevents = DummyOperator(
-        task_id= 'append_net_propertyevents'
+    py_append_net_propertyevents = PythonOperator(
+        task_id= 'append_net_propertyevents',
+        python_callable= 'append_net_propertyevents'
     )
 
     py_validate_net_propertyevents = PythonOperator(
