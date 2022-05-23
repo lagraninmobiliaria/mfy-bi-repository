@@ -20,11 +20,6 @@ from airflow.providers.google.cloud.hooks.bigquery      import BigQueryHook
 from include.dag_net_daily_propertyevents import queries
 from include.dag_net_daily_propertyevents.functions import net_daily_propertyevents, row_validation
 
-default_args = {
-    'retries': 2,
-    'retry_delay': timedelta(seconds= 60),
-    'max_active_runs': 1
-}
 
 def task_net_daily_propertyevents(ti):
     bq_client = Client(project= PROJECT_ID, location= 'US')
@@ -166,6 +161,12 @@ def is_first_dag_run(**context):
         sep= '\n'
     )
     return datetime.strptime(context['ds'], '%Y-%m-%d').date() == context['dag'].start_date.date()
+
+default_args = {
+    'retries': 2,
+    'retry_delay': timedelta(seconds= 60),
+    'max_active_runs': 1
+}
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
