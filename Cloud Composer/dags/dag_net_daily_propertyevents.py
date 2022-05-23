@@ -144,7 +144,7 @@ def is_first_dag_run(**context):
         context['ds'].date() == context['dag'].start_date.date(),
         sep= '\n'
     )
-    return datetime.strptime(context['ds'], '%Y-%m-%d') == context['dag'].start_date.date()
+    return datetime.strptime(context['ds'], '%Y-%m-%d').date() == context['dag'].start_date.date()
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
