@@ -8,8 +8,8 @@ class FirstDAGRunSensor(BaseSensorOperator):
         
         super().__init__(poke_interval=poke_interval, timeout= timeout, soft_fail= soft_fail, mode= mode, exponential_backoff=exponential_backoff, **kwargs)
         self.ds = kwargs['ds']
-        self.dag_start_date = kwargs['dag_start_date']
+        self.dag = kwargs['dag']
 
     def poke(self, **context):
-        return datetime.strptime(self.ds, '%Y-%m-%d').date() == self.dag_start_date.date()
+        return datetime.strptime(self.ds, '%Y-%m-%d').date() == self.dag.start_date.date()
     
