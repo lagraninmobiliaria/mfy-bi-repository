@@ -85,9 +85,10 @@ def create_table_with_properties_listings_and_unlistings(ti):
 
     return bq_load_job.job_id
 
-def task_append_net_propertyevents(**context):
+def task_append_net_propertyevents(ti):
+
     bq_client = Client(project= PROJECT_ID)
-    job_id = context['ti'].xcom_pull(task_ids= 'query_daily_net_propertyevents')
+    job_id = ti.xcom_pull(task_ids= 'query_daily_net_propertyevents')
     bq_job = bq_client.get_job(job_id= job_id)
     query_results = bq_job.to_dataframe()
 
