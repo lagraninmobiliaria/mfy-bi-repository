@@ -11,6 +11,6 @@ class FirstDAGRunSensor(BaseSensorOperator):
         self.ds = date
         self.dag = kwargs['dag']
 
-    def poke(self, **context):
+    def poke(self, context):
         return datetime.strptime(self.ds, '%Y-%m-%d').date() == self.dag.start_date.date()
     
