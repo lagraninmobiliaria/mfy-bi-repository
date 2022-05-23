@@ -1,6 +1,7 @@
 #TODO Align imports to make it look nicer
 
 from datetime import datetime, timedelta
+from multiprocessing import context
 
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, createDisposition, writeDisposition
 
@@ -19,7 +20,7 @@ from airflow.providers.google.cloud.hooks.bigquery      import BigQueryHook
 
 from include.dag_net_daily_propertyevents import queries
 from include.dag_net_daily_propertyevents.functions import net_daily_propertyevents, row_validation
-
+from include.sensors import FirstDAGRunSensor
 
 def task_net_daily_propertyevents(ti):
     bq_client = Client(project= PROJECT_ID, location= 'US')
@@ -150,13 +151,6 @@ def task_validate_net_propertyevents(ti):
     return bq_load_job.job_id
 
 def is_first_dag_run(**context):
-
-    print(
-        context['ds'],
-        context['dag'].start_date.date(),
-        datetime.strptime(context['ds'], '%Y-%m-%d').date() == context['dag'].start_date.date(),
-        sep= '\n'
-    )
     return datetime.strptime(context['ds'], '%Y-%m-%d').date() == context['dag'].start_date.date()
 
 default_args = {
@@ -176,9 +170,10 @@ with DAG(
 
     date = "{{ ds }}"
 
-    first_dug_run = ShortCircuitOperator(
+    first_dug_run = FirstDAGRunSensor(
         task_id= 'first_dag_run',
-        python_callable= is_first_dag_run,
+        ds= date,
+        dag_start_date= dag.start_date
     )
 
     previous_dag_run_successful = ExternalTaskSensor(
