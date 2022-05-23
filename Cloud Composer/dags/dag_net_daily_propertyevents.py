@@ -173,7 +173,8 @@ with DAG(
         task_id= 'first_dag_run',
         poke_interval=30,
         timeout= 60,
-        mode= 'poke', 
+        mode= 'poke',
+        dag= dag,  
         date= date,
     )
 
