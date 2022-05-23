@@ -141,7 +141,7 @@ def is_first_dag_run(**context):
     print(
         context['ds'],
         context['dag'].start_date.date(),
-        context['ds'].date() == context['dag'].start_date.date(),
+        datetime.strptime(context['ds'], '%Y-%m-%d').date() == context['dag'].start_date.date(),
         sep= '\n'
     )
     return datetime.strptime(context['ds'], '%Y-%m-%d').date() == context['dag'].start_date.date()
