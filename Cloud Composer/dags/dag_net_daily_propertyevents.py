@@ -173,7 +173,10 @@ with DAG(
     first_dug_run = FirstDAGRunSensor(
         task_id= 'first_dag_run',
         ds= date,
-        dag_start_date= dag.start_date
+        dag_start_date= dag.start_date,
+        poke_interval=30,
+        timeout= 60,
+        mode= 'poke' 
     )
 
     previous_dag_run_successful = ExternalTaskSensor(
@@ -184,7 +187,7 @@ with DAG(
         allowed_states= [TaskInstanceState.SUCCESS],
         poke_interval= 30,
         timeout= 60,
-        mode= 'reschedule'
+        mode= 'poke'
     )
 
     start_dag = ExternalTaskSensor(
