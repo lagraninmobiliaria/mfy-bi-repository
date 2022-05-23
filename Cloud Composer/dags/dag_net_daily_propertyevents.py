@@ -149,7 +149,6 @@ def task_validate_net_propertyevents(ti):
     bq_load_job = bq_client.load_table_from_json(
         json_rows= data, 
         project= PROJECT_ID,
-        dataframe= query_results, 
         destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.properties_listings_and_unlistings",
         job_config= LoadJobConfig(
             create_disposition= createDisposition.CREATE_NEVER,
