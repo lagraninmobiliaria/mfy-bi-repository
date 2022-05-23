@@ -96,11 +96,7 @@ def task_append_net_propertyevents(ti):
 
     bq_client.load_table_from_dataframe(
         dataframe= query_results,
-        destination= {
-            "projectId": PROJECT_ID,
-            "datasetId": DATASET_MUDATA_CURATED,
-            "tableId": table_id        
-        },
+        destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.properties_listings_and_unlistings",
         job_config= LoadJobConfig(
             create_disposition= createDisposition.CREATE_NEVER,
             write_disposition= writeDisposition.WRITE_APPEND
