@@ -90,7 +90,7 @@ def create_table_with_properties_listings_and_unlistings(ti):
 
     return bq_load_job.job_id
 
-def append_net_propertyevents(**context):
+def task_append_net_propertyevents(**context):
     bq_client = Client(project= PROJECT_ID)
     job_id = context['ti'].xcom_pull(task_ids= 'query_daily_net_propertyevents')
     bq_job = bq_client.get_job(job_id= job_id)
@@ -263,7 +263,7 @@ with DAG(
 
     py_append_net_propertyevents = PythonOperator(
         task_id= 'append_net_propertyevents',
-        python_callable= 'append_net_propertyevents'
+        python_callable= task_append_net_propertyevents
     )
 
     py_validate_net_propertyevents = PythonOperator(
