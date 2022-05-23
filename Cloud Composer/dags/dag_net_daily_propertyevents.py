@@ -62,7 +62,7 @@ def branch_based_in_bigquery_table_existance(project_id, dataset_id, table_id):
     if hook.table_exists(
         project_id= project_id, dataset_id= dataset_id, table_id= table_id
     ):
-        return 'py_validate_net_propertyevents'
+        return 'validate_net_propertyevents'
     else:
         return 'create_properties_listings_and_unlistings_table'
 
