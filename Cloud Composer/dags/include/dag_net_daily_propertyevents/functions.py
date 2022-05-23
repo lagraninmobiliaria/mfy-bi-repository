@@ -59,5 +59,8 @@ if __name__ == "__main__":
     }
 
 
-    print(row_validation(validation_row, to_validate_row))
+    print(
+        row_validation(validation_row, to_validate_row),
+        pd.DataFrame(data=[to_validate_row, validation_row])
+    )
 

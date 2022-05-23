@@ -138,16 +138,15 @@ def task_validate_net_propertyevents(ti):
         else: 
             bandera = 0
         
-        
 
         if not bandera or row_validation(validation_row, to_validate_row):
-            print("APPENDED")
+            print(f"APPENDED - PROP {to_validate_row['prop_id']}")
             data.append(to_validate_row)
         else:
             print("NOT APPENDED")
 
-    bq_load_job = bq_client.load_table_from_json(
-        json_rows= data, 
+    bq_load_job = bq_client.load_table_from_dataframe(
+        json_rows= pd.DataFrame(data= data), 
         project= PROJECT_ID,
         destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.properties_listings_and_unlistings",
         job_config= LoadJobConfig(
