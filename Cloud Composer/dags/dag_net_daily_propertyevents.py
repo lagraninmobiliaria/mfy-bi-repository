@@ -21,7 +21,6 @@ from airflow.providers.google.cloud.hooks.bigquery      import BigQueryHook
 
 from include.dag_net_daily_propertyevents import queries
 from include.dag_net_daily_propertyevents.functions import net_daily_propertyevents, row_validation
-from include.sensors import FirstDAGRunSensor
 
 def task_net_daily_propertyevents(ti):
     bq_client = Client(project= PROJECT_ID, location= 'US')
