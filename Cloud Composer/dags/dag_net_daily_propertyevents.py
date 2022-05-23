@@ -12,10 +12,11 @@ import pandas as pd
 from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.utils.state                                import TaskInstanceState
+from airflow.sensors.python                             import PythonSensor
 from airflow.sensors.external_task                      import ExternalTaskSensor
-from airflow.operators.python                           import PythonOperator, BranchPythonOperator, ShortCircuitOperator
+from airflow.operators.python                           import PythonOperator, BranchPythonOperator
 from airflow.operators.dummy                            import DummyOperator
-from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator, BigQueryJob
+from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator
 from airflow.providers.google.cloud.hooks.bigquery      import BigQueryHook
 
 from include.dag_net_daily_propertyevents import queries
@@ -97,7 +98,7 @@ def task_append_net_propertyevents(ti):
 
     bq_client.load_table_from_dataframe(
         dataframe= query_results,
-        destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.properties_listings_and_unlistings",
+        destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.{table_id}",
         job_config= LoadJobConfig(
             create_disposition= createDisposition.CREATE_NEVER,
             write_disposition= writeDisposition.WRITE_APPEND
@@ -169,13 +170,13 @@ with DAG(
 ) as dag:
 
     date = "{{ ds }}"
-    first_dug_run = FirstDAGRunSensor(
+
+    first_dug_run = PythonSensor(
         task_id= 'first_dag_run',
+        python_callable= is_first_dag_run,
         poke_interval=30,
         timeout= 60,
         mode= 'poke',
-        dag= dag,  
-        date= date,
     )
 
     previous_dag_run_successful = ExternalTaskSensor(
