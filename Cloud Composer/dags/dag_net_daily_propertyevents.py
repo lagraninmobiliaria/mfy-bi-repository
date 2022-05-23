@@ -146,7 +146,7 @@ def task_validate_net_propertyevents(ti):
             print("NOT APPENDED")
 
     bq_load_job = bq_client.load_table_from_dataframe(
-        json_rows= pd.DataFrame(data= data), 
+        dataframe= pd.DataFrame(data= data), 
         project= PROJECT_ID,
         destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.properties_listings_and_unlistings",
         job_config= LoadJobConfig(
