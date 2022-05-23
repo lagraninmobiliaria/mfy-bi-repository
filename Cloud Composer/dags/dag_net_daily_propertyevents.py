@@ -128,14 +128,17 @@ def task_validate_net_propertyevents(ti):
         if prop_last_event.shape[0]:
             bandera = 1
             validation_row = dict(prop_last_event.iloc[0])
+
+            print(
+            f"validation_row:\n{validation_row}",
+            f"to_validate_row:\n{to_validate_row}",
+            row_validation(validation_row, to_validate_row),
+            sep= '\n'
+        )
         else: 
             bandera = 0
         
-        print(
-            f"validation_row:\n{validation_row}",
-            f"to_validate_row:\n{to_validate_row}",
-            sep= '\n'
-        )
+        
 
         if not bandera or row_validation(validation_row, to_validate_row):
             print("APPENDED")
