@@ -169,12 +169,12 @@ with DAG(
 ) as dag:
 
     date = "{{ ds }}"
-
     first_dug_run = FirstDAGRunSensor(
         task_id= 'first_dag_run',
         poke_interval=30,
         timeout= 60,
-        mode= 'poke' 
+        mode= 'poke', 
+        date= date,
     )
 
     previous_dag_run_successful = ExternalTaskSensor(
