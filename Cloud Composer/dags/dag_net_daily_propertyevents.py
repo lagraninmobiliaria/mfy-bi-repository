@@ -116,22 +116,28 @@ def task_validate_net_propertyevents(ti):
 
     for prop in properties:
         to_validate_row = dict(query_results[query_results.prop_id == prop].copy().reset_index(drop= True).iloc[0])
-        validation_row = dict(bq_client.query(
-                query= queries.get_prop_last_listing_unlisting_event(
-                    prop_id= to_validate_row.get('prop_id'), 
-                    project_id= PROJECT_ID, 
-                    dataset_id= DATASET_MUDATA_CURATED
-                ),
-                project= PROJECT_ID
-            ).to_dataframe().iloc[0]
-        )
+        prop_last_event = bq_client.query(
+            query= queries.get_prop_last_listing_unlisting_event(
+                prop_id= to_validate_row.get('prop_id'), 
+                project_id= PROJECT_ID, 
+                dataset_id= DATASET_MUDATA_CURATED
+            ),
+            project= PROJECT_ID
+        ).to_dataframe()
+        
+        if prop_last_event.shape[0]:
+            bandera = 1
+            validation_row = dict(prop_last_event.iloc[0])
+        else: 
+            bandera = 0
+        
         print(
             f"validation_row:\n{validation_row}",
             f"to_validate_row:\n{to_validate_row}",
             sep= '\n'
         )
 
-        if not validation_row['prop_id'] or row_validation(validation_row, to_validate_row):
+        if not bandera or row_validation(validation_row, to_validate_row):
             print("APPENDED")
             data.append(to_validate_row)
         else:
