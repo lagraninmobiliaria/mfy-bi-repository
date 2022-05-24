@@ -169,7 +169,6 @@ default_args = {
 with DAG(
     dag_id= 'net_daily_propertyevents',
     start_date= datetime(2021, 5, 3),
-    end_date= datetime(2021, 5, 4),
     schedule_interval= '@daily',
     default_args= default_args,
     catchup= True,
