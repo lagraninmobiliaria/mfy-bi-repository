@@ -12,6 +12,7 @@ with DAG(
     dag_id= 'get_first_questionevent',
     schedule_interval= '0/1 0/30 0 ? * * *',
     start_date= datetime(2020, 4, 8),
+    end_date= datetime(2020, 4, 9),
     catchup= True
 ) as dag:
     
