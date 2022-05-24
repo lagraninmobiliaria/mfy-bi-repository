@@ -163,13 +163,13 @@ def is_first_dag_run(**context):
 default_args = {
     'retries': 2,
     'retry_delay': timedelta(seconds= 60),
-    'max_active_runs': 1
 }
 
 with DAG(
     dag_id= 'net_daily_propertyevents',
     start_date= datetime(2021, 5, 3),
     schedule_interval= '@daily',
+    max_active_runs= 1,
     default_args= default_args,
     catchup= True,
 ) as dag:
@@ -192,7 +192,7 @@ with DAG(
         allowed_states= [TaskInstanceState.SUCCESS],
         poke_interval= 30,
         timeout= 60,
-        mode= 'poke'
+        mode= 'reschedule'
     )
 
     start_dag = ExternalTaskSensor(
