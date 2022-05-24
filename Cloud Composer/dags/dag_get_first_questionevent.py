@@ -25,7 +25,10 @@ with DAG(
     query = queries.get_client_first_questionevent(datetime_floor= datetime_floor, datetime_ceil= datetime_ceil)
     table_id = 'first_questionevent' 
 
-    query_new_leads = BigQueryInsertJobOperator(
+    query_new_questionevents = BigQueryInsertJobOperator(
+        gcp_conn_id= "bigquery_default",
+        location= 'us',
+        task_id= 'query_new_questionevents',
         configuration= {
             "query": {
                 "query": query,
@@ -49,4 +52,4 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
-    start_dag >> query_new_leads >> end_dag
+    start_dag >> query_new_questionevents >> end_dag
