@@ -1,10 +1,9 @@
 from datetime import datetime
 
-import py
-
 from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID, createDisposition, writeDisposition
 
 from include.dag_get_first_questionevent import queries 
+
 from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.operators.dummy                            import DummyOperator
@@ -20,15 +19,12 @@ with DAG(
     catchup= True
 ) as dag:
     
-    start_dag = BashOperator(
+    start_dag = DummyOperator(
         task_id= 'start_dag',
-        bash_command= "echo {{ data_interval_start }} {{ data_interval_end }}",
     )
 
-    start, end = "{{ data_interval_start }}--{{ data_interval_end }}".split('--')
-
-    query = queries.get_client_first_questionevent(start, end)
-    table_id = 'first_questionevent' 
+    query = queries.get_client_first_questionevent(start= data_interval_start, end= data_interval_end)
+    table_id = 'client_first_questionevent' 
 
     query_new_questionevents = BigQueryInsertJobOperator(
         gcp_conn_id= "bigquery_default",
