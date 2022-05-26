@@ -25,8 +25,7 @@ with DAG(
         bash_command= "echo {{ data_interval_start }} {{ data_interval_end }}",
     )
 
-    start= "{{ data_interval_start }}"
-    end= "{{ data_interval_end }}"
+    start, end = "{{ data_interval_start }} {{ data_interval_end }}".split(' ')
 
     query = queries.get_client_first_questionevent(start, end)
     table_id = 'first_questionevent' 
