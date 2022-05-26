@@ -29,8 +29,8 @@ def get_client_first_questionevent(datetime_floor, datetime_ceil):
                     ee.client_id
 
                 HAVING 
-                        MIN(ee.created_at) >= TO_TIMESTAMP('{str(datetime_floor).replace('T', ' ')[:-6]}', 'YYYY-MM-DD HH24:MI:SS')
-                    AND MIN(ee.created_at) <  TO_TIMESTAMP('{str(datetime_ceil).replace('T', ' ')[:-6]}', 'YYYY-MM-DD HH24:MI:SS')
+                        MIN(ee.created_at) >= TO_TIMESTAMP('{datetime_floor.replace('T', ' ')[:-6]}', 'YYYY-MM-DD HH24:MI:SS')
+                    AND MIN(ee.created_at) <  TO_TIMESTAMP('{datetime_ceil.replace('T', ' ')[:-6]}', 'YYYY-MM-DD HH24:MI:SS')
             )
             SELECT
                 v_client_first_questionevent.*                ,
