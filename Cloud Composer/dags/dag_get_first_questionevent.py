@@ -8,7 +8,7 @@ from include.dag_get_first_questionevent import queries
 from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.operators.dummy                            import DummyOperator
-from airflow.operators.python                           import PythonOperator
+from airflow.operators.bash                             import BashOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
 
 with DAG(
@@ -22,13 +22,9 @@ with DAG(
     datetime_floor = "{{data_interval_start}}"
     datetime_ceil  = "{{data_interval_end}}"
     
-    start_dag = PythonOperator(
+    start_dag = BashOperator(
         task_id= 'start_dag',
-        python_callable= lambda x: print(
-            "{{data_interval_start}}",
-            type("{{data_interval_start}}"),
-            sep= '\n'
-        )
+        bash_command= "echo {{data_interval_start}}",
     )
 
 
