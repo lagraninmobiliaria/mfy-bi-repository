@@ -16,6 +16,7 @@ with DAG(
     schedule_interval= '*/30 * * * *',
     start_date= datetime(2020, 4, 8),
     end_date= datetime(2020, 4, 9),
+    max_active_runs= 1,
     catchup= True
 ) as dag:
     
