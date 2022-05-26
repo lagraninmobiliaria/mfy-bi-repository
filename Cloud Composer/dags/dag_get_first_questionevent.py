@@ -20,8 +20,8 @@ with DAG(
         task_id= 'start_dag'
     )
 
-    datetime_floor = '{{data_interval_start}}'
-    datetime_ceil  = '{{data_interval_end}}'
+    datetime_floor = {{data_interval_start}}
+    datetime_ceil  = {{data_interval_end}}
 
     query = queries.get_client_first_questionevent(datetime_floor, datetime_ceil)
     table_id = 'first_questionevent' 
