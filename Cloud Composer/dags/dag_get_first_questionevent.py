@@ -22,10 +22,13 @@ with DAG(
     
     start_dag = BashOperator(
         task_id= 'start_dag',
-        bash_command= "echo {{data_interval_start}}",
+        bash_command= "echo {{ data_interval_start }} {{ data_interval_end }}",
     )
 
-    query = queries.get_client_first_questionevent("{{data_interval_start}}", "{{data_interval_end}}")
+    start= "{{ data_interval_start }}"
+    end= "{{ data_interval_end }}"
+
+    query = queries.get_client_first_questionevent(start, end)
     table_id = 'first_questionevent' 
 
     query_new_questionevents = BigQueryInsertJobOperator(
