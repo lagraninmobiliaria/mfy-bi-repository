@@ -1,8 +1,7 @@
-from dataclasses import replace
 from textwrap import dedent
-from humanize import deactivate
 from pendulum import datetime
-def get_client_first_questionevent(datetime_floor, datetime_ceil):
+
+def get_client_first_questionevent(data_interval_start= None, data_interval_end= None):
     
     return dedent(
         f'''
@@ -25,8 +24,8 @@ def get_client_first_questionevent(datetime_floor, datetime_ceil):
                     ee.client_id
 
                 HAVING 
-                        MIN(ee.created_at) >= TO_TIMESTAMP('{datetime_floor.replace('T', ' ')[:-6]}', 'YYYY-MM-DD HH24:MI:SS')
-                    AND MIN(ee.created_at) <  TO_TIMESTAMP('{datetime_ceil.replace('T', ' ')[:-6]}', 'YYYY-MM-DD HH24:MI:SS')
+                        MIN(ee.created_at) >= TO_TIMESTAMP('{str(data_interval_start).replace('T', ' ')[:-6]}', 'YYYY-MM-DD HH24:MI:SS')
+                    AND MIN(ee.created_at) <  TO_TIMESTAMP('{str(data_interval_end).replace('T', ' ')[:-6]}', 'YYYY-MM-DD HH24:MI:SS')
             )
             SELECT
                 v_client_first_questionevent.*                ,
@@ -41,6 +40,6 @@ def get_client_first_questionevent(datetime_floor, datetime_ceil):
     )
 
 if __name__ == "__main__":
-    datetime_floor = datetime(2021, 6, 27, 18, 0, 0, 0)
-    datetime_ceil = datetime(2021, 6, 27, 18, 30, 0, 0)
-    print(get_client_first_questionevent(datetime_floor, datetime_ceil))
+    data_interval_start = datetime(2021, 6, 27, 18, 0, 0, 0)
+    data_interval_end = datetime(2021, 6, 27, 18, 30, 0, 0)
+    print(get_client_first_questionevent(data_interval_start, data_interval_end))
