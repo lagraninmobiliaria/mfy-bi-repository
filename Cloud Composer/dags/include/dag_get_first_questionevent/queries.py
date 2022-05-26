@@ -3,7 +3,12 @@ from textwrap import dedent
 from humanize import deactivate
 from pendulum import datetime
 def get_client_first_questionevent(datetime_floor, datetime_ceil):
-   return dedent(
+    print(
+        datetime_floor,
+        datetime_ceil
+    )
+    
+    return dedent(
         f'''
         SELECT
             * 
@@ -40,6 +45,6 @@ def get_client_first_questionevent(datetime_floor, datetime_ceil):
     )
 
 if __name__ == "__main__":
-    datetime_floor = datetime(2021, 6, 27, 17, 0, 0, 0)
-    datetime_ceil = datetime(2021, 6, 27, 17, 5, 0, 0)
+    datetime_floor = datetime(2021, 6, 27, 18, 0, 0, 0)
+    datetime_ceil = datetime(2021, 6, 27, 18, 30, 0, 0)
     print(get_client_first_questionevent(datetime_floor, datetime_ceil))
