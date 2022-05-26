@@ -21,8 +21,10 @@ with DAG(
     start_dag = DummyOperator(
         task_id= 'start_dag',
     )
+    data_interval_start= "{{data_interval_start}}"
+    data_interval_end= "{{data_interval_end}}"
 
-    query = queries.get_client_first_questionevent(data_interval_start= "{{data_interval_start}}", data_interval_end= "{{data_interval_end}}")
+    query = queries.get_client_first_questionevent(data_interval_start, data_interval_end)
     table_id = 'client_first_questionevent' 
 
     query_new_questionevents = BigQueryInsertJobOperator(
