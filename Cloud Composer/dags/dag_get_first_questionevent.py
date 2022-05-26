@@ -22,7 +22,8 @@ with DAG(
 
     datetime_floor = "{{ data_interval_start }}"
     datetime_ceil  = "{{ data_interval_end }}"
-    query = queries.get_client_first_questionevent(datetime_floor= datetime_floor, datetime_ceil= datetime_ceil)
+
+    query = queries.get_client_first_questionevent(datetime_floor, datetime_ceil)
     table_id = 'first_questionevent' 
 
     query_new_questionevents = BigQueryInsertJobOperator(
