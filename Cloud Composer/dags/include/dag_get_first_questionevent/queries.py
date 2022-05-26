@@ -3,10 +3,6 @@ from textwrap import dedent
 from humanize import deactivate
 from pendulum import datetime
 def get_client_first_questionevent(datetime_floor, datetime_ceil):
-    print(
-        datetime_floor,
-        datetime_ceil
-    )
     
     return dedent(
         f'''

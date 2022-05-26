@@ -18,17 +18,13 @@ with DAG(
     end_date= datetime(2020, 4, 9),
     catchup= True
 ) as dag:
-
-    datetime_floor = "{{data_interval_start}}"
-    datetime_ceil  = "{{data_interval_end}}"
     
     start_dag = BashOperator(
         task_id= 'start_dag',
         bash_command= "echo {{data_interval_start}}",
     )
 
-
-    query = queries.get_client_first_questionevent(datetime_floor, datetime_ceil)
+    query = queries.get_client_first_questionevent("{{data_interval_start}}", "{{data_interval_end}}")
     table_id = 'first_questionevent' 
 
     query_new_questionevents = BigQueryInsertJobOperator(
