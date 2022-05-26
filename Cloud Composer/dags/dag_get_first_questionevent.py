@@ -3,8 +3,9 @@ from datetime import datetime
 from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID, createDisposition, writeDisposition
 
 from include.dag_get_first_questionevent import queries 
-
 from airflow                                            import DAG
+
+from airflow.models.dagrun                              import data_interval_st
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.operators.dummy                            import DummyOperator
 from airflow.operators.bash                             import BashOperator
@@ -23,7 +24,7 @@ with DAG(
         task_id= 'start_dag',
     )
 
-    query = queries.get_client_first_questionevent(start= data_interval_start, end= data_interval_end)
+    query = queries.get_client_first_questionevent()
     table_id = 'client_first_questionevent' 
 
     query_new_questionevents = BigQueryInsertJobOperator(
