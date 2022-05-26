@@ -25,10 +25,8 @@ with DAG(
     start_dag = PythonOperator(
         task_id= 'start_dag',
         python_callable= lambda x: print(
-            datetime_floor,
-            type(datetime_floor),
-            datetime_ceil,
-            type(datetime_ceil),
+            "{{data_interval_start}}",
+            type("{{data_interval_start}}"),
             sep= '\n'
         )
     )
