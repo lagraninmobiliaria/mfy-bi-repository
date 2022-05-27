@@ -18,7 +18,7 @@ with DAG(
 
     task_start_dag = BashOperator(
         task_id = 'start_dag',
-        bash_command= f"Start DAGRun - Logical date: {date}"
+        bash_command= f"echo Start DAGRun - Logical date: {date}"
     )
 
     QUERY_SQL_PATH = './include/dag_get_questionevents/queries/get_questionevents.sql'
