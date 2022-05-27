@@ -29,7 +29,7 @@ with DAG(
         task_id= 'get_questionevents',
         configuration= {
             "query": {
-                "query": f"{'{%'} include {SQL_QUERY_PATH} {'%}'}",
+                "query": f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}",
                 "useLegacySql": False,
                  "jobReference": {
                     "projectId": PROJECT_ID,
