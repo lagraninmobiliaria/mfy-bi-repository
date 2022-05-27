@@ -26,7 +26,7 @@ with DAG(
         configuration= {
             "query": {
                 "query": "{% include './include/dag_get_questionevents/queries/get_questionevents.sql' %}",
-                "useLegancySql": False,
+                "useLegacySql": False,
             }
         }
     )
