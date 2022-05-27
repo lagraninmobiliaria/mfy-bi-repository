@@ -24,6 +24,7 @@ with DAG(
     QUERY_SQL_PATH = './include/dag_get_questionevents/queries/get_questionevents.sql'
 
     task_get_questionevents = BigQueryInsertJobOperator(
+        task_id= 'get_questionevents',
         configuration= {
             "query": {
                 "query": "{% include QUERY_SQL_PATH %}",
