@@ -9,9 +9,9 @@ from airflow.operators.python                           import BranchPythonOpera
 def is_first_run(**context):
     prev_ds = context.get('prev_ds')
     if prev_ds is None:
-        return 'task_branch_a'
+        return 'branch_a'
     else:
-        return 'task_branch_b'
+        return 'branch_b'
 
 with DAG(
     dag_id= 'get_client_first_questionevent',
@@ -19,6 +19,7 @@ with DAG(
     start_date= datetime(2020, 4, 8),
     end_date= datetime(2020, 4, 9),
     max_active_runs= 1,
+    is_paused_upon_creation= True,
     catchup= True
 ) as dag:
     
