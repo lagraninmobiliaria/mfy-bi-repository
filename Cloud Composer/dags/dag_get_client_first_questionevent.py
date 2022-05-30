@@ -1,8 +1,7 @@
 from datetime import datetime
 
 from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID, createDisposition, writeDisposition
-
-from include.dag_get_first_questionevent import queries 
+ 
 from airflow                                            import DAG
 
 from airflow.utils.trigger_rule                         import TriggerRule
@@ -10,7 +9,7 @@ from airflow.operators.dummy                            import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
 
 with DAG(
-    dag_id= 'get_first_questionevent',
+    dag_id= 'get_client_first_questionevent',
     schedule_interval= '*/30 * * * *',
     start_date= datetime(2020, 4, 8),
     end_date= datetime(2020, 4, 9),
@@ -24,7 +23,6 @@ with DAG(
     data_interval_start= "{{data_interval_start}}"
     data_interval_end= "{{data_interval_end}}"
 
-    query = queries.get_client_first_questionevent(data_interval_start, data_interval_end)
     table_id = 'client_first_questionevent' 
 
     query_new_questionevents = BigQueryInsertJobOperator(
@@ -33,7 +31,7 @@ with DAG(
         task_id= 'query_new_questionevents',
         configuration= {
             "query": {
-                "query": query,
+                # "query": query,
                 "useLegacySql": False,
                 "jobReference": {
                     "projectId": PROJECT_ID,
