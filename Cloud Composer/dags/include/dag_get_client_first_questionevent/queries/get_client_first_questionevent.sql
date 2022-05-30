@@ -3,6 +3,7 @@ SELECT
     MIN(questionevents.created_at)      created_at,
     questionevents.client_id            client_id,
     MIN(questionevents.opportunity_id)  opportunity_id
+    
 FROM `infrastructure-lgi.{{DATASET_MUDATA_RAW}}.questionevents` questionevents
 WHERE  
     NOT EXISTS(
