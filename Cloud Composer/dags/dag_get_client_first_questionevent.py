@@ -4,15 +4,17 @@ from airflow                                            import DAG
 
 from dependencies.keys_and_constants import DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED
 
+from airflow.utils.dates                                import days_ago
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.operators.dummy                            import DummyOperator
 from airflow.operators.python                           import BranchPythonOperator, PythonOperator
+from airflow.providers.google.cloud.operators.bigquery  import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
 
 def is_first_run(**context):
     prev_data_interval_start_success = context.get('prev_data_interval_start_success')
     print(prev_data_interval_start_success)
     if prev_data_interval_start_success is None:
-        return 'branch_a'
+        return ['branch_a', 'branch_b']
     else:
         return 'branch_b'
 
@@ -55,14 +57,15 @@ with DAG(
     task_branch_a = DummyOperator(
         task_id= 'branch_a'
     )
+    task_branch_a.set_upstream(branch_task)
+    
     task_branch_b = DummyOperator(
         task_id= 'branch_b'
     )
-
+    task_branch_b.set_upstream(task_branch_a, branch_task)
 
     end_dag = DummyOperator(
         task_id= 'end_dag',
         trigger_rule= TriggerRule.ONE_SUCCESS
     )
-
-    start_dag >> branch_task >> [task_branch_a, task_branch_b] >> end_dag
+    end_dag.set_upstream(task_branch_b)
