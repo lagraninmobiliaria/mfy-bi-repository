@@ -9,6 +9,7 @@ from airflow.operators.dummy                            import DummyOperator
 from airflow.operators.python                           import BranchPythonOperator, PythonOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
 
+from google.cloud.bigquery                              import SchemaField
 
 def is_first_run(**context):
     prev_data_interval_start_success = context.get('prev_data_interval_start_success')
@@ -60,10 +61,10 @@ with DAG(
         dataset_id= DATASET_MUDATA_CURATED,
         table_id= 'clients_first_questionevent',
         schema_fields= [
-            {'name':'event_id', 'type': int},
-            {'name':'created_at', 'type': datetime},
-            {'name':'client_id', 'type': int},
-            {'name':'opportunity_id', 'type': int}
+            SchemaField('event_id','INTEGER'),
+            SchemaField('created_at','TIMESTAMP'),
+            SchemaField('client_id','INTEGER'),
+            SchemaField('opportunity_id','INTEGER'),
         ],
         exists_ok= True,
     )
