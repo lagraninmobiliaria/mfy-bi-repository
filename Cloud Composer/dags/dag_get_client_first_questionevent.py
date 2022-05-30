@@ -65,5 +65,5 @@ with DAG(
         trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
-    branch_task >> [task_branch_a, task_branch_b]
+    start_dag >> branch_task >> [task_branch_a, task_branch_b]
     task_branch_a >> task_branch_b >> end_dag
