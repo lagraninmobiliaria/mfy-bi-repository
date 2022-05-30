@@ -8,6 +8,7 @@ from airflow.operators.python                           import BranchPythonOpera
 
 def is_first_run(**context):
     prev_ds = context.get('prev_ds')
+    print(prev_ds)
     if prev_ds is None:
         return 'branch_a'
     else:
