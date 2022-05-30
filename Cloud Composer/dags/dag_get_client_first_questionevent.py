@@ -42,8 +42,7 @@ with DAG(
 
     end_dag = DummyOperator(
         task_id= 'end_dag',
-        trigger_rule= TriggerRule.ALL_SUCCESS
+        trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
-    start_dag >> branch_task >> task_branch_a >> end_dag
-    start_dag >> branch_task >> task_branch_b >> end_dag
+    start_dag >> branch_task >> [task_branch_a, task_branch_b] >> end_dag
