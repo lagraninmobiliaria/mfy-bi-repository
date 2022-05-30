@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from dags.dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED
+from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED
 
 from airflow                                            import DAG
 from airflow.utils.dates                                import days_ago
