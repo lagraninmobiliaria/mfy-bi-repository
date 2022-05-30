@@ -10,8 +10,8 @@ WHERE
         FROM `infrastructure-lgi.{{DATASET_MUDATA_CURATED}}.clients_first_questionevent` clients_first_questionevent
         WHERE questionevents.client_id = clients_first_questionevent.client_id
     )
-    AND questionevents.created_at >= TO_TIMESTAMP('{{ data_interval_start }}', 'YYYY-MM-DDTHH24:MI:SS')
-    AND questionevents.created_at <  TO_TIMESTAMP('{{ data_interval_end }}', 'YYYY-MM-DDTHH24:MI:SS')
+    AND questionevents.created_at >= TIMESTAMP('{{ data_interval_start }}')
+    AND questionevents.created_at <  TIMESTAMP('{{ data_interval_end }}')
 
 GROUP BY
     questionevents.client_id
