@@ -40,6 +40,7 @@ with DAG(
     SQL_QUERY_PATH= './include/dag_get_client_first_questionevent/queries/get_client_first_questionevent.sql'
 
     task_test_query_template = PythonOperator(
+        task_id= 'test_query_template',
         python_callable= test_query_template,
         op_kwargs= {
             'query': f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}"
