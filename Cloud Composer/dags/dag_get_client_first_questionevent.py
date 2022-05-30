@@ -1,14 +1,14 @@
 from datetime import datetime
- 
+
+from dags.dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED
+
 from airflow                                            import DAG
-
-from dependencies.keys_and_constants import DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED
-
 from airflow.utils.dates                                import days_ago
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.operators.dummy                            import DummyOperator
 from airflow.operators.python                           import BranchPythonOperator, PythonOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
+
 
 def is_first_run(**context):
     prev_data_interval_start_success = context.get('prev_data_interval_start_success')
@@ -54,9 +54,20 @@ with DAG(
         python_callable= is_first_run,
     ) 
 
-    task_branch_a = DummyOperator(
-        task_id= 'branch_a'
+    task_branch_a = BigQueryCreateEmptyTableOperator(
+        task_id= 'branch_a',
+        project_id= PROJECT_ID,
+        dataset_id= DATASET_MUDATA_CURATED,
+        table_id= 'clients_first_questionevent',
+        schema_fields= [
+            {'name':'event_id', 'type': int},
+            {'name':'created_at', 'type': datetime},
+            {'name':'client_id', 'type': int},
+            {'name':'opportunity_id', 'type': int}
+        ],
+        exists_ok= True,
     )
+
     task_branch_b = DummyOperator(
         task_id= 'branch_b'
     )
