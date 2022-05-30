@@ -58,7 +58,7 @@ with DAG(
         task_id= 'branch_a'
     )
     task_branch_a.set_upstream(branch_task)
-    
+
     task_branch_b = DummyOperator(
         task_id= 'branch_b'
     )
@@ -69,3 +69,6 @@ with DAG(
         trigger_rule= TriggerRule.ONE_SUCCESS
     )
     end_dag.set_upstream(task_branch_b)
+
+    branch_task >> [task_branch_a, task_branch_b]
+    task_branch_a >> task_branch_b >> end_dag
