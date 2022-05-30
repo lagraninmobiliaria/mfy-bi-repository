@@ -61,10 +61,10 @@ with DAG(
         dataset_id= DATASET_MUDATA_CURATED,
         table_id= 'clients_first_questionevent',
         schema_fields= [
-            SchemaField('event_id','INTEGER'),
-            SchemaField('created_at','TIMESTAMP'),
-            SchemaField('client_id','INTEGER'),
-            SchemaField('opportunity_id','INTEGER'),
+            SchemaField('event_id'),
+            SchemaField('created_at'),
+            SchemaField('client_id'),
+            SchemaField('opportunity_id'),
         ],
         exists_ok= True,
     )
