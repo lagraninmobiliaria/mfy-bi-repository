@@ -2,9 +2,11 @@ from datetime import datetime
  
 from airflow                                            import DAG
 
+from dependencies.keys_and_constants import DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED
+
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.operators.dummy                            import DummyOperator
-from airflow.operators.python                           import BranchPythonOperator
+from airflow.operators.python                           import BranchPythonOperator, PythonOperator
 
 def is_first_run(**context):
     prev_data_interval_start_success = context.get('prev_data_interval_start_success')
@@ -14,6 +16,9 @@ def is_first_run(**context):
     else:
         return 'branch_b'
 
+def test_query_template(query):
+    print(query)
+
 with DAG(
     dag_id= 'get_client_first_questionevent',
     schedule_interval= '*/30 * * * *',
@@ -21,11 +26,24 @@ with DAG(
     end_date= datetime(2020, 4, 9),
     max_active_runs= 1,
     is_paused_upon_creation= True,
+    user_defined_macros= {
+        'DATASET_MUDATA_RAW': DATASET_MUDATA_RAW,
+        'DATASET_MUDATA_CURATED': DATASET_MUDATA_CURATED
+    },
     catchup= True
 ) as dag:
     
     start_dag = DummyOperator(
         task_id= 'start_dag',
+    )
+
+    SQL_QUERY_PATH= './include/dag_get_client_first_questionevent/queries/get_client_first_questionevent.sql'
+
+    task_test_query_template = PythonOperator(
+        python_callable= test_query_template,
+        op_kwargs= {
+            'query': f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}"
+        }
     )
     
     branch_task = BranchPythonOperator(

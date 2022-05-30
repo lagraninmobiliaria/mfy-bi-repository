@@ -1,31 +1,17 @@
-SELECT
-    * 
-FROM EXTERNAL_QUERY(
-    "projects/infrastructure-lgi/locations/us/connections/mudafy", 
-    """
-    WITH v_client_first_questionevent AS (
-        SELECT
-            ee.client_id        client_id,
-            MIN(ee.id)          event_id,
-            MIN(ee.created_at)  event_created_at
-
-        FROM events_questionevent eqe
-        LEFT JOIN events_event ee
-            ON ee.id = eqe.event_ptr_id
-
-        GROUP BY
-            ee.client_id
-
-        HAVING 
-                MIN(ee.created_at) >= TO_TIMESTAMP('{{ data_interval_start }}', 'YYYY-MM-DDTHH24:MI:SS')
-            AND MIN(ee.created_at) <  TO_TIMESTAMP('{{ data_interval_end }}', 'YYYY-MM-DDTHH24:MI:SS')
+SELECT  
+    MIN(questionevents.event_id)        event_id,
+    MIN(questionevents.created_at)      created_at,
+    questionevents.client_id            client_id,
+    MIN(questionevents.opportunity_id)  opportunity_id
+FROM `infrastructure-lgi.{{DATASET_MUDATA_RAW}}.questionevents` questionevents
+WHERE  
+    NOT EXISTS(
+        SELECT client_id
+        FROM `infrastructure-lgi.{{DATASET_MUDATA_CURATED}}.clients_first_questionevent` clients_first_questionevent
+        WHERE questionevents.client_id = clients_first_questionevent.client_id
     )
-    SELECT
-        v_client_first_questionevent.*                ,
-        ee.opportunity_case_id          opportunity_id
+    AND questionevents.created_at >= TO_TIMESTAMP('{{ data_interval_start }}', 'YYYY-MM-DDTHH24:MI:SS')
+    AND questionevents.created_at <  TO_TIMESTAMP('{{ data_interval_end }}', 'YYYY-MM-DDTHH24:MI:SS')
 
-    FROM v_client_first_questionevent
-        LEFT JOIN events_event ee
-            ON ee.id = v_client_first_questionevent.event_id
-    """
-)
+GROUP BY
+    questionevents.client_id
