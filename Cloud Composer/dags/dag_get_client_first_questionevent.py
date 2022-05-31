@@ -63,7 +63,6 @@ with DAG(
         schema_fields= [
             SchemaField('client_id', 'INTEGER'), 
             SchemaField('event_id', 'INTEGER'),
-            SchemaField('created_at', 'TIMESTAMP'),
             SchemaField('opportunity_id', 'INTEGER'),
         ],
         time_partitioning= {'created_at', 'TIMESTAMP'},
