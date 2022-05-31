@@ -13,7 +13,7 @@ def is_first_run(**context):
     prev_data_interval_start_success = context.get('prev_data_interval_start_success')
     print(prev_data_interval_start_success)
     if prev_data_interval_start_success is None:
-        return ['branch_a', 'branch_b']
+        return ['create_client_first_questionevent_table', 'branch_b']
     else:
         return 'branch_b'
 
@@ -78,7 +78,7 @@ with DAG(
         project_id= PROJECT_ID,
         trigger_rule= TriggerRule.ONE_SUCCESS
     )
-    
+
     end_dag = DummyOperator(
         task_id= 'end_dag',
         trigger_rule= TriggerRule.ALL_SUCCESS
