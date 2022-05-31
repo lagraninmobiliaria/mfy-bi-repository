@@ -1,5 +1,3 @@
-#TODO Change branch_b task name into something explicit about the task performed
-
 from datetime import datetime
 
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, writeDisposition, createDisposition
@@ -15,9 +13,9 @@ def is_first_run(**context):
     prev_data_interval_start_success = context.get('prev_data_interval_start_success')
     print(prev_data_interval_start_success)
     if prev_data_interval_start_success is None:
-        return ['create_client_first_questionevent_table', 'branch_b']
+        return ['create_client_first_questionevent_table', 'append_clients_first_questionevent']
     else:
-        return 'branch_b'
+        return 'append_clients_first_questionevent'
 
 with DAG(
     dag_id= 'get_client_first_questionevent',
@@ -60,8 +58,8 @@ with DAG(
 
     SQL_QUERY_PATH= './include/dag_get_client_first_questionevent/queries/get_client_first_questionevent.sql'
 
-    task_branch_b = BigQueryInsertJobOperator(
-        task_id= 'branch_b',
+    task_append_clients_first_questionevent = BigQueryInsertJobOperator(
+        task_id= 'append_clients_first_questionevent',
         configuration= {
             "query": {
                 "query": f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}",
@@ -87,5 +85,5 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
-    start_dag >> branch_task >> [task_create_table, task_branch_b]
-    task_create_table  >> task_branch_b >> end_dag
+    start_dag >> branch_task >> [task_create_table, task_append_clients_first_questionevent]
+    task_create_table  >> task_append_clients_first_questionevent >> end_dag
