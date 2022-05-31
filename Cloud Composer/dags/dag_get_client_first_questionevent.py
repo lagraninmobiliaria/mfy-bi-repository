@@ -39,7 +39,7 @@ with DAG(
 ) as dag:
     
     first_dag_run = PythonSensor(
-        task_id= 'first_dag_run',
+        task_id= 'first_dag_run_sensor',
         python_callable= is_first_run_sensor,
         poke_interval=30,
         timeout= 60,
@@ -48,7 +48,7 @@ with DAG(
 
     previous_dag_run_successful = ExternalTaskSensor(
         execution_delta= timedelta(minutes=30),
-        task_id= 'previous_dag_run_successful',
+        task_id= 'previous_dag_run_successful_sensor',
         external_dag_id= dag.dag_id,
         external_task_id= 'end_dag',
         allowed_states= [TaskInstanceState.SUCCESS],
@@ -112,5 +112,6 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
+    [first_dag_run, previous_dag_run_successful] >> start_dag
     start_dag >> branch_task >> [task_create_table, task_append_clients_first_questionevent]
     task_create_table  >> task_append_clients_first_questionevent >> end_dag
