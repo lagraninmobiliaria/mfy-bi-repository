@@ -1,3 +1,5 @@
+#TODO Change branch_b task name into something explicit about the task performed
+
 from datetime import datetime
 
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED
@@ -17,9 +19,6 @@ def is_first_run(**context):
     else:
         return 'branch_b'
 
-def test_query_template(query):
-    print(query)
-
 with DAG(
     dag_id= 'get_client_first_questionevent',
     schedule_interval= '*/30 * * * *',
@@ -36,16 +35,6 @@ with DAG(
     
     start_dag = DummyOperator(
         task_id= 'start_dag',
-    )
-
-    SQL_QUERY_PATH= './include/dag_get_client_first_questionevent/queries/get_client_first_questionevent.sql'
-
-    task_test_query_template = PythonOperator(
-        task_id= 'test_query_template',
-        python_callable= test_query_template,
-        op_kwargs= {
-            'query': f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}"
-        }
     )
     
     branch_task = BranchPythonOperator(
@@ -66,6 +55,8 @@ with DAG(
         ],
         exists_ok= True,
     )
+
+    SQL_QUERY_PATH= './include/dag_get_client_first_questionevent/queries/get_client_first_questionevent.sql'
 
     task_branch_b = BigQueryInsertJobOperator(
         task_id= 'branch_b',
