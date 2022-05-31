@@ -8,7 +8,7 @@ from airflow                                            import DAG
 from airflow.utils.dates                                import days_ago
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.operators.dummy                            import DummyOperator
-from airflow.operators.python                           import BranchPythonOperator, PythonOperator
+from airflow.operators.python                           import BranchPythonOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
 
 def is_first_run(**context):
