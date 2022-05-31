@@ -65,7 +65,6 @@ with DAG(
             SchemaField('event_id', 'INTEGER'),
             SchemaField('opportunity_id', 'INTEGER'),
         ],
-        time_partitioning= {'created_at', 'TIMESTAMP'},
         exists_ok= True,
     )
 
