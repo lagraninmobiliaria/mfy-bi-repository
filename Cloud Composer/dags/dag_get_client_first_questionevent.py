@@ -23,8 +23,8 @@ def test_query_template(query):
 with DAG(
     dag_id= 'get_client_first_questionevent',
     schedule_interval= '*/30 * * * *',
-    start_date= datetime(2020, 4, 8),
-    end_date= datetime(2020, 4, 9),
+    start_date= datetime(2020, 4, 13, 15, 30),
+    end_date= datetime(2020, 4, 14),
     max_active_runs= 1,
     is_paused_upon_creation= True,
     user_defined_macros= {
@@ -84,5 +84,5 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
-    start_dag >> branch_task >> [task_create_table , task_branch_b]
+    start_dag >> branch_task >> [task_create_table, task_branch_b]
     task_create_table  >> task_branch_b >> end_dag
