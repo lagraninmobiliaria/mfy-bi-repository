@@ -1,13 +1,20 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, writeDisposition, createDisposition
 
 from airflow                                            import DAG
 from airflow.utils.dates                                import days_ago
 from airflow.utils.trigger_rule                         import TriggerRule
+from airflow.utils.state                                import TaskInstanceState
+from airflow.sensors.python                             import PythonSensor
+from airflow.sensors.external_task                      import ExternalTaskSensor
 from airflow.operators.dummy                            import DummyOperator
 from airflow.operators.python                           import BranchPythonOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
+
+def is_first_run_sensor(**context):
+    prev_data_interval_start_success = context.get('prev_data_interval_start_success')
+    return prev_data_interval_start_success is None
 
 def is_first_run(**context):
     prev_data_interval_start_success = context.get('prev_data_interval_start_success')
@@ -31,8 +38,28 @@ with DAG(
     catchup= True
 ) as dag:
     
+    first_dag_run = PythonSensor(
+        task_id= 'first_dag_run',
+        python_callable= is_first_run_sensor,
+        poke_interval=30,
+        timeout= 60,
+        mode= 'poke',
+    )
+
+    previous_dag_run_successful = ExternalTaskSensor(
+        execution_delta= timedelta(minutes=30),
+        task_id= 'previous_dag_run_successful',
+        external_dag_id= dag.dag_id,
+        external_task_id= 'end_dag',
+        allowed_states= [TaskInstanceState.SUCCESS],
+        poke_interval= 30,
+        timeout= 60,
+        mode= 'reschedule'
+    )
+
     start_dag = DummyOperator(
         task_id= 'start_dag',
+        trigger_rule= TriggerRule.ONE_SUCCESS,
     )
     
     branch_task = BranchPythonOperator(
