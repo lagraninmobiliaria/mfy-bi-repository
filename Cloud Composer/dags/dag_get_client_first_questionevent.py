@@ -61,11 +61,12 @@ with DAG(
         dataset_id= DATASET_MUDATA_CURATED,
         table_id= 'clients_first_questionevent',
         schema_fields= [
-            SchemaField('event_id'),
-            SchemaField('created_at'),
-            SchemaField('client_id'),
-            SchemaField('opportunity_id'),
+            SchemaField('client_id', 'INTEGER'), 
+            SchemaField('event_id', 'INTEGER'),
+            SchemaField('created_at', 'TIMESTAMP'),
+            SchemaField('opportunity_id', 'INTEGER'),
         ],
+        time_partitioning= {'created_at', 'TIMESTAMP'},
         exists_ok= True,
     )
 
