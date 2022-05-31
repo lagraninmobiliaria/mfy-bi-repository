@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED
+from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, writeDisposition, createDisposition
 
 from airflow                                            import DAG
 from airflow.utils.dates                                import days_ago
@@ -42,11 +42,13 @@ with DAG(
         python_callable= is_first_run,
     ) 
 
+    table_id = 'clients_first_questionevent'
+
     task_create_table = BigQueryCreateEmptyTableOperator(
         task_id= 'create_client_first_questionevent_table',
         project_id= PROJECT_ID,
         dataset_id= DATASET_MUDATA_CURATED,
-        table_id= 'clients_first_questionevent',
+        table_id= table_id,
         schema_fields= [
             {'name': 'client_id', 'type':  'INTEGER'}, 
             {'name': 'event_id', 'type': 'INTEGER'},
@@ -64,6 +66,16 @@ with DAG(
             "query": {
                 "query": f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}",
                 "useLegacySql": False,
+                "jobReference": {
+                    "projectId": PROJECT_ID,
+                },
+                "destinationTable": {
+                    "projectId": PROJECT_ID,
+                    "datasetId": DATASET_MUDATA_RAW,
+                    "tableId": table_id
+                }, 
+                "writeDisposition": writeDisposition.WRITE_APPEND,
+                "createDisposition": createDisposition.CREATE_NEVER,
             }
         },
         project_id= PROJECT_ID,
