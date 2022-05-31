@@ -21,7 +21,7 @@ with DAG(
     dag_id= 'get_client_first_questionevent',
     schedule_interval= '*/30 * * * *',
     start_date= datetime(2020, 4, 13, 15, 30),
-    end_date= datetime(2020, 4, 14),
+    end_date= days_ago(1),
     max_active_runs= 1,
     is_paused_upon_creation= True,
     user_defined_macros= {
