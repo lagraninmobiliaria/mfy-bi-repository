@@ -64,7 +64,7 @@ with DAG(
             {'name': 'client_id', 'type':  'INTEGER'}, 
             {'name': 'event_id', 'type': 'INTEGER'},
             {'name': 'opportunity_id', 'type': 'INTEGER'},
-            {'name': 'opportunity_id', 'type': 'TIMESTAMP'},
+            {'name': 'created_at', 'type': 'TIMESTAMP'},
         ],
         exists_ok= True,
     )
