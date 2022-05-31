@@ -71,7 +71,7 @@ with DAG(
                 },
                 "destinationTable": {
                     "projectId": PROJECT_ID,
-                    "datasetId": DATASET_MUDATA_RAW,
+                    "datasetId": DATASET_MUDATA_CURATED,
                     "tableId": table_id
                 }, 
                 "writeDisposition": writeDisposition.WRITE_APPEND,
