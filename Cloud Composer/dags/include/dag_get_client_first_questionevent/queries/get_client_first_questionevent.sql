@@ -1,8 +1,8 @@
 SELECT
-    questionevents.event_id                             event_id,
-    questionevents.created_at                           created_at,
-    questionevents.client_id                            client_id,
-    questionevents.opportunity_id                       opportunity_id
+    time_range_questionevents.event_id                  event_id,
+    time_range_questionevents.created_at                created_at,
+    time_range_questionevents.client_id                 client_id,
+    time_range_questionevents.opportunity_id            opportunity_id
 
 FROM (
     SELECT  
