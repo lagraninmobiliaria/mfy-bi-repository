@@ -9,8 +9,6 @@ from airflow.operators.dummy                            import DummyOperator
 from airflow.operators.python                           import BranchPythonOperator, PythonOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
 
-from google.cloud.bigquery                              import SchemaField
-
 def is_first_run(**context):
     prev_data_interval_start_success = context.get('prev_data_interval_start_success')
     print(prev_data_interval_start_success)
@@ -55,8 +53,8 @@ with DAG(
         python_callable= is_first_run,
     ) 
 
-    task_branch_a = BigQueryCreateEmptyTableOperator(
-        task_id= 'branch_a',
+    task_create_table = BigQueryCreateEmptyTableOperator(
+        task_id= 'create_client_first_questionevent_table',
         project_id= PROJECT_ID,
         dataset_id= DATASET_MUDATA_CURATED,
         table_id= 'clients_first_questionevent',
@@ -69,14 +67,22 @@ with DAG(
         exists_ok= True,
     )
 
-    task_branch_b = DummyOperator(
+    task_branch_b = BigQueryInsertJobOperator(
         task_id= 'branch_b',
+        configuration= {
+            "query": {
+                "query": f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}",
+                "useLegacySql": False,
+            }
+        },
+        project_id= PROJECT_ID,
         trigger_rule= TriggerRule.ONE_SUCCESS
     )
+    
     end_dag = DummyOperator(
         task_id= 'end_dag',
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
-    start_dag >> branch_task >> [task_branch_a, task_branch_b]
-    task_branch_a >> task_branch_b >> end_dag
+    start_dag >> branch_task >> [task_create_table , task_branch_b]
+    task_create_table  >> task_branch_b >> end_dag
