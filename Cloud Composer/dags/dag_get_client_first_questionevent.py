@@ -42,7 +42,7 @@ with DAG(
         task_id= 'first_dag_run_sensor',
         python_callable= is_first_run_sensor,
         poke_interval=30,
-        timeout= 60,
+        timeout= 31,
         mode= 'poke',
     )
 
