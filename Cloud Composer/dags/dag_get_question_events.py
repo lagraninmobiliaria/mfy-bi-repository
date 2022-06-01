@@ -8,7 +8,7 @@ from airflow.operators.bash                             import BashOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
 
 with DAG(
-    dag_id= 'get_questionevents',
+    dag_id= 'get_question_events',
     schedule_interval= '@daily',
     start_date= datetime(2020, 4, 8),
     max_active_runs= 5, 
@@ -25,11 +25,11 @@ with DAG(
         bash_command= f"echo Start DAGRun - Logical date: {date}"
     )
 
-    table_id = 'questionevents'
-    SQL_QUERY_PATH= './include/dag_get_questionevents/queries/get_questionevents.sql'
+    SQL_QUERY_PATH= f'./include/dag_{dag.dag_id}/queries/{dag.dag_id}.sql'
+    table_id = 'question_events'
 
-    task_get_questionevents = BigQueryInsertJobOperator(
-        task_id= 'get_questionevents',
+    task_get_question_events = BigQueryInsertJobOperator(
+        task_id= 'get_question_events',
         configuration= {
             "query": {
                 "query": f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}",
@@ -52,4 +52,4 @@ with DAG(
         task_id= 'end_dag'
     )
 
-    task_start_dag >> task_get_questionevents >> task_end_dag
+    task_start_dag >> task_get_question_events >> task_end_dag
