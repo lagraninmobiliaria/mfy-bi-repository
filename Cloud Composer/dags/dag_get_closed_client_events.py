@@ -2,11 +2,9 @@ from datetime import datetime
 
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, writeDisposition, createDisposition
 
-from airflow import DAG
-
-from airflow.operators.dummy import DummyOperator
-from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
-from sqlalchemy import true
+from airflow                                            import DAG
+from airflow.operators.dummy                            import DummyOperator
+from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
 
 with DAG(
     dag_id= "get_closed_client_events",
@@ -17,6 +15,7 @@ with DAG(
         "polymorphic_ctype_id": 120
     }
 ) as dag:
+
     task_start_dag = DummyOperator(
         task_id= 'start_dag'
     )
