@@ -9,10 +9,10 @@ FROM EXTERNAL_QUERY(
         ee.client_id                client_id,
         ee.opportunity_case_id      opportunity_id
 
-    FROM events_questionevent eqe
-        LEFT JOIN events_event ee
-            ON ee.id = eqe.event_ptr_id
+    FROM events_event ee
+    
     WHERE
-        DATE(ee.created_at) = DATE('{{ ds }}')
+            ee.polymorphic_ctype_id = 42
+        AND DATE(ee.created_at) = DATE('{{ ds }}')
     """
 )
