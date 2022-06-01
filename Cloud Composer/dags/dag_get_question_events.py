@@ -18,11 +18,9 @@ with DAG(
     }
 ) as dag:
 
-    date = "{{ ds }}"
-
     task_start_dag = BashOperator(
         task_id = 'start_dag',
-        bash_command= f"echo Start DAGRun - Logical date: {date}"
+        bash_command= f"echo Start DAGRun - Logical date: {{ ds }}"
     )
 
     SQL_QUERY_PATH= f'./include/dag_{dag.dag_id}/queries/{dag.dag_id}.sql'
