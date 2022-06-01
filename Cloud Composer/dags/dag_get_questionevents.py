@@ -13,6 +13,9 @@ with DAG(
     start_date= datetime(2020, 4, 8),
     max_active_runs= 5, 
     is_paused_upon_creation= True,
+    user_defined_filters= {
+        "polymorphic_ctype_id": 42
+    }
 ) as dag:
 
     date = "{{ ds }}"
