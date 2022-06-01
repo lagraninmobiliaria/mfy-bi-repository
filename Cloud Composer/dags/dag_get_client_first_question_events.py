@@ -20,12 +20,12 @@ def is_first_run(**context):
     prev_data_interval_start_success = context.get('prev_data_interval_start_success')
     print(prev_data_interval_start_success)
     if prev_data_interval_start_success is None:
-        return ['create_client_first_questionevent_table', 'append_clients_first_questionevent']
+        return ['create_client_first_question_events_table', 'append_clients_first_question_events']
     else:
-        return 'append_clients_first_questionevent'
+        return 'append_clients_first_question_events'
 
 with DAG(
-    dag_id= 'get_client_first_questionevent',
+    dag_id= 'get_client_first_question_events',
     schedule_interval= '*/30 * * * *',
     start_date= datetime(2020, 4, 13, 15, 30),
     end_date= days_ago(1),
@@ -67,10 +67,10 @@ with DAG(
         python_callable= is_first_run,
     ) 
 
-    table_id = 'clients_first_questionevent'
+    table_id = 'clients_first_question_events'
 
     task_create_table = BigQueryCreateEmptyTableOperator(
-        task_id= 'create_client_first_questionevent_table',
+        task_id= 'create_client_first_question_events_table',
         project_id= PROJECT_ID,
         dataset_id= DATASET_MUDATA_CURATED,
         table_id= table_id,
@@ -83,10 +83,10 @@ with DAG(
         exists_ok= True,
     )
 
-    SQL_QUERY_PATH= './include/dag_get_client_first_questionevent/queries/get_client_first_questionevent.sql'
+    SQL_QUERY_PATH= f'./include/dag_{dag.dag_id}/queries/{dag.dag_id}.sql'
 
-    task_append_clients_first_questionevent = BigQueryInsertJobOperator(
-        task_id= 'append_clients_first_questionevent',
+    task_append_clients_first_question_events = BigQueryInsertJobOperator(
+        task_id= 'append_clients_first_question_events',
         configuration= {
             "query": {
                 "query": f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}",
@@ -113,5 +113,5 @@ with DAG(
     )
 
     [first_dag_run, previous_dag_run_successful] >> start_dag
-    start_dag >> branch_task >> [task_create_table, task_append_clients_first_questionevent]
-    task_create_table  >> task_append_clients_first_questionevent >> end_dag
+    start_dag >> branch_task >> [task_create_table, task_append_clients_first_question_events]
+    task_create_table  >> task_append_clients_first_question_events >> end_dag
