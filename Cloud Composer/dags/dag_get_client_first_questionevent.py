@@ -41,8 +41,8 @@ with DAG(
     first_dag_run = PythonSensor(
         task_id= 'first_dag_run_sensor',
         python_callable= is_first_run_sensor,
-        poke_interval=30,
-        timeout= 31,
+        poke_interval=5,
+        timeout= 15,
         mode= 'poke',
     )
 
