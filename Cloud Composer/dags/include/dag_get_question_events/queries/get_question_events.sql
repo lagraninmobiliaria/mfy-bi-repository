@@ -1,7 +1,7 @@
 SELECT 
     *
 FROM EXTERNAL_QUERY(
-    "projects/infrastructure-lgi/locations/us-central1/connections/mudafy-prod-replic-us-central", 
+    "projects/infrastructure-lgi/locations/us-central1/connections/mudafy-prod-replic-us-central",
     """
     SELECT
         ee.id                       event_id,
