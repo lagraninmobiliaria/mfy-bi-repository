@@ -31,7 +31,7 @@ with DAG(
             task_id = 'create_dataset_' + dataset,
             project_id= PROJECT_ID,
             dataset_id= dataset,
-            location= 'us',
+            location= 'us-central1',
             exists_ok= True
         )
 
