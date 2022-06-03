@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, writeDisposition, createDisposition
 
 from airflow                                            import DAG
-from airflow.utils.dates                                import days_ago
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.utils.state                                import TaskInstanceState
 from airflow.sensors.python                             import PythonSensor
