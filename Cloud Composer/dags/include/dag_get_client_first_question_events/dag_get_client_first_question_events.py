@@ -45,7 +45,7 @@ with DAG(
     )
 
     previous_dag_run_successful = ExternalTaskSensor(
-        execution_delta= timedelta(minutes=30),
+        execution_delta= timedelta(days= 1),
         task_id= 'previous_dag_run_successful_sensor',
         external_dag_id= dag.dag_id,
         external_task_id= 'end_dag',
