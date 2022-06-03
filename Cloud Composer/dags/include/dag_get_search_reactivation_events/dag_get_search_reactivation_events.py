@@ -37,11 +37,11 @@ with DAG(
             "query": {
                 "query": f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}",
                 "useLegacySql": False,
-                # "destionationTable": {
-                #     "projectId": PROJECT_ID,
-                #     "datasetId": DATASET_MUDATA_RAW,
-                #     "tableId": destionation_table_id
-                # }
+                "destionationTable": {
+                    "projectId": PROJECT_ID,
+                    "datasetId": DATASET_MUDATA_RAW,
+                    "tableId": destionation_table_id
+                }
             }
         }
     )
