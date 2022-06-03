@@ -2,7 +2,7 @@ from datetime import datetime
 
 from textwrap import dedent
 
-from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID
+from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID, writeDisposition, createDisposition
 
 from airflow                                                import DAG
 from airflow.utils.trigger_rule                             import TriggerRule
@@ -41,7 +41,9 @@ with DAG(
                     "projectId": PROJECT_ID,
                     "datasetId": DATASET_MUDATA_RAW,
                     "tableId": destionation_table_id
-                }
+                },
+                "writeDisposition": writeDisposition.WRITE_APPEND,
+                "createDisposition": createDisposition.CREATE_IF_NEEDED
             }
         }
     )
