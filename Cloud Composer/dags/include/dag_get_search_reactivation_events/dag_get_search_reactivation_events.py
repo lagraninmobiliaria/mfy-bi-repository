@@ -42,6 +42,10 @@ with DAG(
                     "datasetId": DATASET_MUDATA_RAW,
                     "tableId": destionation_table_id
                 },
+                "jobReference": {
+                    "projectId": PROJECT_ID,
+                    "location": 'us-central1'
+                },
                 "writeDisposition": writeDisposition.WRITE_APPEND,
                 "createDisposition": createDisposition.CREATE_IF_NEEDED
             }
