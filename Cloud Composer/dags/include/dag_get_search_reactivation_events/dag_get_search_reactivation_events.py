@@ -22,13 +22,7 @@ with DAG(
 
     task_start_dag = BashOperator(
         task_id= 'start_dag',
-        bash_command= dedent(
-            f"""
-            --- DAG started ---
-            {{ data_interval_start }}
-            {{ data_interval_end }}
-            """
-        )
+        bash_command= f"""DAGRun started: {{ data_interval_start }} - {{ data_interval_end }}"""
     )
 
 
