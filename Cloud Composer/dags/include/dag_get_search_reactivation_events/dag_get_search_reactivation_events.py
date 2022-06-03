@@ -14,7 +14,6 @@ with DAG(
     dag_id= 'get_search_reactivation_events',
     schedule_interval= '@daily',
     start_date= datetime(2021, 10, 19),
-    end_date= datetime(2021, 10, 20),
     max_active_runs= 1,
     is_paused_upon_creation= True,
     params= {
