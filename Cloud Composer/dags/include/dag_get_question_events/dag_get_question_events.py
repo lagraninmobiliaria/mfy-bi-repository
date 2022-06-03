@@ -23,7 +23,7 @@ with DAG(
         bash_command= f"echo Start DAGRun - Logical date: {{ ds }}"
     )
 
-    SQL_QUERY_PATH= f'./include/dag_{dag.dag_id}/queries/{dag.dag_id}.sql'
+    SQL_QUERY_PATH= f'./queries/{dag.dag_id}.sql'
     table_id = 'question_events'
 
     task_get_question_events = BigQueryInsertJobOperator(
