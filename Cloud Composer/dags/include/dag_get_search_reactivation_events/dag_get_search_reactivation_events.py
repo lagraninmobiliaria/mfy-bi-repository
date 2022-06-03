@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from textwrap import dedent
-
 from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID, writeDisposition, createDisposition
 
 from airflow                                                import DAG
