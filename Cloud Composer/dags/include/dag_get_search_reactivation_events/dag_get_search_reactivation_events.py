@@ -22,11 +22,11 @@ with DAG(
 
     task_start_dag = BashOperator(
         task_id= 'start_dag',
-        bash_command= f"""echo DAGRun started: {{ data_interval_start }} - {{ data_interval_end }}"""
+        bash_command= "echo DAGRun started: {{ data_interval_start }} - {{ data_interval_end }}"
     )
 
 
-    SQL_QUERY_PATH= f'./dag_{dag.dag_id}/queries/{dag.dag_id}.sql'
+    SQL_QUERY_PATH= f'./queries/{dag.dag_id}.sql'
     destionation_table_id= 'search_reactivation_events'
 
     task_get_search_reactivation_events = BigQueryInsertJobOperator(
