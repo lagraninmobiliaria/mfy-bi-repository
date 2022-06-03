@@ -24,7 +24,6 @@ with DAG(
         bash_command= "echo DAGRun started: {{ data_interval_start }} - {{ data_interval_end }}"
     )
 
-
     SQL_QUERY_PATH= f'./queries/{dag.dag_id}.sql'
     destionation_table_id= 'search_reactivation_events'
 
