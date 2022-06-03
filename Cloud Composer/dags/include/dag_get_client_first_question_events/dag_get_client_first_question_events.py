@@ -45,10 +45,10 @@ with DAG(
     )
 
     previous_dag_run_successful = ExternalTaskSensor(
-        execution_delta= timedelta(days= 1),
         task_id= 'previous_dag_run_successful_sensor',
         external_dag_id= dag.dag_id,
         external_task_id= 'end_dag',
+        execution_delta= timedelta(days= 1),
         allowed_states= [TaskInstanceState.SUCCESS],
         poke_interval= 30,
         timeout= 60,
@@ -81,7 +81,7 @@ with DAG(
         exists_ok= True,
     )
 
-    SQL_QUERY_PATH= f'./include/dag_{dag.dag_id}/queries/{dag.dag_id}.sql'
+    SQL_QUERY_PATH= f'./queries/{dag.dag_id}.sql'
 
     task_append_clients_first_question_events = BigQueryInsertJobOperator(
         task_id= 'append_clients_first_question_events',
