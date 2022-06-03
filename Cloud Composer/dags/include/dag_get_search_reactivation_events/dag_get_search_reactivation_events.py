@@ -2,7 +2,7 @@ from datetime import datetime
 
 from textwrap import dedent
 
-from dags.dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID
+from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID
 
 from airflow                                                import DAG
 from airflow.utils.trigger_rule                             import TriggerRule
