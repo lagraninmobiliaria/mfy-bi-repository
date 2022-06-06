@@ -20,7 +20,7 @@ with DAG(
         task_id=  'start_dag'
     )
 
-    SQL_QUERY_PATH= f'./include/dag_{dag.dag_id}/queries/{dag.dag_id}.sql'
+    SQL_QUERY_PATH= f'./queries/{dag.dag_id}.sql'
     table_id= 'unlisted_property_events'
 
     task_get_unlisted_property_events = BigQueryInsertJobOperator(
