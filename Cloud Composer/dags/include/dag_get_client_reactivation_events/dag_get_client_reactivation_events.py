@@ -2,7 +2,7 @@ from datetime import datetime
 
 from dependencies.keys_and_constants import DATASET_MUDATA_RAW, createDisposition, writeDisposition, PROJECT_ID
 
-from functions import get_clients_with_search_reactivation_event
+from include.dag_get_client_reactivation_events.functions import get_clients_with_search_reactivation_event
 
 from airflow import DAG
 from airflow.utils.trigger_rule import TriggerRule
