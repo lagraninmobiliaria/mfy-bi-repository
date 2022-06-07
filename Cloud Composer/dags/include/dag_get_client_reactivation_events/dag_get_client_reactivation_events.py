@@ -52,7 +52,7 @@ with DAG(
         }
     )
 
-    PythonOperator(
+    task_search_reactivations_as_client_reactivations= PythonOperator(
         task_id= 'search_reactivations_as_client_reactivations',
         python_callable= validate_search_reactivation_as_client_reactivation
 
@@ -63,6 +63,6 @@ with DAG(
     )
 
     task_start_dag >> task_create_client_reactivation_table
-    task_create_client_reactivation_table >> task_query_daily_search_reactivation_events
+    task_create_client_reactivation_table >> task_query_daily_search_reactivation_events >> task_search_reactivations_as_client_reactivations
     
     
