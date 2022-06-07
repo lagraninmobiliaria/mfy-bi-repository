@@ -1,11 +1,8 @@
 from datetime import datetime
-from turtle import end_fill
-
-import py
 
 from dependencies.keys_and_constants import DATASET_MUDATA_RAW, createDisposition, writeDisposition, PROJECT_ID
 
-from .functions import get_clients_with_search_reactivation_event, branching_based_on_results
+from .functions import get_clients_with_search_reactivation_event
 
 from airflow import DAG
 from airflow.utils.trigger_rule import TriggerRule
