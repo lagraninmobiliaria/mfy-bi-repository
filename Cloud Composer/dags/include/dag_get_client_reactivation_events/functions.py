@@ -2,7 +2,7 @@ from google.cloud.bigquery import Client
 
 from dependencies.keys_and_constants import PROJECT_ID
 
-def validate_search_reactivation_as_client_reactivation(**context):
+def validate_search_reactivation_as_client_reactivation(query: str, **context):
     bq_client= Client(project= PROJECT_ID, location= 'us-central1')
     
     job_id= context['task_instance'].xcom_pull('query_daily_search_reactivation_events')
@@ -10,5 +10,5 @@ def validate_search_reactivation_as_client_reactivation(**context):
     query_results= bq_job.to_dataframe()
     SQL_QUERY_PATH = './queries/client_last_closed_event.sql'
     for row in query_results.to_dict('records'):
-        query = (f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}").format(row.get('client_id'), row.get('created_at'))
-        print(query)
+        client_query = query.format(row.get('client_id'), row.get('created_at'))
+        print(client_query)
