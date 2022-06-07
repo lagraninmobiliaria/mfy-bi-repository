@@ -2,7 +2,7 @@ from datetime import datetime
 
 from dependencies.keys_and_constants import DATASET_MUDATA_RAW, createDisposition, writeDisposition, PROJECT_ID
 
-from .functions import get_clients_with_search_reactivation_event
+from functions import get_clients_with_search_reactivation_event
 
 from airflow import DAG
 from airflow.utils.trigger_rule import TriggerRule
@@ -15,7 +15,7 @@ with DAG(
     dag_id= 'get_client_reactivation_events',
     schedule_interval= '@daily',
     max_active_runs= 1, 
-    start_date= datetime(2021, 1, 1),
+    start_date= datetime(2021, 10, 19),
     params= {
         'project_id': PROJECT_ID,
         'mudata_raw': DATASET_MUDATA_RAW
