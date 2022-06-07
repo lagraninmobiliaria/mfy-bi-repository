@@ -2,13 +2,11 @@ from datetime import datetime
 
 from dependencies.keys_and_constants import DATASET_MUDATA_RAW, createDisposition, writeDisposition, PROJECT_ID
 
-from include.dag_get_client_reactivation_events.functions import get_clients_with_search_reactivation_event
+from include.dag_get_client_reactivation_events.functions import validate_search_reactivation_as_client_reactivation
 
 from airflow import DAG
-from airflow.utils.trigger_rule import TriggerRule
-from airflow.utils.task_group import TaskGroup
 from airflow.operators.dummy import DummyOperator
-from airflow.operators.python import PythonOperator, BranchPythonOperator
+from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator
 
 with DAG(
@@ -54,34 +52,17 @@ with DAG(
         }
     )
 
-    client_ids = get_clients_with_search_reactivation_event(job_id= task_query_daily_search_reactivation_events.output)
+    PythonOperator(
+        task_id= 'search_reactivations_as_client_reactivations',
+        python_callable= validate_search_reactivation_as_client_reactivation
 
-    with TaskGroup(group_id= 'get_closed_client_events') as clients_processing_group:
-        for client_id in client_ids:
-            t1 = DummyOperator(
-                task_id= f"search_reactivation_event_client_{client_id}"
-            )
-            t2 = DummyOperator(
-                task_id= f"search_closed_event_client_{client_id}"
-            )
-
-            t1 >> t2
-
-    # task_branching_based_on_results = BranchPythonOperator(
-    #     task_id= 'branching_based_on_results',
-    #     python_callable= branching_based_on_results,
-    # )
-
-    # with TaskGroup() as client_processing_group:
-    #     # for client_id in 
-    #     pass
+    )
 
     task_end_dag= DummyOperator(
         task_id= 'end_dag'
     )
 
     task_start_dag >> task_create_client_reactivation_table
-    task_create_client_reactivation_table >> task_query_daily_search_reactivation_events >> clients_processing_group
-    clients_processing_group >> task_end_dag
+    task_create_client_reactivation_table >> task_query_daily_search_reactivation_events
     
     
