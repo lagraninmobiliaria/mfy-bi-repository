@@ -10,5 +10,5 @@ def validate_search_reactivation_as_client_reactivation(**context):
     query_results= bq_job.to_dataframe()
     SQL_QUERY_PATH = './queries/client_last_closed_event.sql'
     for row in query_results.to_dict('records'):
-        query = f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}".format(row.get('client_id'), row.get('created_at'))
+        query = (f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}").format(row.get('client_id'), row.get('created_at'))
         print(query)
