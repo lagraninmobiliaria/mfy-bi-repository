@@ -16,6 +16,7 @@ with DAG(
     schedule_interval= '@daily',
     max_active_runs= 1, 
     start_date= datetime(2021, 10, 19),
+    end_date= datetime(2021, 10, 20),
     params= {
         'project_id': PROJECT_ID,
         'mudata_raw': DATASET_MUDATA_RAW
@@ -53,10 +54,18 @@ with DAG(
         }
     )
 
-    task_get_clients_with_search_reactivation_event = PythonOperator(
-        task_id= 'get_clients_with_search_reactivation_event',
-        python_callable= get_clients_with_search_reactivation_event
-    )
+    client_ids = get_clients_with_search_reactivation_event(job_id= task_query_daily_search_reactivation_events.output)
+
+    with TaskGroup(group_id= 'get_closed_client_events') as clients_processing_group:
+        for client_id in client_ids:
+            t1 = DummyOperator(
+                task_id= f"search_reactivation_event_client_{client_id}"
+            )
+            t2 = DummyOperator(
+                task_id= f"search_closed_event_client_{client_id}"
+            )
+
+            t1 >> t2
 
     # task_branching_based_on_results = BranchPythonOperator(
     #     task_id= 'branching_based_on_results',
@@ -72,7 +81,7 @@ with DAG(
     )
 
     task_start_dag >> task_create_client_reactivation_table
-    task_create_client_reactivation_table >> task_query_daily_search_reactivation_events >> task_get_clients_with_search_reactivation_event
-    task_get_clients_with_search_reactivation_event >> task_end_dag
+    task_create_client_reactivation_table >> task_query_daily_search_reactivation_events >> clients_processing_group
+    clients_processing_group >> task_end_dag
     
     
