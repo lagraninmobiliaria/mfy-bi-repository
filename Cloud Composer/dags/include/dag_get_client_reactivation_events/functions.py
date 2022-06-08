@@ -11,7 +11,7 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
     query_results= bq_job.to_dataframe()
     
     append_rows = []
-    with open('./queries/reactivation_event_already_exists,sql', 'r') as sql_file:
+    with open('./queries/reactivation_event_already_exists.sql', 'r') as sql_file:
         record_existance_query = sql_file.read()
 
     for row in query_results.to_dict('records'):
