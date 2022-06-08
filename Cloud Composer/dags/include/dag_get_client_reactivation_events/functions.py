@@ -2,7 +2,7 @@ from google.cloud.bigquery import Client
 
 from dependencies.keys_and_constants import PROJECT_ID
 
-def validate_search_reactivation_as_client_reactivation(query: str, **context):
+def validate_search_reactivation_as_client_reactivation(closed_client_query: str, client_reactivation_query: str, **context):
     bq_client= Client(project= PROJECT_ID, location= 'us-central1')
     
     job_id= context['task_instance'].xcom_pull('query_daily_search_reactivation_events')
@@ -10,7 +10,13 @@ def validate_search_reactivation_as_client_reactivation(query: str, **context):
     query_results= bq_job.to_dataframe()
     SQL_QUERY_PATH = './queries/client_last_closed_event.sql'
     for row in query_results.to_dict('records'):
-        client_query = query.format(row.get('client_id'), row.get('created_at'))
-        last_closed_client_event= bq_client.query(query= client_query).result()
-        
-        print(last_closed_client_event)
+        closed_client_query = closed_client_query.format(row.get('client_id'), row.get('created_at'))
+        last_closed_client_event= bq_client.query(query= closed_client_query).result()
+
+        client_last_reactivation_query = client_reactivation_query.format(row.get('client_id'), row.get('created_at'))
+        last_client_last_reactivation_event = bq_client.query(query= client_last_reactivation_query).result()
+
+        print(
+            f"Closed Client Event: {last_closed_client_event}",
+            f"Reactivation Event: {last_client_last_reactivation_event}"
+        )

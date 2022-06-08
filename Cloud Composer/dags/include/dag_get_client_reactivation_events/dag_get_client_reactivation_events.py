@@ -52,13 +52,15 @@ with DAG(
         }
     )
 
-    SQL_QUERY_PATH_2 = './queries/client_last_closed_event.sql'
+    SQL_QUERY_PATH_CLOSED_CLIENT= './queries/client_last_closed_event.sql'
+    SQL_QUERY_PATH_CLIENT_REACTIVATION= './queries/client_last_reactivation_event.sql'
 
     task_search_reactivations_as_client_reactivations= PythonOperator(
         task_id= 'search_reactivations_as_client_reactivations',
         python_callable= validate_search_reactivation_as_client_reactivation,
         op_kwargs= {
-            'query': f"{'{%'} include '{SQL_QUERY_PATH_2}' {'%}'}"
+            'closed_client_query': f"{'{%'} include '{SQL_QUERY_PATH_CLOSED_CLIENT}' {'%}'}",
+            'client_reactivation_query': f"{'{%'} include '{SQL_QUERY_PATH_CLIENT_REACTIVATION}' {'%}'}",
         }
     )
 
