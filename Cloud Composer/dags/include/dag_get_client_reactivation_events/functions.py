@@ -33,7 +33,6 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
         client_last_reactivation_query = client_reactivation_query.format(row.get('client_id'), row.get('created_at'))
         last_client_last_reactivation_event = bq_client.query(query= client_last_reactivation_query).result().to_dataframe().to_dict('records')
 
-
         to_append_option_1 = not len(last_client_last_reactivation_event)
         to_append_option_2 = (
                 len(last_client_last_reactivation_event)
@@ -52,7 +51,7 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
         print(temp_query) 
         condition_2 = bq_client.query(
             query= temp_query
-        ).result().num_results() == 0
+        ).result().num_results == 0
 
         if condition_1 and condition_2:
             append_rows.append(row)
