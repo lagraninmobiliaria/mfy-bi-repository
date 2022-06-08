@@ -8,15 +8,12 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
     job_id= context['task_instance'].xcom_pull('query_daily_search_reactivation_events')
     bq_job= bq_client.get_job(job_id= job_id)
     query_results= bq_job.to_dataframe()
-    SQL_QUERY_PATH = './queries/client_last_closed_event.sql'
+    
     for row in query_results.to_dict('records'):
         closed_client_query = closed_client_query.format(row.get('client_id'), row.get('created_at'))
-        last_closed_client_event= bq_client.query(query= closed_client_query).result()
+        last_closed_client_event= bq_client.query(query= closed_client_query).result().pages
 
         client_last_reactivation_query = client_reactivation_query.format(row.get('client_id'), row.get('created_at'))
-        last_client_last_reactivation_event = bq_client.query(query= client_last_reactivation_query).result()
+        last_client_last_reactivation_event = bq_client.query(query= client_last_reactivation_query).result().pages
 
-        print(
-            f"Closed Client Event: {last_closed_client_event}",
-            f"Closed Client Event len: {len(last_closed_client_event)}"
-        )
+        print(last_closed_client_event, list(last_closed_client_event))        
