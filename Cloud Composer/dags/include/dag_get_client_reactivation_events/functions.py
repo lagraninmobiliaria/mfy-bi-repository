@@ -1,4 +1,7 @@
 import os
+from h11 import Data
+
+from pandas import DataFrame
 
 from google.cloud.bigquery import Client
 from google.cloud.bigquery import LoadJobConfig
@@ -58,8 +61,8 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
 
     print(append_rows)
     if len(append_rows):
-        bq_client.load_table_from_json(
-            json_rows= append_rows, 
+        bq_client.load_table_from_dataframe(
+            dataframe= DataFrame(data= append_rows), 
             destination= f'{PROJECT_ID}.{DATASET_MUDATA_RAW}.client_reactivation_events',
             job_config= LoadJobConfig(
                 create_disposition= createDisposition.CREATE_NEVER,
