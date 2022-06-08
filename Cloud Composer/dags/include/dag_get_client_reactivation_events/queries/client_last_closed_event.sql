@@ -9,4 +9,4 @@ WHERE
     AND closed_client_events.created_at < TIMESTAMP('{}')
 
 GROUP BY 
-    closed_client.client_id
+    closed_client_events.client_id
