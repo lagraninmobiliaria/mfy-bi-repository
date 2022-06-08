@@ -17,6 +17,6 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
         last_client_last_reactivation_event = bq_client.query(query= client_last_reactivation_query).result()
 
         print(
-            f"Closed Client Event: {last_closed_client_event}",
-            f"Reactivation Event: {last_client_last_reactivation_event}"
+            f"Closed Client Event: {last_closed_client_event.total_rows}",
+            f"Reactivation Event: {last_client_last_reactivation_event.total_rows}"
         )
