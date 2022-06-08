@@ -35,25 +35,17 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
         )
 
         condition_1 = (to_append_option_1 or to_append_option_2)
+        temp_query= record_existance_query.format(
+            PROJECT_ID, 
+            DATASET_MUDATA_RAW, 
+            'client_reactivation_events',
+            'event_id',
+            row.get('event_id')
+        )
+        print(temp_query) 
         condition_2 = Client.query(
-            query= record_existance_query.format(
-                PROJECT_ID, 
-                DATASET_MUDATA_RAW, 
-                'client_reactivation_events',
-                'event_id',
-                row.get('event_id')
-            )
+            query= temp_query
         ).result().num_results() == 0
-
-        print(
-            record_existance_query.format(
-                PROJECT_ID, 
-                DATASET_MUDATA_RAW, 
-                'client_reactivation_events',
-                'event_id',
-                row.get('event_id')
-            )   
-        ) 
 
         if condition_1 and condition_2:
             append_rows.append(row)
