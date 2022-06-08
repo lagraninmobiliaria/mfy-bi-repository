@@ -1,6 +1,7 @@
 from google.cloud.bigquery import Client
+from google.cloud.bigquery import LoadJobConfig
 
-from dependencies.keys_and_constants import PROJECT_ID
+from dependencies.keys_and_constants import PROJECT_ID,DATASET_MUDATA_RAW, writeDisposition, createDisposition
 
 def validate_search_reactivation_as_client_reactivation(closed_client_query: str, client_reactivation_query: str, **context):
     bq_client= Client(project= PROJECT_ID, location= 'us-central1')
@@ -10,6 +11,8 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
     query_results= bq_job.to_dataframe()
     
     append_rows = []
+    with open('./queries/reactivation_event_already_exists,sql', 'r') as sql_file:
+        record_existance_query = sql_file.read()
 
     for row in query_results.to_dict('records'):
         closed_client_query = closed_client_query.format(row.get('client_id'), row.get('created_at'))
@@ -18,19 +21,50 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
         if not len(last_closed_client_event):
             continue
 
+        last_closed_client_event= last_closed_client_event.pop()
+
         client_last_reactivation_query = client_reactivation_query.format(row.get('client_id'), row.get('created_at'))
         last_client_last_reactivation_event = bq_client.query(query= client_last_reactivation_query).result().to_dataframe().to_dict('records')
 
-        last_closed_client_event= last_closed_client_event[0]
 
         to_append_option_1 = not len(last_client_last_reactivation_event)
         to_append_option_2 = (
                 len(last_client_last_reactivation_event)
-            and last_closed_client_event.get('created_at') >=
+            and last_closed_client_event.get('created_at') >= \
                 last_client_last_reactivation_event[0].get('created_at') 
         )
 
-        if to_append_option_1 or to_append_option_2:
+        condition_1 = (to_append_option_1 or to_append_option_2)
+        condition_2 = Client.query(
+            query= record_existance_query.format(
+                PROJECT_ID, 
+                DATASET_MUDATA_RAW, 
+                'client_reactivation_events',
+                'event_id',
+                row.get('event_id')
+            )
+        ).result().num_results() == 0
+
+        print(
+            record_existance_query.format(
+                PROJECT_ID, 
+                DATASET_MUDATA_RAW, 
+                'client_reactivation_events',
+                'event_id',
+                row.get('event_id')
+            )   
+        ) 
+
+        if condition_1 and condition_2:
             append_rows.append(row)
 
     print(append_rows)
+    if len(append_rows):
+        Client.load_table_from_json(
+            json_rows= append_rows, 
+            destination= f'{PROJECT_ID}.{DATASET_MUDATA_RAW}.client_reactivation_events',
+            job_config= LoadJobConfig(
+                create_disposition= createDisposition.CREATE_NEVER,
+                write_disposition= writeDisposition.WRITE_APPEND
+            )
+        )
