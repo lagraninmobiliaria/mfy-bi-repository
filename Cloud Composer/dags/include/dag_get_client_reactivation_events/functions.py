@@ -11,12 +11,12 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
     SQL_QUERY_PATH = './queries/client_last_closed_event.sql'
     for row in query_results.to_dict('records'):
         closed_client_query = closed_client_query.format(row.get('client_id'), row.get('created_at'))
-        last_closed_client_event= bq_client.query(query= closed_client_query).result()
+        last_closed_client_event= list(bq_client.query(query= closed_client_query).result())
 
         client_last_reactivation_query = client_reactivation_query.format(row.get('client_id'), row.get('created_at'))
-        last_client_last_reactivation_event = bq_client.query(query= client_last_reactivation_query).result()
+        last_client_last_reactivation_event = list(bq_client.query(query= client_last_reactivation_query).result())
 
         print(
-            f"Closed Client Event: {last_closed_client_event.total_rows}",
-            f"Reactivation Event: {last_client_last_reactivation_event.total_rows}"
+            f"Closed Client Event: {last_closed_client_event}",
+            f"Reactivation Event: {last_client_last_reactivation_event}"
         )
