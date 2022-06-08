@@ -1,3 +1,5 @@
+import os
+
 from google.cloud.bigquery import Client
 from google.cloud.bigquery import LoadJobConfig
 
@@ -11,7 +13,12 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
     query_results= bq_job.to_dataframe()
     
     append_rows = []
-    with open('./queries/reactivation_event_already_exists.sql', 'r') as sql_file:
+    record_existance_query_path = os.path.join(
+        os.path.dirname(__file__),
+        'queries',
+        'reactivation_event_already_exists.sql'
+    )
+    with open(record_existance_query_path, 'r') as sql_file:
         record_existance_query = sql_file.read()
 
     for row in query_results.to_dict('records'):
