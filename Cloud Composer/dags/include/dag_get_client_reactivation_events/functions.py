@@ -11,4 +11,6 @@ def validate_search_reactivation_as_client_reactivation(query: str, **context):
     SQL_QUERY_PATH = './queries/client_last_closed_event.sql'
     for row in query_results.to_dict('records'):
         client_query = query.format(row.get('client_id'), row.get('created_at'))
-        print(client_query)
+        last_closed_client_event= bq_client.query(query= client_query).result()
+        
+        print(last_closed_client_event)
