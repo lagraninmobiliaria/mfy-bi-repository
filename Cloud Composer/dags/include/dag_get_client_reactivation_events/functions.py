@@ -50,7 +50,7 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
             row.get('event_id')
         )
         print(temp_query) 
-        condition_2 = Client.query(
+        condition_2 = bq_client.query(
             query= temp_query
         ).result().num_results() == 0
 
@@ -59,7 +59,7 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
 
     print(append_rows)
     if len(append_rows):
-        Client.load_table_from_json(
+        bq_client.load_table_from_json(
             json_rows= append_rows, 
             destination= f'{PROJECT_ID}.{DATASET_MUDATA_RAW}.client_reactivation_events',
             job_config= LoadJobConfig(
