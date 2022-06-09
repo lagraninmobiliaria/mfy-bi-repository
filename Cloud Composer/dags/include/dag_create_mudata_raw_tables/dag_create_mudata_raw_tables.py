@@ -1,5 +1,5 @@
 from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID
-from table_schemas import *
+from include.dag_create_mudata_raw_tables.table_schemas import *
 
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
