@@ -13,7 +13,7 @@ with DAG(
     schedule_interval= "@daily",
     start_date= datetime(2021, 10, 19),
     is_paused_upon_creation= True,
-    doc_md= "{% include ./markdowns/dag_get_closed_client_events.md %}",
+    doc_md= "{% include './markdowns/dag_get_closed_client_events.md' %}",
     user_defined_macros= {
         "polymorphic_ctype_id": 120
     }
