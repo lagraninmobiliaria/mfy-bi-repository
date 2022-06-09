@@ -1,5 +1,5 @@
 from dependencies.keys_and_constants import schemaTypes
-from google.cloud.bigquery.table import TimePartitioning, TimePartitioningType
+from google.cloud.bigquery.table import TimePartitioningType
 CLIENT_CREATION = {
     "table_id": "client_cration",
     "schema_fields": [
@@ -13,10 +13,10 @@ CLIENT_CREATION = {
         {"name": "country","type": schemaTypes.STRING},
         {"name": "creation_date","type": schemaTypes.DATETIME},
     ],
-    "time_partitioning": TimePartitioning(
-        field= "registered_date", 
-        type_= TimePartitioningType.DAY 
-    ),
+    "time_partitioning": {
+        "field": "registered_date", 
+        "type": TimePartitioningType.DAY 
+    },
 }
 
 CLIENT_MAIL_SUBSCRIPTION = {
@@ -27,10 +27,10 @@ CLIENT_MAIL_SUBSCRIPTION = {
         {"name": "subscription_date", "type": schemaTypes.DATETIME},
         {"name": "condition", "type": schemaTypes.STRING}
     ],
-    "time_partitioning": TimePartitioning(
-        field= "registered_date", 
-        type_= TimePartitioningType.DAY 
-    ),
+    "time_partitioning": {
+        "field": "registered_date", 
+        "type": TimePartitioningType.DAY 
+    },
 }
 
 BUYING_OPPORTUNITY_CASE = {
@@ -47,10 +47,10 @@ BUYING_OPPORTUNITY_CASE = {
         {"name": "reference", "type": schemaTypes.STRING},
         {"name": "is_new", "type": schemaTypes.BOOL}
     ],
-    "time_partitioning": TimePartitioning(
-        field= "registered_date", 
-        type_= TimePartitioningType.DAY 
-    ),
+    "time_partitioning": {
+        "field": "registered_date", 
+        "type": TimePartitioningType.DAY 
+    },
 }
 
 TASKS = {
@@ -79,7 +79,11 @@ TASKS = {
         {"name":"next_priority_check", "type": schemaTypes.DATETIME},
         {"name":"sla", "type": schemaTypes.DATETIME},
         {"name":"booking_id", "type": schemaTypes.INTEGER}
-    ]
+    ],
+    "time_partitioning": {
+        "field": "registered_date", 
+        "type": TimePartitioningType.DAY 
+    },
 }
 
 USER_ASSIGNMENT = {
@@ -94,10 +98,10 @@ USER_ASSIGNMENT = {
         {"name": "from_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "to_datetime_z", "type": schemaTypes.DATETIME},
     ],
-    "time_partitioning": TimePartitioning(
-        field= "registered_date", 
-        type_= TimePartitioningType.DAY 
-    ),
+    "time_partitioning": {
+        "field": "registered_date", 
+        "type_": TimePartitioningType.DAY 
+    },
 }
 
 TICKETS = {
@@ -115,8 +119,8 @@ TICKETS = {
         {"name": "status", "type": schemaTypes.STRING},
         {"name": "is_new", "type": schemaTypes.BOOL},
     ],
-    "time_partitioning": TimePartitioning(
-        field= "registered_date", 
-        type_= TimePartitioningType.DAY 
-    ),
+    "time_partitioning": {
+        "field": "registered_date", 
+        "type": TimePartitioningType.DAY 
+    },
 }
