@@ -42,8 +42,9 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
             and last_closed_client_event.get('created_at') >= \
                 last_client_last_reactivation_event[0].get('created_at') 
         )
-
+        # Que no exista un evento de reactivación mayor al evento de cierre
         condition_1 = (to_append_option_1 or to_append_option_2)
+
         temp_query= record_existance_query.format(
             PROJECT_ID, 
             DATASET_MUDATA_RAW, 
@@ -51,7 +52,6 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
             'event_id',
             row.get('event_id')
         )
-        print(temp_query) 
         condition_2 = bq_client.query(
             query= temp_query
         ).result().num_results == 0

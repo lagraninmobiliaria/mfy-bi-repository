@@ -1,5 +1,7 @@
 import os
 
+from sqlalchemy import FLOAT
+
 PROJECT_ID = os.getenv('_PROJECT_ID')
 DATASET_MUDATA_RAW = os.getenv('_DATASET_MUDATA_RAW')
 DATASET_MUDATA_CURATED = os.getenv('_DATASET_MUDATA_CURATED')
@@ -39,3 +41,14 @@ class createDisposition:
         }
 
         return dict_doc.get(option, f"{option} is not an option")
+
+class schemaTypes:
+    BOOL= "BOOL"
+    STRING= "STRING"
+    DATE= "DATE"
+    DATETIME= "DATETIME"
+    TIMESTAMP= "TIMESTAMP"
+    STRUCT= "STRUCT"
+    GEOGRAPHY= "GEOGRAPHY"
+    INTEGER= "INTEGER"
+    FLOAT= "FLOAT64"

@@ -2,14 +2,18 @@ from datetime import datetime
 
 from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, writeDisposition, createDisposition
 
+from google.cloud.bigquery.table import TimePartitioning, TimePartitioningType
+
 from airflow                                            import DAG
 from airflow.operators.dummy                            import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator
+
 with DAG(
     dag_id= "get_closed_client_events",
     schedule_interval= "@daily",
     start_date= datetime(2021, 10, 19),
     is_paused_upon_creation= True,
+    doc_md= "{% include ./markdowns/dag_get_closed_client_events.md %}",
     user_defined_macros= {
         "polymorphic_ctype_id": 120
     }
@@ -33,7 +37,11 @@ with DAG(
             {"name": "created_at", "type":"TIMESTAMP" , "mode": "REQUIRED"},
             {"name": "client_id", "type":"INTEGER" , "mode": "REQUIRED"},
         ],
-        cluster_fields= ["event_id", "client_id"]
+        time_partitioning= TimePartitioning(
+            field= "created_at", 
+            type_= TimePartitioningType.DAY
+        ),
+        cluster_fields= ["client_id", "event_id"],
     )
 
     task_get_closed_client_events = BigQueryInsertJobOperator(

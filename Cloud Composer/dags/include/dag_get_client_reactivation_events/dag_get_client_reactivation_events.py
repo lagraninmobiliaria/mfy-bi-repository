@@ -6,7 +6,7 @@ from include.dag_get_client_reactivation_events.functions import validate_search
 
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
-from airflow.operators.python import PythonOperator
+from airflow.operators.python import PythonOperator, task
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator
 
 with DAG(
@@ -70,5 +70,6 @@ with DAG(
 
     task_start_dag >> task_create_client_reactivation_table
     task_create_client_reactivation_table >> task_query_daily_search_reactivation_events >> task_search_reactivations_as_client_reactivations
+    task_search_reactivations_as_client_reactivations >> task_end_dag
     
     
