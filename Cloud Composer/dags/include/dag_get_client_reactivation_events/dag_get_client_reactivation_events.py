@@ -14,7 +14,7 @@ with DAG(
     schedule_interval= '@daily',
     max_active_runs= 1, 
     start_date= datetime(2021, 10, 19),
-    end_date= datetime(2021, 10, 19) + timedelta(days= 10),
+    # end_date= datetime(2021, 10, 19) + timedelta(days= 10),
     params= {
         'project_id': PROJECT_ID,
         'mudata_raw': DATASET_MUDATA_RAW
