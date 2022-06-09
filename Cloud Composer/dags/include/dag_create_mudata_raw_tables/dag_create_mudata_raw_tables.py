@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID
 from include.dag_create_mudata_raw_tables.table_schemas import *
 
@@ -13,6 +15,7 @@ tables_to_create= [
 
 with DAG(
     dag_id= "mudata_raw_tables_creation",
+    start_date= datetime(2022, 1, 1),
     schedule_interval= None,
     is_paused_upon_creation= True,
 ) as dag:
