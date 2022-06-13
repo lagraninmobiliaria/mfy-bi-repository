@@ -12,10 +12,7 @@ from google.cloud import bigquery
 bigquery.SchemaField.name
 
 tables_to_create = [
-    LOOK_CLIENTS, 
-    LOOK_PROPERTIES, FACT_PROPERTIES,
-    LOOK_ALLIANCES,
-    LOOK_DEVELOPMENTS
+    LOOK_PROPERTIES, LOOK_PROPERTIES_ADDITIONAL, FACT_PROPERTIES, 
 ]
 
 with DAG(

@@ -97,6 +97,28 @@ FACT_PROPERTIES = {
     }
 }
 
+LOOK_PROPERTIES_ADDITIONAL = {
+    "table_id": "look_properties_additional",
+    "schema_fields": [
+        {"name": "property_id", "type": schemaTypes.INTEGER},
+        {"name": "total_area", "type": schemaTypes.FLOAT},
+        {"name": "covered_area", "type": schemaTypes.FLOAT},
+        {"name": "semi_covered_area", "type": schemaTypes.FLOAT},
+        {"name": "uncovered_area", "type": schemaTypes.FLOAT},
+        {"name": "number_room", "type": schemaTypes.INTEGER},
+        {"name": "number_bedroom", "type": schemaTypes.INTEGER},
+        {"name": "number_toilet", "type": schemaTypes.INTEGER},
+        {"name": "number_bath", "type": schemaTypes.INTEGER},
+        {"name": "number_garage", "type": schemaTypes.INTEGER},
+        {"name": "tour_link", "type": schemaTypes.STRING},
+        {"name": "update_date", "type": schemaTypes.DATE},
+    ],
+    "time_partitioning": dict(
+        field= "update_date",
+        type= TimePartitioningType.MONTH
+    )
+}
+
 LOOK_ALLIANCES = {
     "table_id": "look_alliances",
     "schema_fields": [
