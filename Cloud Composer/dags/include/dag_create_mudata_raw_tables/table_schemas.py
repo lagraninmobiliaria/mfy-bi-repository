@@ -1,12 +1,12 @@
 from dependencies.keys_and_constants import schemaTypes
 from google.cloud.bigquery.table import TimePartitioningType
+
 CLIENT_CREATION = {
-    "table_id": "client_cration",
+    "table_id": "client_creation",
     "schema_fields": [
         {"name": "registered_date", "type": schemaTypes.DATETIME},
         {"name": "client_id", "type": schemaTypes.INTEGER},
-        {"name": "assignee_id","type": schemaTypes.INTEGER},
-        {"name": "name","type": schemaTypes.STRING},
+        {"name": "name", "type": schemaTypes.STRING},
         {"name": "phone","type": schemaTypes.STRING},
         {"name": "email","type": schemaTypes.STRING},
         {"name": "source","type": schemaTypes.STRING},
