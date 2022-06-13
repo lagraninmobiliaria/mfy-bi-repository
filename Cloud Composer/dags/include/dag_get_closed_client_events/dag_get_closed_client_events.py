@@ -37,9 +37,9 @@ with DAG(
             {"name": "created_at", "type":"TIMESTAMP" , "mode": "REQUIRED"},
             {"name": "client_id", "type":"INTEGER" , "mode": "REQUIRED"},
         ],
-        time_partitioning= TimePartitioning(
+        time_partitioning= dict(
             field= "created_at", 
-            type_= TimePartitioningType.DAY
+            type= TimePartitioningType.DAY
         ),
         cluster_fields= ["client_id", "event_id"],
     )
