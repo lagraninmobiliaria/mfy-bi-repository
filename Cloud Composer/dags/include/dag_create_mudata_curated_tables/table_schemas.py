@@ -22,6 +22,28 @@ LOOK_CLIENTS = {
     }
 }
 
+LOOK_USERS = {
+    "table_id": "look_users",
+    "schema_fields": [
+        {"name": "user_key", "type": schemaTypes.INTEGER},
+        {"name": "user_id", "type": schemaTypes.INTEGER},
+        {"name": "name", "type": schemaTypes.STRING},
+        {"name": "role", "type": schemaTypes.STRING},
+        {"name": "team", "type": schemaTypes.STRING},
+        {"name": "leader_id", "type": schemaTypes.INTEGER},
+        {"name": "region", "type": schemaTypes.STRING},
+        {"name": "country", "type": schemaTypes.STRING},
+        {"name": "mail", "type": schemaTypes.STRING},
+        {"name": "phone", "type": schemaTypes.STRING},
+        {"name": "registration_date", "type": schemaTypes.DATE},
+        {"name": "is_user_active", "type": schemaTypes.BOOL},
+    ],
+    "time_partitioning": dict(
+        field= "registration_date",
+        type= TimePartitioningType.MONTH
+    )
+}
+
 LOOK_PROPERTIES = {
     "table_id": "look_properties",
     "schema_fields": [
@@ -73,4 +95,45 @@ FACT_PROPERTIES = {
         "field": "registered_date",
         "type": TimePartitioningType.MONTH
     }
+}
+
+LOOK_ALLIANCES = {
+    "table_id": "look_alliances",
+    "schema_fields": [
+        {"name": "alliance_id", "type": schemaTypes.INTEGER},
+        {"name": "name", "type": schemaTypes.STRING},
+        {"name": "name_broker", "type": schemaTypes.STRING},
+        {"name": "source", "type": schemaTypes.STRING},
+        {"name": "country", "type": schemaTypes.STRING},
+        {"name": "is_alliance_active", "type": schemaTypes.BOOL},
+        {"name": "reason", "type": schemaTypes.STRING},    
+    ]
+}
+
+LOOK_DEVELOPMENTS = {
+    "table_id": "look_developments",
+    "schema_fields": [
+        {"name": "development_id", "type": schemaTypes.INTEGER},
+        {"name": "name", "type": schemaTypes.STRING},
+        {"name": "street", "type": schemaTypes.STRING},
+        {"name": "street_number", "type": schemaTypes.INTEGER},
+        {"name": "address", "type": schemaTypes.STRING},
+        {"name": "latitude", "type": schemaTypes.FLOAT},
+        {"name": "longitude", "type": schemaTypes.FLOAT},
+        {"name": "location_id", "type": schemaTypes.INTEGER},
+        {"name": "development_status", "type": schemaTypes.STRING},
+        {"name": "alliance_id", "type": schemaTypes.INTEGER},
+        {"name": "developer_id", "type": schemaTypes.INTEGER},
+        {"name": "update_date", "type": schemaTypes.DATE},
+        {"name": "min_listed_price", "type": schemaTypes.INTEGER},
+        {"name": "min_listed_currency", "type": schemaTypes.STRING},
+        {"name": "min_number_rooms", "type": schemaTypes.INTEGER},
+        {"name": "min_total_area", "type": schemaTypes.FLOAT},
+        {"name": "min_covered_area", "type": schemaTypes.FLOAT},
+        {"name": "max_listed_price", "type": schemaTypes.INTEGER},
+        {"name": "max_listed_currency", "type": schemaTypes.INTEGER},
+        {"name": "max_number_room", "type": schemaTypes.INTEGER},
+        {"name": "max_total_area", "type": schemaTypes.FLOAT},
+        {"name": "max_covered_area", "type": schemaTypes.FLOAT},
+    ]
 }

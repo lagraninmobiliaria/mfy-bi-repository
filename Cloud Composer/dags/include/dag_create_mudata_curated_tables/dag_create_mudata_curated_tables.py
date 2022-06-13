@@ -13,7 +13,9 @@ bigquery.SchemaField.name
 
 tables_to_create = [
     LOOK_CLIENTS, 
-    LOOK_PROPERTIES, FACT_PROPERTIES
+    LOOK_PROPERTIES, FACT_PROPERTIES,
+    LOOK_ALLIANCES,
+    LOOK_DEVELOPMENTS
 ]
 
 with DAG(
