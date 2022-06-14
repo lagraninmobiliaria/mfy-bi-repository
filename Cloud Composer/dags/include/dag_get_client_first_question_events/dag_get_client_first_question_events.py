@@ -8,8 +8,24 @@ from airflow.utils.state                                import TaskInstanceState
 from airflow.sensors.python                             import PythonSensor
 from airflow.sensors.external_task                      import ExternalTaskSensor
 from airflow.operators.dummy                            import DummyOperator
-from airflow.operators.python                           import BranchPythonOperator
+from airflow.operators.python                           import BranchPythonOperator, ShortCircuitOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
+
+
+def dag_start_validator(**context):
+    prev_data_interval_start_success= context["prev_data_interval_start_success"]
+    data_interval_start= context['data_interval_start']
+    print(
+        prev_data_interval_start_success, 
+        data_interval_start,
+        prev_data_interval_start_success == (data_interval_start - timedelta(days= 1))
+    )
+
+    return (
+        prev_data_interval_start_success is None 
+    or prev_data_interval_start_success == (data_interval_start - timedelta(days= 1))
+    )
+    
 
 def is_first_run_sensor(**context):
     prev_data_interval_start_success = context.get('prev_data_interval_start_success')
@@ -26,7 +42,7 @@ def is_first_run(**context):
 with DAG(
     dag_id= 'get_client_first_question_events',
     schedule_interval= '@daily',
-    start_date= datetime(2020, 4, 13, 15, 30),
+    start_date= datetime(2020, 4, 13),
     max_active_runs= 1,
     is_paused_upon_creation= True,
     user_defined_macros= {
@@ -36,6 +52,11 @@ with DAG(
     catchup= True
 ) as dag:
     
+    tasK_dag_start_validator = ShortCircuitOperator(
+        task_id= 'dag_start_validator',
+        python_callable= dag_start_validator,
+    )
+
     first_dag_run = PythonSensor(
         task_id= 'first_dag_run_sensor',
         python_callable= is_first_run_sensor,
