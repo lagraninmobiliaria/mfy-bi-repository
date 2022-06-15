@@ -15,15 +15,10 @@ from airflow.providers.google.cloud.operators.bigquery  import BigQueryCreateEmp
 def dag_start_validator(**context):
     prev_data_interval_start_success= context["prev_data_interval_start_success"]
     data_interval_start= context['data_interval_start']
-    print(
-        prev_data_interval_start_success, 
-        data_interval_start,
-        prev_data_interval_start_success == (data_interval_start - timedelta(days= 1))
-    )
 
     return (
-        prev_data_interval_start_success is None 
-    or prev_data_interval_start_success == (data_interval_start - timedelta(days= 1))
+            prev_data_interval_start_success is None 
+        or  prev_data_interval_start_success == (data_interval_start - timedelta(days= 1))
     )
     
 
@@ -52,28 +47,9 @@ with DAG(
     catchup= True
 ) as dag:
     
-    tasK_dag_start_validator = ShortCircuitOperator(
+    task_dag_start_validator = ShortCircuitOperator(
         task_id= 'dag_start_validator',
         python_callable= dag_start_validator,
-    )
-
-    first_dag_run = PythonSensor(
-        task_id= 'first_dag_run_sensor',
-        python_callable= is_first_run_sensor,
-        poke_interval=5,
-        timeout= 15,
-        mode= 'poke',
-    )
-
-    previous_dag_run_successful = ExternalTaskSensor(
-        task_id= 'previous_dag_run_successful_sensor',
-        external_dag_id= dag.dag_id,
-        external_task_id= 'end_dag',
-        execution_delta= timedelta(days= 1),
-        allowed_states= [TaskInstanceState.SUCCESS],
-        poke_interval= 30,
-        timeout= 60,
-        mode= 'reschedule'
     )
 
     start_dag = DummyOperator(
@@ -131,6 +107,6 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
-    [first_dag_run, previous_dag_run_successful] >> start_dag
+    task_dag_start_validator >> start_dag
     start_dag >> branch_task >> [task_create_table, task_append_clients_first_question_events]
     task_create_table  >> task_append_clients_first_question_events >> end_dag
