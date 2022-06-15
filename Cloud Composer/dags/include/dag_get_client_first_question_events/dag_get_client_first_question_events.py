@@ -4,9 +4,6 @@ from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATA
 
 from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
-from airflow.utils.state                                import TaskInstanceState
-from airflow.sensors.python                             import PythonSensor
-from airflow.sensors.external_task                      import ExternalTaskSensor
 from airflow.operators.dummy                            import DummyOperator
 from airflow.operators.python                           import BranchPythonOperator, ShortCircuitOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
