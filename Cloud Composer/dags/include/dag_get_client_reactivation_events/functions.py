@@ -6,7 +6,9 @@ from pandas import DataFrame
 from google.cloud.bigquery import Client
 from google.cloud.bigquery import LoadJobConfig
 
-from dependencies.keys_and_constants import PROJECT_ID,DATASET_MUDATA_RAW, writeDisposition, createDisposition
+from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW
+
+from google.cloud.bigquery import WriteDisposition, CreateDisposition
 
 def validate_search_reactivation_as_client_reactivation(closed_client_query: str, client_reactivation_query: str, **context):
     bq_client= Client(project= PROJECT_ID, location= 'us-central1')
@@ -65,7 +67,7 @@ def validate_search_reactivation_as_client_reactivation(closed_client_query: str
             dataframe= DataFrame(data= append_rows), 
             destination= f'{PROJECT_ID}.{DATASET_MUDATA_RAW}.client_reactivation_events',
             job_config= LoadJobConfig(
-                create_disposition= createDisposition.CREATE_NEVER,
-                write_disposition= writeDisposition.WRITE_APPEND
+                create_disposition= CreateDisposition.CREATE_NEVER,
+                write_disposition= WriteDisposition.WRITE_APPEND
             )
         )

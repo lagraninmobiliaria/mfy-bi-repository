@@ -1,10 +1,12 @@
 from datetime import datetime
 
-from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID, writeDisposition, createDisposition
+from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID
 
 from airflow                                            import DAG
 from airflow.operators.dummy                            import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
+
+from google.cloud.bigquery import WriteDisposition, CreateDisposition
 
 with DAG(
     dag_id= "get_listed_property_events",
@@ -37,8 +39,8 @@ with DAG(
                     "datasetId": DATASET_MUDATA_RAW,
                     "tableId": table_id
                 },
-                "writeDisposition": writeDisposition.WRITE_APPEND,
-                "createDisposition": createDisposition.CREATE_IF_NEEDED
+                "writeDisposition": WriteDisposition.WRITE_APPEND,
+                "createDisposition": CreateDisposition.CREATE_IF_NEEDED
             }
         }
     ) 

@@ -1,12 +1,19 @@
 import os
 
-from sqlalchemy import FLOAT
+from datetime import timedelta
 
 PROJECT_ID = os.getenv('_PROJECT_ID')
 DATASET_MUDATA_RAW = os.getenv('_DATASET_MUDATA_RAW')
 DATASET_MUDATA_CURATED = os.getenv('_DATASET_MUDATA_CURATED')
 DATASET_MUDATA_AGGREGATED = os.getenv('_DATASET_MUDATA_AGGREGATED')
-EXTERNAL_DATA_BUCKET = os.getenv('_EXTERNAL_DATA_BUCKET')
+
+STG_DATASET_MUDATA_RAW = os.getenv('_STG_DATASET_MUDATA_RAW')
+STG_DATASET_MUDATA_CURATED = os.getenv('_STG_DATASET_MUDATA_CURATED')
+STG_DATASET_MUDATA_AGGREGATED = os.getenv('_STG_DATASET_MUDATA_AGGREGATED')
+
+PROD_DATASET_MUDATA_RAW = os.getenv('_PROD_DATASET_MUDATA_RAW')
+PROD_DATASET_MUDATA_CURATED = os.getenv('_PROD_DATASET_MUDATA_CURATED')
+PROD_DATASET_MUDATA_AGGREGATED = os.getenv('_PROD_DATASET_MUDATA_AGGREGATED')
 
 class BUSINESS_ROLES:
     TCC= 'TCC'
@@ -15,32 +22,6 @@ class BUSINESS_ROLES:
     AP= 'AP'
     AC= 'AC'
     AL= 'AL'
-
-class writeDisposition:
-    WRITE_TRUNCATE = "WRITE_TRUNCATE"
-    WRITE_APPEND = "WRITE_APPEND"
-    WRITE_EMPTY = "WRITE_EMPTY"
-
-    def constants_documentation(option: str) -> str:
-        dict_doc = {
-            "WRITE_TRUNCATE": "If the table already exists, BigQuery overwrites the table data and uses the schema from the query result.",
-            "WRITE_APPEND": "If the table already exists, BigQuery appends the data to the table.",
-            "WRITE_EMPTY": "If the table already exists and contains data, a 'duplicate' error is returned in the job result."
-        }
-
-        return dict_doc.get(option, f"{option} is not an option")
-    
-class createDisposition:
-    CREATE_IF_NEEDED = "CREATE_IF_NEEDED"
-    CREATE_NEVER = "CREATE_NEVER"
-
-    def constants_documentation(option: str) -> str:
-        dict_doc = {
-            "CREATE_IF_NEEDED": "If the table does not exist, BigQuery creates the table.", 
-            "CREATE_NEVER": "The table must already exist. If it does not, a 'notFound' error is returned in the job result."
-        }
-
-        return dict_doc.get(option, f"{option} is not an option")
 
 class schemaTypes:
     BOOL= "BOOL"
@@ -52,3 +33,13 @@ class schemaTypes:
     GEOGRAPHY= "GEOGRAPHY"
     INTEGER= "INTEGER"
     FLOAT= "FLOAT64"
+
+std_default_args_dag = dict(
+    is_paused_upon_creation= True,
+    owner= 'airflow',
+    depends_on_past= False,
+    email_on_failure= False,
+    email_on_retry= False,
+    retries= 1,
+    retry_delay= timedelta(minutes= 1)
+)

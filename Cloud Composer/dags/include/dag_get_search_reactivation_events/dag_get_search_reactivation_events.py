@@ -1,12 +1,14 @@
 from datetime import datetime
 
-from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID, writeDisposition, createDisposition
+from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID
 
 from airflow                                                import DAG
 from airflow.utils.trigger_rule                             import TriggerRule
 from airflow.operators.dummy                                import DummyOperator
 from airflow.operators.bash                                 import BashOperator
 from airflow.providers.google.cloud.operators.bigquery      import BigQueryInsertJobOperator
+
+from google.cloud.bigquery import WriteDisposition, CreateDisposition
 
 with DAG(
     dag_id= 'get_search_reactivation_events',
@@ -42,8 +44,8 @@ with DAG(
                     "projectId": PROJECT_ID,
                     "location": 'us-central1'
                 },
-                "writeDisposition": writeDisposition.WRITE_APPEND,
-                "createDisposition": createDisposition.CREATE_IF_NEEDED
+                "writeDisposition": WriteDisposition.WRITE_APPEND,
+                "createDisposition": CreateDisposition.CREATE_IF_NEEDED
             }
         }
     )

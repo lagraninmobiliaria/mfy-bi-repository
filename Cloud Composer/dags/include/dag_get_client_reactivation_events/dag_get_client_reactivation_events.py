@@ -1,13 +1,14 @@
 from datetime import datetime, timedelta
 
-from dependencies.keys_and_constants import DATASET_MUDATA_RAW, createDisposition, writeDisposition, PROJECT_ID
+from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID
 
 from include.dag_get_client_reactivation_events.functions import validate_search_reactivation_as_client_reactivation
 
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
-from airflow.operators.python import PythonOperator, task
+from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator
+
 
 with DAG(
     dag_id= 'get_client_reactivation_events',

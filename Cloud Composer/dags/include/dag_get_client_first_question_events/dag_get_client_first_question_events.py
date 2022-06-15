@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, writeDisposition, createDisposition
+from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED
 
 from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
@@ -8,6 +8,7 @@ from airflow.operators.dummy                            import DummyOperator
 from airflow.operators.python                           import BranchPythonOperator, ShortCircuitOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
 
+from google.cloud.bigquery import WriteDisposition, CreateDisposition
 
 def dag_start_validator(**context):
     prev_data_interval_start_success= context["prev_data_interval_start_success"]
@@ -91,8 +92,8 @@ with DAG(
                     "datasetId": DATASET_MUDATA_CURATED,
                     "tableId": table_id
                 }, 
-                "writeDisposition": writeDisposition.WRITE_APPEND,
-                "createDisposition": createDisposition.CREATE_NEVER,
+                "writeDisposition": WriteDisposition.WRITE_APPEND,
+                "createDisposition": CreateDisposition.CREATE_NEVER,
             }
         },
         project_id= PROJECT_ID,

@@ -1,12 +1,14 @@
 from datetime import datetime
 
-from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, writeDisposition, createDisposition
+from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW
 
 from google.cloud.bigquery.table import TimePartitioning, TimePartitioningType
 
 from airflow                                            import DAG
 from airflow.operators.dummy                            import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator
+
+from google.cloud.bigquery import WriteDisposition, CreateDisposition
 
 with DAG(
     dag_id= "get_closed_client_events",
@@ -58,8 +60,8 @@ with DAG(
                     "datasetId": DATASET_MUDATA_RAW,
                     "tableId": table_id
                 },
-                "writeDisposition": writeDisposition.WRITE_APPEND,
-                "createDisposition": createDisposition.CREATE_NEVER
+                "writeDisposition": WriteDisposition.WRITE_APPEND,
+                "createDisposition": CreateDisposition.CREATE_NEVER
             }
         }
     )
