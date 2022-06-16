@@ -1,3 +1,4 @@
+from pendulum import datetime
 from dependencies.keys_and_constants import PROJECT_ID, STG_DATASET_MUDATA_RAW
 
 from airflow import DAG
@@ -14,7 +15,7 @@ source_kinds = [
 with DAG(
     dag_id= 'stg_get_properties_no_creation_date',
     schedule_interval= None,
-    start_date= (2021, 31, 8)
+    start_date= datetime(2021, 31, 8)
 ) as dag:
 
     task_start_dag = DummyOperator(
@@ -40,7 +41,7 @@ with DAG(
                     #     "projectId": PROJECT_ID,
                     #     "datasetId": STG_DATASET_MUDATA_RAW,
                     #     "tableId": table_id
-                    # # }, 
+                    # }, 
                     # "writeDisposition": WriteDisposition.WRITE_APPEND,
                     # "createDisposition": CreateDisposition.CREATE_NEVER,
                 }
