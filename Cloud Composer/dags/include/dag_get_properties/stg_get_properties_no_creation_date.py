@@ -1,3 +1,5 @@
+import os
+
 from pendulum import datetime
 from dependencies.keys_and_constants import PROJECT_ID, STG_DATASET_MUDATA_RAW
 
@@ -24,8 +26,13 @@ with DAG(
 
     table_id= 'properties'
     tasks= []
+    query_path = os.path.join(
+        os.path.dirname(__file__),
+        'queries',
+        'properties_by_source_kind.sql'
+    )
     for source_kind in source_kinds:
-        with open('./queries/properties_by_source_kind.sql') as sql:
+        with open(query_path, 'r') as sql:
             query = sql.read().format(source_kind)
     
         task = BigQueryInsertJobOperator(
