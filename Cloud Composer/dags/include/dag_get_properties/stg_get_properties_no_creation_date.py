@@ -15,7 +15,7 @@ source_kinds = [
 with DAG(
     dag_id= 'stg_get_properties_no_creation_date',
     schedule_interval= None,
-    start_date= datetime(2021, 31, 8)
+    start_date= datetime(2021, 8, 31)
 ) as dag:
 
     task_start_dag = DummyOperator(
