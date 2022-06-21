@@ -74,6 +74,10 @@ with DAG(
         'properties_by_source_kind.sql'
     )
 
+    dummy_node = DummyOperator(
+        task_id= 'resolve_and_continue',
+        trigger_rule= TriggerRule.ONE_SUCCESS,
+    )
     for source_kind in source_kinds:
 
         with open(get_properties_by_source_kind_query_path, 'r') as sql:
@@ -108,5 +112,5 @@ with DAG(
         task_id= 'end_dag'
     )
 
-    task_start_dag >> check_table_exists >> [task_create_table, task_delete_properties_without_created_at]
-    [task_create_table, task_delete_properties_without_created_at] >> tasks >> task_end_dag
+    task_start_dag >> check_table_exists >> [task_create_table, task_delete_properties_without_created_at] >> dummy_node
+    dummy_node >> tasks >> task_end_dag
