@@ -171,6 +171,7 @@ with DAG(
     schedule_interval= '@daily',
     max_active_runs= 1,
     default_args= default_args,
+    is_paused_upon_creation= True, 
     catchup= True,
 ) as dag:
 

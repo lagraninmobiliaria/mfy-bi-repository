@@ -16,7 +16,8 @@ with DAG(
     dag_id= 'bigquery_datasets_deletion',
     start_date= datetime(2022, 3, 1),
     schedule_interval= None,
-    default_args= default_args
+    default_args= default_args,
+    is_paused_upon_creation= True,
 ) as dag:
 
     tasks = []

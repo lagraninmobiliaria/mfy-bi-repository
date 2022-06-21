@@ -39,6 +39,7 @@ with DAG(
     schedule_interval= '@daily',
     default_args= default_args,
     catchup= True,
+    is_paused_upon_creation= True,
 ) as dag:
 
     start_task = DummyOperator(
