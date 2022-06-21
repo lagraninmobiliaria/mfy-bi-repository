@@ -78,8 +78,8 @@ def create_table_with_properties_listings_and_unlistings(ti):
         dataframe= query_results, 
         destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.properties_listings_and_unlistings",
         job_config= LoadJobConfig(
-            create_disposition= createDisposition.CREATE_IF_NEEDED,
-            write_disposition= writeDisposition.WRITE_APPEND
+            create_disposition= CreateDisposition.CREATE_IF_NEEDED,
+            write_disposition= WriteDisposition.WRITE_APPEND
         )
     )
 
@@ -98,8 +98,8 @@ def task_append_net_propertyevents(ti):
         dataframe= query_results,
         destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.{table_id}",
         job_config= LoadJobConfig(
-            create_disposition= createDisposition.CREATE_NEVER,
-            write_disposition= writeDisposition.WRITE_APPEND
+            create_disposition= CreateDisposition.CREATE_NEVER,
+            write_disposition= WriteDisposition.WRITE_APPEND
         )
     )
 
@@ -149,8 +149,8 @@ def task_validate_net_propertyevents(ti):
         project= PROJECT_ID,
         destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.properties_listings_and_unlistings",
         job_config= LoadJobConfig(
-            create_disposition= createDisposition.CREATE_NEVER,
-            write_disposition= writeDisposition.WRITE_APPEND
+            create_disposition= CreateDisposition.CREATE_NEVER,
+            write_disposition= WriteDisposition.WRITE_APPEND
         )  
     )
 
