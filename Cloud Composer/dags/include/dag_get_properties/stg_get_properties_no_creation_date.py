@@ -48,10 +48,7 @@ with DAG(
                 "useLegacySql": False,
                 "jobReference": {
                     "projectId": "{{ params.project_id }}"
-                },
-                "writeDisposition": WriteDisposition.WRITE_APPEND,
-                "createDisposition": CreateDisposition.CREATE_NEVER,
-                "schemaUpdateOptions": [SchemaUpdateOption.ALLOW_FIELD_ADDITION]
+                }
             }
         }
     )
@@ -77,7 +74,15 @@ with DAG(
                     "useLegacySql": False,
                     "jobReference": {
                         "projectId": "{{ params.project_id }}",
-                    }
+                    },
+                    "destinationTable": {
+                        "projectId": "{{ params.project_id }}",
+                        "datasetId": "{{ params.mudata_raw }}",
+                        "tableId": table_id
+                    },
+                    "writeDisposition": WriteDisposition.WRITE_APPEND,
+                    "createDisposition": CreateDisposition.CREATE_NEVER,
+                    "schemaUpdateOptions": [SchemaUpdateOption.ALLOW_FIELD_ADDITION]
                 }
             }
         )
