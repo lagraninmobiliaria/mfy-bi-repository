@@ -108,5 +108,5 @@ with DAG(
         task_id= 'end_dag'
     )
 
-    task_start_dag >> check_table_exists >> [task_create_table >> task_delete_properties_without_created_at]
-    [task_create_table >> task_delete_properties_without_created_at] >> tasks >> task_end_dag
+    task_start_dag >> check_table_exists >> [task_create_table, task_delete_properties_without_created_at]
+    [task_create_table, task_delete_properties_without_created_at] >> tasks >> task_end_dag
