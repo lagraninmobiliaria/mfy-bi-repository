@@ -3,10 +3,9 @@
 from datetime import datetime, timedelta
 from multiprocessing import context
 
-from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED, createDisposition, writeDisposition
+from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED
 
-from google.cloud.exceptions    import NotFound
-from google.cloud.bigquery      import Client, LoadJobConfig
+from google.cloud.bigquery      import Client, LoadJobConfig, CreateDisposition, WriteDisposition
 import pandas as pd
 
 from airflow                                            import DAG
@@ -45,8 +44,8 @@ def task_net_daily_propertyevents(ti):
         dataframe= df_to_append,
         destination= f"{PROJECT_ID}.{DATASET_MUDATA_CURATED}.properties_daily_net_propertyevents",
         job_config= LoadJobConfig(
-            create_disposition= createDisposition.CREATE_IF_NEEDED,
-            write_disposition= writeDisposition.WRITE_APPEND
+            create_disposition= CreateDisposition.CREATE_IF_NEEDED,
+            write_disposition= WriteDisposition.WRITE_APPEND
         )
     )
 
