@@ -1,5 +1,4 @@
 import os
-from nox import param
 
 from pendulum import datetime
 from dependencies.keys_and_constants import PROJECT_ID, STG_DATASET_MUDATA_RAW
