@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 from textwrap import dedent
 
-from dependencies.keys_and_constants                    import PROJECT_ID, DATASET_MUDATA_RAW, writeDisposition, createDisposition
+from dependencies.keys_and_constants                    import PROJECT_ID, DATASET_MUDATA_RAW
 from include.dag_get_listed_unlisted_propertyevents     import queries
 
-from google.cloud.bigquery import Client
+from google.cloud.bigquery import Client, WriteDisposition, CreateDisposition
 
 from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
@@ -67,8 +67,8 @@ with DAG(
                     "datasetId": DATASET_MUDATA_RAW,
                     "tableId": table_id
                 }, 
-                "writeDisposition": writeDisposition.WRITE_APPEND,
-                "createDisposition": createDisposition.CREATE_IF_NEEDED,
+                "writeDisposition": WriteDisposition.WRITE_APPEND,
+                "createDisposition": CreateDisposition.CREATE_IF_NEEDED,
             }
         },
     )
