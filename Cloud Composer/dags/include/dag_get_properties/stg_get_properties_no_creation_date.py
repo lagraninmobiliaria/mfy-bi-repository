@@ -4,8 +4,10 @@ from pendulum import datetime
 from dependencies.keys_and_constants import PROJECT_ID, STG_DATASET_MUDATA_RAW
 
 from airflow import DAG
+from airflow.utils.trigger_rule import TriggerRule
 from airflow.operators.dummy import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator
+from airflow.providers.google.cloud.sensors.bigquery import BigQueryTableExistenceSensor
 
 from google.cloud.bigquery import WriteDisposition, CreateDisposition, SchemaUpdateOption
 
@@ -32,8 +34,18 @@ with DAG(
 
     table_id= 'properties'
 
+    check_table_exists = BigQueryTableExistenceSensor(
+        task_id="check_table_exists", 
+        project_id= "{{ params.project_id }}", 
+        dataset_id= "{{ params.mudata_raw }}",
+        table_id= table_id,
+        poke_interval= 5,
+        timeout= 10
+    )
+
     task_create_table = BigQueryCreateEmptyTableOperator(
         task_id= "create_table",
+        trigger_rule= TriggerRule.ONE_FAILED,
         project_id= "{{ params.project_id }}", 
         dataset_id= "{{ params.mudata_raw }}",
         table_id= table_id,
@@ -42,6 +54,7 @@ with DAG(
 
     task_delete_properties_without_created_at = BigQueryInsertJobOperator(
         task_id= "delete_properties_without_created_at",
+        trigger_rule= TriggerRule.ONE_SUCCESS,
         configuration= {
             "query": {
                 "query": f"{'{%'} include './queries/delete_properties_without_created_at.sql' {'%}'}",
@@ -95,5 +108,5 @@ with DAG(
         task_id= 'end_dag'
     )
 
-    task_start_dag >> task_create_table >> task_delete_properties_without_created_at
-    task_delete_properties_without_created_at >> tasks >> task_end_dag
+    task_start_dag >> check_table_exists >> [task_create_table >> task_delete_properties_without_created_at]
+    [task_create_table >> task_delete_properties_without_created_at] >> tasks >> task_end_dag
