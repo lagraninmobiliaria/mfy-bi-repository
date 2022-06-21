@@ -1,13 +1,14 @@
 import os
+from nox import param
 
 from pendulum import datetime
 from dependencies.keys_and_constants import PROJECT_ID, STG_DATASET_MUDATA_RAW
 
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
-from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator, BigQueryDeleteTableOperator
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator
 
-from google.cloud.bigquery import QueryJobConfig, WriteDisposition, CreateDisposition, QueryJob, SchemaUpdateOption
+from google.cloud.bigquery import WriteDisposition, CreateDisposition, SchemaUpdateOption
 
 source_kinds = [
     'stock', 'manual', 
@@ -19,6 +20,11 @@ with DAG(
     schedule_interval= None,
     start_date= datetime(2021, 8, 31),
     is_paused_upon_creation= True,
+    params= {
+        'mudata_raw': STG_DATASET_MUDATA_RAW,
+        'project_id': PROJECT_ID
+    }
+
 ) as dag:
 
     task_start_dag = DummyOperator(
@@ -29,26 +35,49 @@ with DAG(
 
     task_create_table = BigQueryCreateEmptyTableOperator(
         task_id= "create_table",
-        project_id= PROJECT_ID, 
-        dataset_id= STG_DATASET_MUDATA_RAW,
+        project_id= "{{ params.project_id }}", 
+        dataset_id= "{{ params.mudata_raw }}",
         table_id= table_id,
+        exists_ok= True
+    )
+
+    task_delete_properties_without_created_at = BigQueryInsertJobOperator(
+        task_id= "delete_properties_without_created_at",
+        configuration= {
+            "query": {
+                "query": f"{'{%'} include './queries/delete_properties_without_created_at.sql' {'%}'}",
+                "useLegacySql": False,
+                "jobReference": {
+                    "projectId": "{{ params.project_id }}"
+                },
+                "writeDisposition": WriteDisposition.WRITE_APPEND,
+                "createDisposition": CreateDisposition.CREATE_NEVER,
+                "schemaUpdateOptions": [SchemaUpdateOption.ALLOW_FIELD_ADDITION]
+            }
+        }
     )
 
     tasks= []
-    query_path = os.path.join(os.path.dirname(__file__),'queries','properties_by_source_kind.sql')
+
+    get_properties_by_source_kind_query_path = os.path.join(
+        os.path.dirname(__file__),
+        'queries',
+        'properties_by_source_kind.sql'
+    )
 
     for source_kind in source_kinds:
-        with open(query_path, 'r') as sql:
-            query = sql.read().format(source_kind)
+
+        with open(get_properties_by_source_kind_query_path, 'r') as sql:
+            get_properties_by_source_kind_query = sql.read().format(source_kind)
     
         task = BigQueryInsertJobOperator(
             task_id= f'get_{source_kind}_properties',
             configuration= {
                 "query": {
-                    "query": query,
+                    "query": get_properties_by_source_kind_query,
                     "useLegacySql": False,
                     "jobReference": {
-                        "projectId": PROJECT_ID,
+                        "projectId": "{{ params.project_id }}",
                     }
                 }
             }
@@ -62,4 +91,5 @@ with DAG(
         task_id= 'end_dag'
     )
 
-    task_start_dag >> tasks >> task_end_dag
+    task_start_dag >> task_create_table >> task_delete_properties_without_created_at
+    task_delete_properties_without_created_at >> tasks >> task_end_dag
