@@ -12,7 +12,7 @@ FROM EXTERNAL_QUERY(
     FROM events_event ee
     
     WHERE
-            DATE(ee.created_at) = DATE('{{ ds }}')
-        AND ee.polymorphic_ctype_id = {{ polymorphic_ctype_id }}
+            DATE(ee.created_at) = DATE('{{ data_interval_start.date() }}')
+        AND ee.polymorphic_ctype_id = {{ params.polymorphic_ctype_id }}
     """
 )
