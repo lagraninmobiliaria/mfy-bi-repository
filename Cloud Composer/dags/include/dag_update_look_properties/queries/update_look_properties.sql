@@ -28,6 +28,7 @@ SELECT
     development_id          development_id,
     STRUCT(
         NULL as empty
-    )                       prop_additionals                              
+    )                       prop_additionals,
+    CURRENT_DATE()          update_date                              
 
 FROM `{{ params.project_id }}.{{ params.mudata_raw }}.properties` properties
