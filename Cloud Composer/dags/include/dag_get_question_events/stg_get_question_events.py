@@ -50,6 +50,7 @@ with DAG(
             "field": "created_at",
             "type": TimePartitioningType.DAY
         },
+        cluster_fields= ['client_id'],
         exists_ok= True
     )
 
