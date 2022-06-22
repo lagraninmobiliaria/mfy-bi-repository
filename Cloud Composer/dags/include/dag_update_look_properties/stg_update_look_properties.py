@@ -6,6 +6,8 @@ from airflow import DAG
 from airflow.operators.dummy import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
+
+from google.cloud.bigquery import WriteDisposition, CreateDisposition, SchemaUpdateOption
 with DAG(
     dag_id= 'stg_update_look_properties',
     schedule_interval= None,
@@ -22,12 +24,22 @@ with DAG(
         task_id= 'start_dag'
     )
 
+    table_id = "look_properties"
+
     update_look_properties = BigQueryInsertJobOperator(
         task_id= 'update_look_properties',
         configuration= {
             "query": {
                 "query": f"{'{%'} include './queries/update_look_properties.sql' {'%}'}",
-                "useLegacySql": False
+                "useLegacySql": False,
+                "destinationTable": {
+                    "projectId": "{{ params.project_id }}",
+                    "datasetId": "{{ params.mudata_curated }}",
+                    "tableId": table_id
+                }, 
+                "writeDisposition": WriteDisposition.WRITE_TRUNCATE,
+                "createDisposition": CreateDisposition.CREATE_NEVER,
+                "schemaUpdateOptions": [SchemaUpdateOption.ALLOW_FIELD_RELAXATION]
             }
         }
     )
