@@ -30,7 +30,7 @@ def is_first_run(**context):
         return 'append_clients_first_question_events'
 
 with DAG(
-    dag_id= 'stg_client_first_question_events',
+    dag_id= 'stg_get_client_first_question_events',
     schedule_interval= '@daily',
     start_date= datetime(2020, 4, 13),
     end_date= datetime(2020, 4, 20),
