@@ -9,7 +9,7 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 with DAG(
     dag_id= 'stg_update_look_properties',
     schedule_interval= None,
-    start_date= (2021, 1, 1),
+    start_date= datetime(2021, 1, 1),
     params= {
         'mudata_raw': STG_DATASET_MUDATA_RAW,
         'mudata_curated': STG_DATASET_MUDATA_CURATED,
