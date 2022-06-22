@@ -14,7 +14,8 @@ with DAG(
         'mudata_raw': STG_DATASET_MUDATA_RAW,
         'mudata_curated': STG_DATASET_MUDATA_CURATED,
         'project_id': PROJECT_ID
-    }
+    },
+    is_paused_upon_creation= True,
 ) as dag:
 
     start_dag = DummyOperator(
