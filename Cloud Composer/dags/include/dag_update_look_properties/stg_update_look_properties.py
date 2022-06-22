@@ -39,7 +39,6 @@ with DAG(
                 }, 
                 "writeDisposition": WriteDisposition.WRITE_TRUNCATE,
                 "createDisposition": CreateDisposition.CREATE_NEVER,
-                "schemaUpdateOptions": [SchemaUpdateOption.ALLOW_FIELD_RELAXATION]
             }
         }
     )
