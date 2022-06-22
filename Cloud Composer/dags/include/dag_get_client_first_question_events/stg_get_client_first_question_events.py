@@ -72,6 +72,7 @@ with DAG(
             {'name': 'opportunity_id', 'type': 'INTEGER'},
             {'name': 'created_at', 'type': 'TIMESTAMP'},
         ],
+        cluster_fields= ['client_id'],
         time_partitioning= {
             'field': 'created_at',
             'type': TimePartitioningType.DAY,
