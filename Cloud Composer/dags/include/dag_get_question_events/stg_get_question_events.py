@@ -28,7 +28,7 @@ with DAG(
 
     task_start_dag = BashOperator(
         task_id = 'start_dag',
-        bash_command= f"echo Start DAGRun - Logical date: {{ data_interval_start.date() }}"
+        bash_command= "echo Start DAGRun - Logical date: {{ data_interval_start.date() }}"
     )
 
     SQL_QUERY_PATH= f'./queries/{dag.dag_id.split(maxsplit=1, sep="_")[-1]}.sql'
