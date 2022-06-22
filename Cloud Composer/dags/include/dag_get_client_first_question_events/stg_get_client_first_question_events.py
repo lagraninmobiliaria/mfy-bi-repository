@@ -84,7 +84,6 @@ with DAG(
 
     task_append_clients_first_question_events = BigQueryInsertJobOperator(
         task_id= 'append_clients_first_question_events',
-        project_id= "{{ params.project_id }}",
         configuration= {
             "query": {
                 "query": f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}",

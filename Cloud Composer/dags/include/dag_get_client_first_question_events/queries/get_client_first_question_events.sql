@@ -15,12 +15,12 @@ FROM (
             ORDER BY question_events.created_at ASC
         )                                               created_order_n
 
-    FROM `infrastructure-lgi.{{ params.mudata_raw }}.question_events` question_events
+    FROM `{{ params.project_id }}.{{ params.mudata_raw }}.question_events` question_events
     WHERE  
         NOT EXISTS(
             SELECT 
                 *
-            FROM `infrastructure-lgi.{{ params.mudata_raw }}.clients_first_question_events` clients_first_question_events
+            FROM `{{ params.project_id }}.{{ params.mudata_raw }}.clients_first_question_events` clients_first_question_events
             WHERE 
                 question_events.client_id = clients_first_question_events.client_id
         )
