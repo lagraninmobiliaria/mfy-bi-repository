@@ -39,6 +39,7 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS,
         project_id= "{{ params.project_id }}",
         dataset_id= "{{ params.mudata_raw }}",
+        table_id= table_id,
         schema_fields= [
             {"name": "event_id", "type": schemaTypes.INTEGER},
             {"name": "created_at", "type": schemaTypes.TIMESTAMP},
@@ -49,7 +50,6 @@ with DAG(
             "field": "created_at",
             "type": TimePartitioningType.DAY
         },
-        table_id= table_id,
         exists_ok= True
     )
 
