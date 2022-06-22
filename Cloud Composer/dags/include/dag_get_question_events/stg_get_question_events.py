@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from dependencies.keys_and_constants import STG_DATASET_MUDATA_RAW, PROJECT_ID, schemaTypes
+from dependencies.keys_and_constants                    import STG_DATASET_MUDATA_RAW, PROJECT_ID, schemaTypes
 
-from google.cloud.bigquery import WriteDisposition, CreateDisposition
-from google.cloud.bigquery.table import TimePartitioningType
+from google.cloud.bigquery                              import WriteDisposition, CreateDisposition
+from google.cloud.bigquery.table                        import TimePartitioningType
 
-from airflow import DAG
+from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.operators.dummy                            import DummyOperator
 from airflow.operators.bash                             import BashOperator
@@ -29,7 +29,7 @@ with DAG(
         bash_command= f"echo Start DAGRun - Logical date: {{ data_interval_start.date() }}"
     )
 
-    SQL_QUERY_PATH= f'./queries/{dag.dag_id}.sql'
+    SQL_QUERY_PATH= f'./queries/{dag.dag_id.split(maxsplit=1, sep="_")[-1]}.sql'
     table_id = 'question_events'
 
     task_create_question_events_table = BigQueryCreateEmptyTableOperator(
