@@ -15,13 +15,15 @@ with DAG(
     dag_id= 'stg_get_question_events',
     schedule_interval= '@daily',
     start_date= datetime(2020, 4, 8),
+    end_date= datetime(2020, 4, 16),
     max_active_runs= 5, 
     is_paused_upon_creation= True,
     params= {
         "polymorphic_ctype_id": 42,
         'project_id': PROJECT_ID,
         'mudata_raw': STG_DATASET_MUDATA_RAW
-    }
+    },
+    catchup= True,
 ) as dag:
 
     task_start_dag = BashOperator(
