@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW, DATASET_MUDATA_CURATED
+from dependencies.keys_and_constants import PROJECT_ID, STG_DATASET_MUDATA_RAW, STG_DATASET_MUDATA_CURATED
 
 from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
@@ -9,6 +9,8 @@ from airflow.operators.python                           import BranchPythonOpera
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
 
 from google.cloud.bigquery import WriteDisposition, CreateDisposition
+from google.cloud.bigquery.table import TimePartitioningType
+
 
 def dag_start_validator(**context):
     prev_data_interval_start_success= context["prev_data_interval_start_success"]
@@ -18,11 +20,6 @@ def dag_start_validator(**context):
             prev_data_interval_start_success is None 
         or  prev_data_interval_start_success == (data_interval_start - timedelta(days= 1))
     )
-    
-
-def is_first_run_sensor(**context):
-    prev_data_interval_start_success = context.get('prev_data_interval_start_success')
-    return prev_data_interval_start_success is None
 
 def is_first_run(**context):
     prev_data_interval_start_success = context.get('prev_data_interval_start_success')
@@ -33,14 +30,16 @@ def is_first_run(**context):
         return 'append_clients_first_question_events'
 
 with DAG(
-    dag_id= 'get_client_first_question_events',
+    dag_id= 'stg_client_first_question_events',
     schedule_interval= '@daily',
     start_date= datetime(2020, 4, 13),
+    end_date= datetime(2020, 4, 20),
     max_active_runs= 1,
     is_paused_upon_creation= True,
-    user_defined_macros= {
-        'DATASET_MUDATA_RAW': DATASET_MUDATA_RAW,
-        'DATASET_MUDATA_CURATED': DATASET_MUDATA_CURATED
+    params= {
+        'project_id': PROJECT_ID,
+        'mudata_raw': STG_DATASET_MUDATA_RAW,
+        'mudata_curated': STG_DATASET_MUDATA_CURATED
     },
     catchup= True
 ) as dag:
@@ -64,8 +63,8 @@ with DAG(
 
     task_create_table = BigQueryCreateEmptyTableOperator(
         task_id= 'create_client_first_question_events_table',
-        project_id= PROJECT_ID,
-        dataset_id= DATASET_MUDATA_CURATED,
+        project_id= "{{ params.project_id }}",
+        dataset_id= "{{ params.mudata_raw }}",
         table_id= table_id,
         schema_fields= [
             {'name': 'client_id', 'type':  'INTEGER'}, 
@@ -73,30 +72,34 @@ with DAG(
             {'name': 'opportunity_id', 'type': 'INTEGER'},
             {'name': 'created_at', 'type': 'TIMESTAMP'},
         ],
+        time_partitioning= {
+            'field': 'created_at',
+            'type': TimePartitioningType.DAY,
+        },
         exists_ok= True,
     )
 
-    SQL_QUERY_PATH= f'./queries/{dag.dag_id}.sql'
+    SQL_QUERY_PATH= f'./queries/{dag.dag_id.split(maxsplit=1, sep="_")[-1]}.sql'
 
     task_append_clients_first_question_events = BigQueryInsertJobOperator(
         task_id= 'append_clients_first_question_events',
+        project_id= "{{ params.project_id }}",
         configuration= {
             "query": {
                 "query": f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}",
                 "useLegacySql": False,
                 "jobReference": {
-                    "projectId": PROJECT_ID,
+                    "projectId": "{{ params.project_id }}",
                 },
                 "destinationTable": {
-                    "projectId": PROJECT_ID,
-                    "datasetId": DATASET_MUDATA_CURATED,
+                    "projectId": "{{ params.project_id }}",
+                    "datasetId": "{{ params.mudata_raw }}",
                     "tableId": table_id
                 }, 
                 "writeDisposition": WriteDisposition.WRITE_APPEND,
                 "createDisposition": CreateDisposition.CREATE_NEVER,
             }
         },
-        project_id= PROJECT_ID,
         trigger_rule= TriggerRule.ONE_SUCCESS
     )
 
