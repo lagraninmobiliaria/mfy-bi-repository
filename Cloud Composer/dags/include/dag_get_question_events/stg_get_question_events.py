@@ -15,7 +15,7 @@ with DAG(
     dag_id= 'stg_get_question_events',
     schedule_interval= '@daily',
     start_date= datetime(2020, 4, 13),
-    end_date= datetime(2020, 4, 16),
+    end_date= datetime(2020, 4, 20),
     max_active_runs= 5, 
     is_paused_upon_creation= True,
     params= {
