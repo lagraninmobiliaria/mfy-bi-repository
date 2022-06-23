@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID
+from dependencies.keys_and_constants import STG_DATASET_MUDATA_RAW, PROJECT_ID
 from include.dag_create_mudata_raw_tables.table_schemas import *
 
 from airflow import DAG
@@ -14,10 +14,14 @@ tables_to_create= [
 ]
 
 with DAG(
-    dag_id= "mudata_raw_tables_creation",
+    dag_id= "stg_create_mudata_raw_tables",
     start_date= datetime(2022, 1, 1),
     schedule_interval= None,
     is_paused_upon_creation= True,
+    params= {
+        'project_id': PROJECT_ID,
+        'mudata_raw': STG_DATASET_MUDATA_RAW
+    }
 ) as dag:
 
     task_start_dag = DummyOperator(
@@ -30,8 +34,8 @@ with DAG(
 
         task = BigQueryCreateEmptyTableOperator(
             task_id= f"create_table_{table.get('table_id')}",
-            project_id= PROJECT_ID,
-            dataset_id= DATASET_MUDATA_RAW,
+            project_id= "{{ params.project_id }}",
+            dataset_id= "{{ params.mudata_raw }}",
             table_id= table.get("table_id"),
             schema_fields= table.get("schema_fields"),
             time_partitioning= table.get("time_partitioning"),
