@@ -36,6 +36,10 @@ with DAG(
             "query": {
                 "query": f"{'{%'} include '{QUERY_PATH_QE_DAY}' {'%}'}",
                 "useLegacySql": False,
+                "jobReference": {
+                    "projectId": "{{ params.project_id }}",
+                    "location": 'us-central1'
+                },
             }
         }
     )

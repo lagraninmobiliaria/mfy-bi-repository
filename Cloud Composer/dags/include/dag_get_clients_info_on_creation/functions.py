@@ -26,7 +26,7 @@ def get_clients_data(**context):
 
     bq_client = Client(project= context['params'].get('project_id'))
     job_id= context['task_instance'].xcom_pull(task_ids= 'query_first_client_question_events_of_day')
-    bq_job= bq_client.get_job(job_id= job_id)
+    bq_job= bq_client.get_job(job_id= job_id, location= 'us-central1')
 
     query_results_df = bq_job.to_dataframe()
 
@@ -41,9 +41,7 @@ def get_clients_data(**context):
             with open(client_information_query_path, 'r') as client_information_query_file:
                 client_information_query= client_information_query_file.read().format(client_id= client_id, opportunity_id= opportunity_id)
             
-            bq_job= bq_client.query(
-                query= client_information_query
-            )
+            bq_job= bq_client.query(query= client_information_query)
             client_information_results= list(bq_job.result()) if (bq_job.result().num_results >= 1) else None
 
             if client_information_results is not None:
