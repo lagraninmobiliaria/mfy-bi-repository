@@ -1,42 +1,41 @@
 from dependencies.keys_and_constants import schemaTypes
 from google.cloud.bigquery.table import TimePartitioningType
 
-CLIENT_CREATION = {
-    "table_id": "client_creation",
+CLIENTS_CREATION = {
+    "table_id": "clients_creation",
     "schema_fields": [
-        {"name": "registered_date", "type": schemaTypes.DATETIME},
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "client_id", "type": schemaTypes.INTEGER},
         {"name": "name", "type": schemaTypes.STRING},
         {"name": "email", "type": schemaTypes.STRING},
         {"name": "phone", "type": schemaTypes.STRING},
-        {"name": "source", "type": schemaTypes.STRING},
         {"name": "country", "type": schemaTypes.STRING},
-        {"name": "creation_date", "type": schemaTypes.DATETIME},
+        {"name": "creation_datetime_z", "type": schemaTypes.DATETIME},
     ],
     "time_partitioning": {
-        "field": "registered_date", 
+        "field": "registered_datetime_z", 
         "type": TimePartitioningType.DAY 
     },
 }
 
-CLIENT_MAIL_SUBSCRIPTION = {
-    "table_id": "client_mail_subscription",
+CLIENTS_MAIL_SUBSCRIPTION = {
+    "table_id": "clients_mail_subscription",
     "schema_fields": [
-        {"name": "registered_date", "type": schemaTypes.DATETIME},
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "client_id", "type": schemaTypes.INTEGER},
-        {"name": "subscription_date", "type": schemaTypes.DATETIME},
+        {"name": "subscription_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "condition", "type": schemaTypes.STRING}
     ],
     "time_partitioning": {
-        "field": "registered_date", 
+        "field": "registered_datetime_z", 
         "type": TimePartitioningType.DAY 
     },
 }
 
-BUYING_OPPORTUNITY_CASE = {
-    "table_id": "buying_opportunity_case",
+BUYING_OPPORTUNITY_CASES = {
+    "table_id": "buying_opportunity_cases",
     "schema_fields": [
-        {"name": "registered_date", "type": schemaTypes.DATETIME},
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "event_id", "type": schemaTypes.INTEGER},
         {"name": "opportunity_id", "type": schemaTypes.INTEGER},
         {"name": "client_id", "type": schemaTypes.INTEGER},
@@ -48,7 +47,7 @@ BUYING_OPPORTUNITY_CASE = {
         {"name": "is_new", "type": schemaTypes.BOOL}
     ],
     "time_partitioning": {
-        "field": "registered_date", 
+        "field": "registered_datetime_z", 
         "type": TimePartitioningType.DAY 
     },
 }
@@ -56,11 +55,11 @@ BUYING_OPPORTUNITY_CASE = {
 TASKS = {
     "table_id": "tasks",
     "schema_fields": [
-        {"name": "registered_date", "type": schemaTypes.DATETIME},
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
         {"name":"task_id", "type": schemaTypes.INTEGER},
-        {"name":"creation_date", "type": schemaTypes.DATETIME},
-        {"name":"deadline_date", "type": schemaTypes.DATETIME},
-        {"name":"completion_date", "type": schemaTypes.DATETIME},
+        {"name":"creation_datetime_z", "type": schemaTypes.DATETIME},
+        {"name":"deadline_datetime_z", "type": schemaTypes.DATETIME},
+        {"name":"completion_datetime_z", "type": schemaTypes.DATETIME},
         {"name":"title", "type": schemaTypes.STRING},
         {"name":"description", "type": schemaTypes.STRING},
         {"name":"assignee_id", "type": schemaTypes.INTEGER},
@@ -81,15 +80,15 @@ TASKS = {
         {"name":"booking_id", "type": schemaTypes.INTEGER}
     ],
     "time_partitioning": {
-        "field": "registered_date", 
+        "field": "registered_datetime_z", 
         "type": TimePartitioningType.DAY 
     },
 }
 
-USER_ASSIGNMENT = {
-    "table_id": "user_assignment",
+USER_ASSIGNMENTS = {
+    "table_id": "user_assignments",
     "schema_fields": [
-        {"name": "registered_date", "type": schemaTypes.DATETIME},
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "event_id", "type": schemaTypes.INTEGER},
         {"name": "client_id", "type": schemaTypes.INTEGER},
         {"name": "ticket_id", "type": schemaTypes.INTEGER},
@@ -99,7 +98,7 @@ USER_ASSIGNMENT = {
         {"name": "to_datetime_z", "type": schemaTypes.DATETIME},
     ],
     "time_partitioning": {
-        "field": "registered_date", 
+        "field": "registered_datetime_z", 
         "type_": TimePartitioningType.DAY 
     },
 }
@@ -107,7 +106,7 @@ USER_ASSIGNMENT = {
 TICKETS = {
     "table_id": "tickets",
     "schema_fields": [
-        {"name": "registered_date", "type": schemaTypes.DATETIME},
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "ticket_id", "type": schemaTypes.INTEGER},
         {"name": "client_id", "type": schemaTypes.INTEGER},
         {"name": "country_id", "type": schemaTypes.INTEGER},
@@ -120,7 +119,7 @@ TICKETS = {
         {"name": "is_new", "type": schemaTypes.BOOL},
     ],
     "time_partitioning": {
-        "field": "registered_date", 
+        "field": "registered_datetime_z", 
         "type": TimePartitioningType.DAY 
     },
 }

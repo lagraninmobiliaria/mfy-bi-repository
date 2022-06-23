@@ -8,8 +8,8 @@ from airflow.operators.dummy import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryCreateEmptyTableOperator
 
 tables_to_create= [
-    CLIENT_CREATION, CLIENT_MAIL_SUBSCRIPTION, 
-    BUYING_OPPORTUNITY_CASE, USER_ASSIGNMENT,
+    CLIENTS_CREATION, CLIENTS_MAIL_SUBSCRIPTION, 
+    BUYING_OPPORTUNITY_CASES, USER_ASSIGNMENTS,
     TASKS, TICKETS
 ]
 
