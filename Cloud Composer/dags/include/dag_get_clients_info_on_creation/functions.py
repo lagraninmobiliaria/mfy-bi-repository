@@ -25,7 +25,7 @@ def client_exists_already(bq_client: Client, client_id, **context):
 def get_clients_data(**context):
 
     bq_client = Client()
-    job_id= context['task_instance'].xcom_pull(tasks_id= 'query_first_client_question_events_of_day')
+    job_id= context['task_instance'].xcom_pull(task_ids= 'query_first_client_question_events_of_day')
     bq_job= bq_client.get_job(job_id= job_id)
 
     query_results_df = bq_job.to_dataframe()
