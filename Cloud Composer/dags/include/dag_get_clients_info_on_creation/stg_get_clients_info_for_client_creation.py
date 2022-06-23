@@ -42,9 +42,11 @@ with DAG(
 
     task_get_clients_data = PythonOperator(
         task_id= "get_clients_data",
-        python_callable= get_clients_data,
+        python_callable= get_clients_data
     )
 
     task_end_dag = DummyOperator(
         task_id= 'end_dag'
     )
+
+    task_start_dag >> task_query_first_client_qe_day >> task_get_clients_data >> task_end_dag
