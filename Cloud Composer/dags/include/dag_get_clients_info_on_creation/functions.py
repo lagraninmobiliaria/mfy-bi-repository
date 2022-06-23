@@ -20,6 +20,8 @@ def client_exists_already(bq_client: Client, client_id, **context):
     )
     exists = len(list(bq_job.result())) >= 1
 
+    print(exists)
+
     return exists
 
 def get_clients_data(**context):
@@ -32,6 +34,9 @@ def get_clients_data(**context):
 
     for i in range(query_results_df.shape[0]):
         client_id= query_results_df.iloc[i].client_id
+        print(
+            query_results_df.iloc[i]
+        )
 
         if not client_exists_already(bq_client= bq_client, client_id= client_id, **context):
             opportunity_id= query_results_df.iloc[i].opportunity_id
