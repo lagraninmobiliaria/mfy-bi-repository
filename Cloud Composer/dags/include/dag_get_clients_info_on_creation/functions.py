@@ -2,7 +2,6 @@ import os
 from textwrap import dedent
 from google.cloud.bigquery import Client
 
-
 def client_exists_already(bq_client: Client, client_id, **context):
     
     query= dedent(f"""
@@ -19,10 +18,7 @@ def client_exists_already(bq_client: Client, client_id, **context):
         query= query
     )
 
-    print(list(bq_job.result()))
-
-    exists = len(list(bq_job.result())) >= 1
-
+    exists = bq_job.result().total_rows >= 1
 
     return exists
 
