@@ -6,22 +6,18 @@ from google.cloud.bigquery.table import _EmptyRowIterator
 def client_exists_already(bq_client: Client, client_id, **context):
     
     query= dedent(f"""
-        SELECT EXISTS (
-            SELECT
-                client_id
-            FROM `{context['params'].get('project_id')}.{context['params'].get('mudata_raw')}.clients_creation` clients_creation
-            WHERE 
-                clients_creation.client_id = {client_id}
-        );
+        SELECT
+            client_id
+        FROM `{context['params'].get('project_id')}.{context['params'].get('mudata_raw')}.clients_creation` clients_creation
+        WHERE 
+        clients_creation.client_id = {client_id};
     """)
     
     bq_job= bq_client.query(
         query= query
     )
 
-    print(isinstance(bq_job.result()[-1], _EmptyRowIterator))
-
-    exists = isinstance(bq_job.result()[-1], _EmptyRowIterator)
+    exists = bq_job.result().total_rows() >= 1
 
     return exists
 
