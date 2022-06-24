@@ -3,7 +3,7 @@ SELECT
 FROM EXTERNAL_QUERY(
     "projects/infrastructure-lgi/locations/us-central1/connections/mudafy-prod-replic-us-central", 
     """
-    EXPLAIN SELECT 
+    SELECT 
         us.first_name   name,
         us.email        email,
         prof.phone      phone,
