@@ -18,6 +18,8 @@ def client_exists_already(bq_client: Client, client_id, **context):
         query= query
     )
 
+    print(bq_job.result().total_rows)
+
     exists = bq_job.result().total_rows >= 1
 
     return exists
