@@ -1,6 +1,7 @@
 import os
 from textwrap import dedent
 from google.cloud.bigquery import Client
+from google.cloud.bigquery.table import _EmptyRowIterator
 
 def client_exists_already(bq_client: Client, client_id, **context):
     
@@ -18,9 +19,9 @@ def client_exists_already(bq_client: Client, client_id, **context):
         query= query
     )
 
-    print(bq_job.result().total_rows)
+    print(isinstance(bq_job.result()[-1], _EmptyRowIterator))
 
-    exists = bq_job.result().total_rows >= 1
+    exists = isinstance(bq_job.result()[-1], _EmptyRowIterator)
 
     return exists
 
