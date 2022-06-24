@@ -40,6 +40,10 @@ def get_clients_data(**context):
             with open(client_information_query_path, 'r') as client_information_query_file:
                 client_information_query= client_information_query_file.read().format(client_id= client_id, opportunity_id= opportunity_id)
             
+            print(
+                client_information_query
+            )
+
             bq_job= bq_client.query(query= client_information_query)
             client_information_results= list(bq_job.result()) if (bq_job.result().num_results >= 1) else None
 
