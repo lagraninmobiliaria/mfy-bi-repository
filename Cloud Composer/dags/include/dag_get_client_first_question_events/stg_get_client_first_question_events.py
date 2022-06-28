@@ -48,7 +48,7 @@ with DAG(
 
     sensor_check_question_events= ExternalTaskSensor(
         task_id= 'check_question_events',
-        external_dag_id= f'{{ params.env_prefix }}_get_question_events',
+        external_dag_id= '{{ params.env_prefix }}' + '_get_question_events',
         external_task_id= 'end_dag',
         poke_interval= 60,
         timeout= 60*3
