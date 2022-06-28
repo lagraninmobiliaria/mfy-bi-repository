@@ -8,8 +8,7 @@ from airflow import DAG
 from airflow.operators.dummy                            import DummyOperator
 from airflow.operators.python                           import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
-
-import os
+from airflow.sensors.external_task                      import ExternalTaskSensor
 
 with DAG(
     dag_id= 'stg_get_clients_info_on_creation', 
@@ -20,9 +19,18 @@ with DAG(
     catchup= True,
     params= {
         'project_id': PROJECT_ID, 
-        'mudata_raw': STG_DATASET_MUDATA_RAW
+        'mudata_raw': STG_DATASET_MUDATA_RAW,
+        'env_prefix': 'stg'
     }
 ) as dag:
+
+    sensor_check_client_first_qe_successful_run= ExternalTaskSensor(
+        task_id= 'check_client_first_qe_successful_run',
+        poke_interval= 60,
+        timeout= 60*5,
+        external_dag_id= "{{ params.env_prefix }}" + "_get_client_first_question_events",
+        external_task_id= "end_dag"
+    )
 
     task_start_dag = DummyOperator(
         task_id= "start_dag"
@@ -53,4 +61,4 @@ with DAG(
         task_id= 'end_dag'
     )
 
-    task_start_dag >> task_query_first_client_qe_day >> task_get_clients_data >> task_end_dag
+    sensor_check_client_first_qe_successful_run >> task_start_dag >> task_query_first_client_qe_day >> task_get_clients_data >> task_end_dag

@@ -51,7 +51,7 @@ with DAG(
         external_dag_id= '{{ params.env_prefix }}' + '_get_question_events',
         external_task_id= 'end_dag',
         poke_interval= 60,
-        timeout= 60*3
+        timeout= 60*5
     )
     
     task_dag_start_validator = ShortCircuitOperator(
