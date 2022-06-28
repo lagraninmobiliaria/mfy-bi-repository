@@ -1,15 +1,16 @@
 from datetime import datetime, timedelta
 
-from dependencies.keys_and_constants import PROJECT_ID, STG_DATASET_MUDATA_RAW, STG_DATASET_MUDATA_CURATED
+from dependencies.keys_and_constants                    import PROJECT_ID, STG_DATASET_MUDATA_RAW, STG_DATASET_MUDATA_CURATED
 
 from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.operators.dummy                            import DummyOperator
 from airflow.operators.python                           import BranchPythonOperator, ShortCircuitOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryCreateEmptyTableOperator, BigQueryInsertJobOperator
+from airflow.sensors.external_task                      import ExternalTaskSensor
 
-from google.cloud.bigquery import WriteDisposition, CreateDisposition
-from google.cloud.bigquery.table import TimePartitioningType
+from google.cloud.bigquery                              import WriteDisposition, CreateDisposition
+from google.cloud.bigquery.table                        import TimePartitioningType
 
 
 def dag_start_validator(**context):
@@ -39,10 +40,19 @@ with DAG(
     params= {
         'project_id': PROJECT_ID,
         'mudata_raw': STG_DATASET_MUDATA_RAW,
-        'mudata_curated': STG_DATASET_MUDATA_CURATED
+        'mudata_curated': STG_DATASET_MUDATA_CURATED,
+        'env_prefix': 'stg'
     },
     catchup= True
 ) as dag:
+
+    sensor_check_question_events= ExternalTaskSensor(
+        task_id= 'check_question_events',
+        external_dag_id= f'{{ params.env_prefix }}_get_question_events',
+        external_task_id= 'end_dag',
+        poke_interval= 60,
+        timeout= 60*3
+    )
     
     task_dag_start_validator = ShortCircuitOperator(
         task_id= 'dag_start_validator',
@@ -67,10 +77,10 @@ with DAG(
         dataset_id= "{{ params.mudata_raw }}",
         table_id= table_id,
         schema_fields= [
-            {'name': 'client_id', 'type':  'INTEGER'}, 
-            {'name': 'event_id', 'type': 'INTEGER'},
-            {'name': 'opportunity_id', 'type': 'INTEGER'},
-            {'name': 'created_at', 'type': 'TIMESTAMP'},
+            {'name': 'client_id',       'type':  'INTEGER'}, 
+            {'name': 'event_id',        'type': 'INTEGER'},
+            {'name': 'opportunity_id',  'type': 'INTEGER'},
+            {'name': 'created_at',      'type': 'TIMESTAMP'},
         ],
         cluster_fields= ['client_id'],
         time_partitioning= {
@@ -108,6 +118,6 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
-    task_dag_start_validator >> start_dag
+    sensor_check_question_events >> task_dag_start_validator >> start_dag
     start_dag >> branch_task >> [task_create_table, task_append_clients_first_question_events]
     task_create_table  >> task_append_clients_first_question_events >> end_dag
