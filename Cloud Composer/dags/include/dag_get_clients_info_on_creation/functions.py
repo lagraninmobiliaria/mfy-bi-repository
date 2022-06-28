@@ -49,9 +49,10 @@ def get_clients_data(**context):
             if client_information_results is not None:
                 client_information_results['client_id']= client_id
                 client_information_results['creation_datetime_z']= query_results_df.iloc[i].created_at
+                client_information_results['registered_datetime_z']= context['data_interval_start']
 
                 print(DataFrame(
                     data= [client_information_results]
-                ))
+                ).info)
         else:
             print("Client already exists")
