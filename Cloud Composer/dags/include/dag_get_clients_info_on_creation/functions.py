@@ -1,7 +1,8 @@
 import os
 from textwrap import dedent
 from google.cloud.bigquery import Client
-from google.cloud.bigquery.table import _EmptyRowIterator
+from pandas import DataFrame
+
 
 def client_exists_already(bq_client: Client, client_id, **context):
     
@@ -46,7 +47,11 @@ def get_clients_data(**context):
             client_information_results= dict(df_client_information.iloc[-1]) if df_client_information.shape[0] else None
 
             if client_information_results is not None:
-                print(client_information_results)
-        
+                client_information_results['client_id']= client_id
+                client_information_results['creation_datetime_z']= query_results_df.iloc[i].created_at
+
+                print(DataFrame(
+                    data= [client_information_results]
+                ))
         else:
             print("Client already exists")
