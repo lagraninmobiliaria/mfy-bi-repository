@@ -41,7 +41,7 @@ def get_clients_data(**context):
                 client_information_query= client_information_query_file.read().format(client_id= client_id, opportunity_id= opportunity_id)
             
             bq_job= bq_client.query(query= client_information_query)
-            print(dict(bq_job.result().to_dataframe()))
+            print(bq_job.result().num_results)
             client_information_results= bq_job.result() if (bq_job.result().num_results >= 1) else None
 
             if client_information_results is not None:
