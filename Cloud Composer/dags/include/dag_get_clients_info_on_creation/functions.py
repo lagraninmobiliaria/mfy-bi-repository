@@ -53,6 +53,6 @@ def get_clients_data(**context):
 
                 print(DataFrame(
                     data= [client_information_results]
-                ).info)
+                ).info())
         else:
             print("Client already exists")
