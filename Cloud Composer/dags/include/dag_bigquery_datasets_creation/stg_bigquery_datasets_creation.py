@@ -19,10 +19,7 @@ with DAG(
     default_args= default_args,
     is_paused_upon_creation= True,
     params= {
-        'project_id': PROJECT_ID,
-        'mudata_raw': STG_DATASET_MUDATA_RAW,
-        'mudata_curated': STG_DATASET_MUDATA_CURATED,
-        'mudata_aggregated': STG_DATASET_MUDATA_AGGREGATED
+        'project_id': PROJECT_ID
     }  
 ) as dag:
 
@@ -32,11 +29,7 @@ with DAG(
         task_id= 'start_dag'
     )
 
-    mudata_raw= "{{ params.mudata_raw }}"
-    mudata_curated= "{{ params.mudata_curated }}"
-    mudata_aggregated= "{{ params.mudata_aggregated }}"
-
-    for dataset in [mudata_raw, mudata_curated, mudata_aggregated]:
+    for dataset in [STG_DATASET_MUDATA_RAW, STG_DATASET_MUDATA_CURATED, STG_DATASET_MUDATA_AGGREGATED]:
 
         task = BigQueryCreateEmptyDatasetOperator(
             task_id = 'create_dataset_' + dataset,
