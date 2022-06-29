@@ -15,6 +15,7 @@ with DAG(
     schedule_interval= '@daily',
     start_date= datetime(2020, 4, 13),
     end_date= datetime(2020, 4, 20),
+    max_active_runs=1,
     is_paused_upon_creation= True, 
     catchup= True,
     params= {
@@ -27,7 +28,7 @@ with DAG(
     sensor_check_client_first_qe_successful_run= ExternalTaskSensor(
         task_id= 'check_client_first_qe_successful_run',
         poke_interval= 60,
-        timeout= 60*5,
+        timeout= 60*30,
         external_dag_id= "{{ params.env_prefix }}" + "_get_client_first_question_events",
         external_task_id= "end_dag"
     )
