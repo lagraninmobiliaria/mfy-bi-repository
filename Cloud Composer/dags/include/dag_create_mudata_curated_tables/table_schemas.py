@@ -3,7 +3,7 @@ from google.cloud.bigquery.table        import TimePartitioningType
 
 LOOK_CLIENTS = {
     "table_id": "look_clients",
-    "shema_fields": [
+    "schema_fields": [
         {"name": "client_id", "type": schemaTypes.INTEGER},
         {"name": "name", "type": schemaTypes.STRING},
         {"name": "creation_datetime_z", "type": schemaTypes.DATETIME},
