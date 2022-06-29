@@ -1,0 +1,49 @@
+from datetime import datetime
+
+from dependencies.keys_and_constants import PROJECT_ID, STG_DATASET_MUDATA_RAW, STG_DATASET_MUDATA_CURATED
+
+from airflow                                            import DAG
+from airflow.operators.dummy                            import DummyOperator
+from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
+
+with DAG(
+    dag_id= 'stg_append_new_clients_to_look_clients_table',
+    schedule_interval= '@daily',
+    start_date= datetime(2020, 4, 13),
+    end_date= datetime(2020, 4, 20),
+    max_active_runs=1,
+    is_paused_upon_creation= True, 
+    catchup= True,
+    params= {
+        'project_id': PROJECT_ID, 
+        'mudata_raw': STG_DATASET_MUDATA_RAW,
+        'mudata_curated': STG_DATASET_MUDATA_CURATED,
+        'env_prefix': 'stg'
+    }
+) as dag:
+
+    task_start_dag= DummyOperator(
+        task_id= 'start_dag'
+    )
+
+    SQL_QUERY_PATH= './queries/get_daily_clients_creation.sql'
+
+    task_query_new_clients_creation= BigQueryInsertJobOperator(
+        task_id= 'query_new_clients_creation',
+        configuration= {
+            'query': {
+                'query': f"{'{%'} include '{SQL_QUERY_PATH}' {'%}'}",
+                'useLegacySql': False,
+                "jobReference": {
+                    "projectId": "{{ params.project_id }}",
+                    "location": 'us-central1'
+                },
+            }
+        }
+    )
+
+    task_end_dag= DummyOperator(
+        task_id= 'end_dag'
+    )
+
+    task_start_dag >> task_query_new_clients_creation >> task_end_dag
