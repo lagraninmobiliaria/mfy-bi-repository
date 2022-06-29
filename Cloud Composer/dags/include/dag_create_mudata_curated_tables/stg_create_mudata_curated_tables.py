@@ -12,7 +12,7 @@ from google.cloud import bigquery
 bigquery.SchemaField.name
 
 tables_to_create = [
-    LOOK_PROPERTIES, LOOK_PROPERTIES_ADDITIONAL, FACT_PROPERTIES, 
+    LOOK_PROPERTIES, LOOK_PROPERTIES_ADDITIONAL, FACT_PROPERTIES, LOOK_CLIENTS
 ]
 
 with DAG(
@@ -40,6 +40,7 @@ with DAG(
             table_id= table_to_create.get("table_id"),
             schema_fields= table_to_create.get("schema_fields"),
             time_partitioning= table_to_create.get("time_partitioning"),
+            cluster_fields= table_to_create.get("cluster_fields"),
             exists_ok= True
         )
 

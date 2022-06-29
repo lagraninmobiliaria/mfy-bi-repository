@@ -6,20 +6,18 @@ LOOK_CLIENTS = {
     "shema_fields": [
         {"name": "client_id", "type": schemaTypes.INTEGER},
         {"name": "name", "type": schemaTypes.STRING},
-        {"name": "creation_date", "type": schemaTypes.DATE},
+        {"name": "creation_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "phone", "type": schemaTypes.STRING},
         {"name": "email", "type": schemaTypes.STRING},
         {"name": "source", "type": schemaTypes.STRING},
         {"name": "country", "type": schemaTypes.STRING},
         {"name": "is_mail_subscription", "type": schemaTypes.BOOL},
-        {"name": "marketing_campaign", "type": schemaTypes.STRING},
-        {"name": "adgroup", "type": schemaTypes.STRING},
-        {"name": "medium", "type": schemaTypes.STRING}
     ],
     "time_partitioning": {
         "field": "creation_date",
         "type": TimePartitioningType.DAY
-    }
+    },
+    "cluster_fields": ['client_id', 'country', 'email']
 }
 
 LOOK_USERS = {
