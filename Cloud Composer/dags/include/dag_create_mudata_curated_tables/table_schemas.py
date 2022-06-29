@@ -14,7 +14,7 @@ LOOK_CLIENTS = {
         {"name": "is_mail_subscription", "type": schemaTypes.BOOL},
     ],
     "time_partitioning": {
-        "field": "creation_date",
+        "field": "creation_datetime_z",
         "type": TimePartitioningType.DAY
     },
     "cluster_fields": ['client_id', 'country', 'email']
