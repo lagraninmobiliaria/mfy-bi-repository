@@ -32,7 +32,11 @@ with DAG(
         task_id= 'start_dag'
     )
 
-    for dataset in ["{{ params.mudata_raw }}", "{{ params.mudata_curated }}", "{{ params.mudata_aggregated }}"]:
+    mudata_raw= "{{ params.mudata_raw }}"
+    mudata_curated= "{{ params.mudata_curated }}"
+    mudata_aggregated= "{{ params.mudata_aggregated }}"
+
+    for dataset in [mudata_raw, mudata_curated, mudata_aggregated]:
 
         task = BigQueryCreateEmptyDatasetOperator(
             task_id = 'create_dataset_' + dataset,
