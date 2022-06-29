@@ -9,7 +9,6 @@ LOOK_CLIENTS = {
         {"name": "creation_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "phone", "type": schemaTypes.STRING},
         {"name": "email", "type": schemaTypes.STRING},
-        {"name": "source", "type": schemaTypes.STRING},
         {"name": "country", "type": schemaTypes.STRING},
         {"name": "is_mail_subscription", "type": schemaTypes.BOOL},
     ],
