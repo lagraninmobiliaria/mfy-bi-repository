@@ -43,7 +43,7 @@ with DAG(
                 "destinationTable": {
                     "projectId": "{{ params.project_id }}",
                     "datasetId": "{{ params.mudata_curated }}",
-                    "tableId": "{{ params.table_id }}"
+                    "tableId": "look_clients"
                 },
                 "writeDisposition": WriteDisposition.WRITE_APPEND,
                 "createDisposition": CreateDisposition.CREATE_NEVER,
