@@ -11,3 +11,10 @@ FROM `{{ params.project_id }}.{{ params.mudata_raw }}.clients_creation` clients_
 WHERE
         clients_creation.registered_datetime_z >= DATETIME(TIMESTAMP('{{ data_interval_start }}'))
     AND clients_creation.registered_datetime_z <  DATETIME(TIMESTAMP('{{ data_interval_end }}'))
+    AND NOT EXISTS (
+        SELECT
+            client_id
+        FROM `{{ params.project_id }}.{{ params.mudata_curated }}.look_clients` look_clients
+        WHERE 
+            look_clients.client_id = clients_creation.client_id
+    )
