@@ -13,7 +13,7 @@ with DAG(
     dag_id= 'prod_append_new_clients_to_look_clients_table',
     schedule_interval= '@daily',
     start_date= datetime(2020, 4, 13, 1, 30),
-    max_active_runs=1,
+    max_active_runs=5,
     is_paused_upon_creation= True, 
     catchup= True,
     params= {
