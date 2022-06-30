@@ -6,6 +6,8 @@ from airflow                                            import DAG
 from airflow.operators.dummy                            import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
 
+from google.cloud.bigquery import WriteDisposition, CreateDisposition
+
 with DAG(
     dag_id= 'stg_append_new_clients_to_look_clients_table',
     schedule_interval= '@daily',
@@ -38,6 +40,13 @@ with DAG(
                     "projectId": "{{ params.project_id }}",
                     "location": 'us-central1'
                 },
+                "destinationTable": {
+                    "projectId": "{{ params.project_id }}",
+                    "datasetId": "{{ params.mudata_curated }}",
+                    "tableId": "{{ params.table_id }}"
+                },
+                "writeDisposition": WriteDisposition.WRITE_APPEND,
+                "createDisposition": CreateDisposition.CREATE_NEVER,
             }
         }
     )
