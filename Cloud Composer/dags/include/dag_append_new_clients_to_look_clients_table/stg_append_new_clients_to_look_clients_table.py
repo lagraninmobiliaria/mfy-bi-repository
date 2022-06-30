@@ -28,7 +28,7 @@ with DAG(
     sensor_check_clients_creation_run= ExternalTaskSensor(
         task_id= 'check_daily_clients_creation_run',
         poke_interval= 30,
-        timout= 30*60,
+        timeout= 30*60,
         external_dag_id= "{{ params.env_prefix }}" + '_get_clients_info_on_creation',
         external_task_id= 'end_dag'
     )
