@@ -63,4 +63,4 @@ with DAG(
         task_id= 'end_dag'
     )
 
-    task_start_dag >> task_query_new_clients_creation >> task_end_dag
+    sensor_check_clients_creation_run >> task_start_dag >> task_query_new_clients_creation >> task_end_dag
