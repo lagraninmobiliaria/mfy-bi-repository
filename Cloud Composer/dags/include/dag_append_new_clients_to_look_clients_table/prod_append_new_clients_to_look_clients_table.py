@@ -3,6 +3,7 @@ from datetime import datetime
 from dependencies.keys_and_constants import PROJECT_ID, PROD_DATASET_MUDATA_RAW, PROD_DATASET_MUDATA_CURATED
 
 from airflow                                            import DAG
+from airflow.sensors.external_task                      import ExternalTaskSensor
 from airflow.operators.dummy                            import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
 
@@ -19,9 +20,17 @@ with DAG(
         'project_id': PROJECT_ID, 
         'mudata_raw': PROD_DATASET_MUDATA_RAW,
         'mudata_curated': PROD_DATASET_MUDATA_CURATED,
-        'env_prefix': 'stg'
+        'env_prefix': 'prod'
     }
 ) as dag:
+
+    sensor_check_clients_creation_run= ExternalTaskSensor(
+        task_id= 'check_daily_clients_creation_run',
+        poke_interval= 30,
+        timeout= 30*60,
+        external_dag_id= "{{ params.env_prefix }}" + '_get_clients_info_on_creation',
+        external_task_id= 'end_dag'
+    )
 
     task_start_dag= DummyOperator(
         task_id= 'start_dag'
