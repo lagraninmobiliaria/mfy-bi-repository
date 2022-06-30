@@ -15,7 +15,7 @@ with DAG(
     schedule_interval= '@daily',
     start_date= datetime(2020, 4, 13),
     is_paused_upon_creation= True,
-    max_active_runs=1,
+    max_active_runs= 5,
     catchup= True,
     params= {
         'project_id': PROJECT_ID, 
