@@ -3,9 +3,9 @@ from datetime import datetime
 from dependencies.keys_and_constants import PROJECT_ID, STG_DATASET_MUDATA_RAW, STG_DATASET_MUDATA_CURATED
 
 from airflow                                            import DAG
+from airflow.sensors.external_task                      import ExternalTaskSensor
 from airflow.operators.dummy                            import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
-from airflow.sensors.external_task                      import ExternalTaskSensor
 
 from google.cloud.bigquery import WriteDisposition, CreateDisposition
 
