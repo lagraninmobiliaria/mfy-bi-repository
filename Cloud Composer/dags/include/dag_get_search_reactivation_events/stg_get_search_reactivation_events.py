@@ -77,4 +77,4 @@ with DAG(
         trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
-    task_start_dag >> task_get_search_reactivation_events >> task_end_dag
+    task_start_dag >> task_create_search_reactivation_events_table >> task_get_search_reactivation_events >> task_end_dag
