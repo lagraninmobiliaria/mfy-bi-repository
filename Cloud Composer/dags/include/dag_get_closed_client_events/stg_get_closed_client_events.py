@@ -14,9 +14,9 @@ with DAG(
     dag_id= "get_closed_client_events",
     schedule_interval= "@daily",
     start_date= datetime(2021, 10, 19),
+    end_date= datetime(2021, 11, 1),
     is_paused_upon_creation= True,
-    doc_md= "{% include './markdowns/dag_get_closed_client_events.md' %}",
-    user_defined_macros= {
+    params= {
         "polymorphic_ctype_id": 120
     }
 ) as dag:

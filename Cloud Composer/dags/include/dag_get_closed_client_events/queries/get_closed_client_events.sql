@@ -12,6 +12,6 @@ FROM EXTERNAL_QUERY(
     
     WHERE
             DATE(ee.created_at) = DATE('{{ ds }}')
-        AND ee.polymorphic_ctype_id = {{ polymorphic_ctype_id }}
+        AND ee.polymorphic_ctype_id = {{ params.polymorphic_ctype_id }}
     """
 )
