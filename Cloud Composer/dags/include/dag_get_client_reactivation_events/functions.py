@@ -49,6 +49,8 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
         # Ejecuto la query para ir a buscar ese último evento de cierre 
         # y me traigo una lista de resultados
         client_last_closed_event_query = queries_manager.client_last_closed_event_query_template.format(
+            project_id= context['params'].get('project_id'),
+            dataset_id= context['params'].get('mudata_raw'),
             client_id= row.get('client_id'), 
             created_at= row.get('created_at')
         )
@@ -68,6 +70,8 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
         # Ejecuto la query para ir a buscar ese último evento de reactivacion 
         # y me traigo una lista de resultados.
         client_last_reactivation_event_query = queries_manager.client_last_reactivation_event_query_template.format(
+            project_id= context['params'].get('project_id'),
+            dataset_id= context['params'].get('mudata_raw'),
             client_id= row.get('client_id'),
             created_at= row.get('created_at')
         )
