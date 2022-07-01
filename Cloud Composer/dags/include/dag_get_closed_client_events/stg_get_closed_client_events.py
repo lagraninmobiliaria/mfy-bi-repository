@@ -11,7 +11,7 @@ from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJob
 from google.cloud.bigquery import WriteDisposition, CreateDisposition
 
 with DAG(
-    dag_id= "stg_closed_client_events",
+    dag_id= "stg_get_closed_client_events",
     schedule_interval= "@daily",
     start_date= datetime(2021, 10, 19),
     end_date= datetime(2021, 11, 1),
@@ -27,7 +27,7 @@ with DAG(
         task_id= 'start_dag'
     )
 
-    SQL_QUERY_PATH= f'./queries/{dag.dag_id}.sql'
+    SQL_QUERY_PATH= f'./queries/{dag.dag_id.split(sep="_", maxsplit= 1)[-1]}.sql'
     table_id= 'closed_client_events'
 
     task_create_closed_client_events_table = BigQueryCreateEmptyTableOperator(
