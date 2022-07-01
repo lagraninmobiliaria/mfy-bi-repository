@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from dependencies.keys_and_constants import PROJECT_ID, DATASET_MUDATA_RAW
+from dependencies.keys_and_constants import PROJECT_ID, STG_DATASET_MUDATA_RAW
 
 from google.cloud.bigquery.table import TimePartitioning, TimePartitioningType
 
@@ -11,13 +11,15 @@ from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJob
 from google.cloud.bigquery import WriteDisposition, CreateDisposition
 
 with DAG(
-    dag_id= "get_closed_client_events",
+    dag_id= "stg_closed_client_events",
     schedule_interval= "@daily",
     start_date= datetime(2021, 10, 19),
     end_date= datetime(2021, 11, 1),
     is_paused_upon_creation= True,
     params= {
-        "polymorphic_ctype_id": 120
+        "polymorphic_ctype_id": 120,
+        "project_id": PROJECT_ID,
+        "mudata_raw": STG_DATASET_MUDATA_RAW
     }
 ) as dag:
 
@@ -31,8 +33,8 @@ with DAG(
     task_create_closed_client_events_table = BigQueryCreateEmptyTableOperator(
         task_id= 'create_closed_client_events_table',
         exists_ok= True,
-        project_id= PROJECT_ID,
-        dataset_id= DATASET_MUDATA_RAW,
+        project_id= "{{ params.project_id }}",
+        dataset_id= "{{ params.mudata_raw }}",
         table_id= table_id,
         schema_fields= [
             {"name": "event_id", "type":"INTEGER" , "mode": "REQUIRED"},
@@ -56,8 +58,8 @@ with DAG(
                     "projectId": PROJECT_ID
                 },
                 "destinationTable": {
-                    "projectId": PROJECT_ID,
-                    "datasetId": DATASET_MUDATA_RAW,
+                    "projectId": "{{ params.project_id }}",
+                    "datasetId": "{{ params.mudata_raw }}",
                     "tableId": table_id
                 },
                 "writeDisposition": WriteDisposition.WRITE_APPEND,
