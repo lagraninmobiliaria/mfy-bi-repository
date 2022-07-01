@@ -107,7 +107,7 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
     return append_rows
 
 def validate_search_reactivation_as_client_reactivation(**context):
-    bq_client= Client(project= context['params'].project_id, location= 'us-central1')
+    bq_client= Client(project= context['params'].get('project_id'), location= 'us-central1')
     
     job_id= context['task_instance'].xcom_pull('query_daily_search_reactivation_events')
     bq_job= bq_client.get_job(job_id= job_id)
