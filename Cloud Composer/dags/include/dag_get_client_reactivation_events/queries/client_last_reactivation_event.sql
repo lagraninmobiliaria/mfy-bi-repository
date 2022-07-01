@@ -5,8 +5,8 @@ SELECT
 
 FROM `{{ params.project_id }}.{{ params.mudata_raw }}.client_reactivation_events` client_reactivation_events
 WHERE
-        client_reactivation_events.client_id  = {}
-    AND client_reactivation_events.created_at < TIMESTAMP('{}')
+        client_reactivation_events.client_id  = {client_id}
+    AND client_reactivation_events.created_at < TIMESTAMP('{created_at}')
 
 GROUP BY 
     client_reactivation_events.client_id

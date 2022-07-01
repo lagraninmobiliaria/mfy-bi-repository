@@ -1,6 +1,6 @@
 SELECT
     COUNT(*) register_exists
-FROM `{}.{}.{}` _table
+FROM `{project_id}.{dataset_id}.{table_id}` _table
 WHERE 
-    _table.{} = {}
+    _table.{field_name} = {field_value}
     

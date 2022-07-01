@@ -1,6 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
-from dependencies.keys_and_constants import DATASET_MUDATA_RAW, PROJECT_ID
+from dependencies.keys_and_constants import STG_DATASET_MUDATA_RAW, PROJECT_ID
 
 from include.dag_get_client_reactivation_events.functions import validate_search_reactivation_as_client_reactivation
 
@@ -10,15 +10,17 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator, BigQueryCreateEmptyTableOperator
 
 
+from google.cloud.bigquery import TimePartitioningType
+
 with DAG(
-    dag_id= 'get_client_reactivation_events',
+    dag_id= 'stg_get_client_reactivation_events',
     schedule_interval= '@daily',
     max_active_runs= 1, 
     start_date= datetime(2021, 10, 19),
-    # end_date= datetime(2021, 10, 19) + timedelta(days= 10),
+    end_date= datetime(2021, 11, 1),
     params= {
         'project_id': PROJECT_ID,
-        'mudata_raw': DATASET_MUDATA_RAW
+        'mudata_raw': STG_DATASET_MUDATA_RAW
     },
     is_paused_upon_creation= True
 ) as dag:
@@ -31,14 +33,19 @@ with DAG(
     task_create_client_reactivation_table = BigQueryCreateEmptyTableOperator(
         task_id= 'create_client_reactivation_events_table',
         exists_ok= True,
-        project_id= PROJECT_ID,
-        dataset_id= DATASET_MUDATA_RAW,
+        project_id= "{{ params.project_id }}",
+        dataset_id= "{{ params.mudata_raw }}",
         table_id= 'client_reactivation_events',
         schema_fields= [
             {'name': 'event_id', 'type': 'INTEGER'},
             {'name': 'created_at', 'type': 'TIMESTAMP'},
             {'name': 'client_id', 'type': 'INTEGER'}
-        ]
+        ],
+        time_partitioning= {
+            "field": "created_at",
+            "type": TimePartitioningType.DAY
+        },
+        cluster_fields= ['client_id', 'event_id']
     )
 
     SQL_QUERY_PATH= f'./queries/daily_search_reactivation_events.sql'
@@ -53,16 +60,9 @@ with DAG(
         }
     )
 
-    SQL_QUERY_PATH_CLOSED_CLIENT= './queries/client_last_closed_event.sql'
-    SQL_QUERY_PATH_CLIENT_REACTIVATION= './queries/client_last_reactivation_event.sql'
-
     task_search_reactivations_as_client_reactivations= PythonOperator(
         task_id= 'search_reactivations_as_client_reactivations',
         python_callable= validate_search_reactivation_as_client_reactivation,
-        op_kwargs= {
-            'closed_client_query': f"{'{%'} include '{SQL_QUERY_PATH_CLOSED_CLIENT}' {'%}'}",
-            'client_reactivation_query': f"{'{%'} include '{SQL_QUERY_PATH_CLIENT_REACTIVATION}' {'%}'}",
-        }
     )
 
     task_end_dag= DummyOperator(
