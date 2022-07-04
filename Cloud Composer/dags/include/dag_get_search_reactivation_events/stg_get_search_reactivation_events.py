@@ -15,7 +15,7 @@ with DAG(
     schedule_interval= '@daily',
     start_date= datetime(2021, 10, 19),
     end_date= datetime(2021, 11, 1),
-    max_active_runs= 1,
+    max_active_runs= 5,
     is_paused_upon_creation= True,
     params= {
         "polymorphic_ctype_id": 94,
