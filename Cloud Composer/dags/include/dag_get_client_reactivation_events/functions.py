@@ -62,7 +62,7 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
         )
         print(   
             '',
-            client_last_closed_event_query
+            client_last_closed_event_query,
         )
 
         last_closed_client_event_record= bq_client.query(
@@ -91,6 +91,10 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
             query= client_last_reactivation_event_query
         ).result().to_dataframe().to_dict('records')
 
+        print(
+            f"Last reactivation event: {last_client_last_reactivation_event_record}"
+        )
+
         # La primera opcion para appendear es si no hay un evento de reactivación previo.
         #La segunda opcion es que si existe pero que el evento que está siendo iterado
         # es posterior al ultimo evento de reactivacion.
@@ -98,7 +102,7 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
         to_append_option_2= (
                 len(last_client_last_reactivation_event_record)
             and last_closed_client_event_record.get('created_at') >= \
-                last_client_last_reactivation_event_record[0].get('created_at') 
+                last_client_last_reactivation_event_record[0].get('created_at')
         )
         print(
             f"First viable option to append: {to_append_option_1}",
@@ -135,6 +139,9 @@ def validate_search_reactivation_as_client_reactivation(**context):
     df_search_reactivation_events= bq_job.to_dataframe()
     
     append_rows= define_rows_to_append(df_search_reactivation_events, bq_client, **context)
+    print(
+        f"Rows to append: {append_rows}"
+    )
 
     if len(append_rows):
         bq_client.load_table_from_dataframe(
