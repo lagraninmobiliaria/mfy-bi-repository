@@ -26,7 +26,8 @@ with DAG(
         'mudata_raw': STG_DATASET_MUDATA_RAW,
         'env_prefix': 'stg'
     },
-    is_paused_upon_creation= True
+    is_paused_upon_creation= True,
+    catchup= True
 ) as dag:
 
     sensor_check_dag_closed_clients_events= ExternalTaskSensor(
