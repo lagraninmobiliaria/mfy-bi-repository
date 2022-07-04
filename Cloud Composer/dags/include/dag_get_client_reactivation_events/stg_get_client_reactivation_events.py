@@ -5,6 +5,7 @@ from dependencies.keys_and_constants import STG_DATASET_MUDATA_RAW, PROJECT_ID
 from include.dag_get_client_reactivation_events.functions   import validate_search_reactivation_as_client_reactivation, previous_dagrun_successful
 
 from airflow import DAG
+from airflow.utils.trigger_rule                             import TriggerRule
 from airflow.sensors.external_task                          import ExternalTaskSensor
 from airflow.sensors.python                                 import PythonSensor
 from airflow.operators.dummy                                import DummyOperator
@@ -50,7 +51,8 @@ with DAG(
     )
 
     task_start_dag = DummyOperator(
-        task_id= 'start_dag'
+        task_id= 'start_dag',
+        trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
     task_create_client_reactivation_table = BigQueryCreateEmptyTableOperator(
