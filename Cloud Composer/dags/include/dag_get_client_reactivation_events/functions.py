@@ -44,12 +44,6 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
 
     for row in df_search_reactivation_events.to_dict('records'):
         
-        print(
-            f"Client ID: {row['client_id']}",
-            f"Search reactivation event: {row['created_at']}",
-            sep= '\n'
-        )
-
         # Creo la query para ir a buscar el último evento de cierre del cliente 
         # cuyo timestamp sea previo al evento de reapertura que está siendo iterado.
         # Ejecuto la query para ir a buscar ese último evento de cierre 
@@ -72,9 +66,6 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
 
         # Si hay evento me quedo con el evento y no con la lista
         last_closed_client_event_record= last_closed_client_event_record.pop()
-        print(
-            f"Last closed client event: {last_closed_client_event_record}"
-        )
 
         # Creo la query para ir a buscar el último evento de reactivacion del cliente 
         # cuyo timestamp sea previo al evento de reapertura que está siendo iterado.
@@ -90,10 +81,6 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
             query= client_last_reactivation_event_query
         ).result().to_dataframe().to_dict('records')
 
-        print(
-            f"Last client reactivation event: {last_client_last_reactivation_event_record}"
-        )
-
         # La primera opcion para appendear es si no hay un evento de reactivación previo.
         #La segunda opcion es que si existe pero que el evento que está siendo iterado
         # es posterior al ultimo evento de reactivacion.
@@ -102,17 +89,12 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
                 len(last_client_last_reactivation_event_record)
             and last_closed_client_event_record.get('created_at') >= last_client_last_reactivation_event_record[0].get('created_at')
         )
-        print(
-            f"First viable option to append: {to_append_option_1}",
-            f"Second viable option to append: {to_append_option_2}",
-            sep= '\n'
-        )
-        
+
         # La primera condicion necesaria es que se cumpla alguna de las opciones anteriores
         record_can_be_appended= (to_append_option_1 or to_append_option_2)
 
-        # La segunda condición es que no haya agregado
-        # ya el evento a la tabla de reactivaciones
+        # La segunda condición necesaria es que no haya agregado
+        # ya el evento a la tabla de reactivación de clientes
         check_record_exists_query= queries_manager.record_existance_query_template.format(
             project_id= context['params'].get('project_id'), 
             dataset_id= context['params'].get('mudata_raw'), 
@@ -120,11 +102,15 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
             field_name= 'event_id',
             field_value= row.get('event_id')
         )
-        record_doesnt_exists= not bool(bq_client.query(query= check_record_exists_query).result().total_rows)
+        record_exists= bool(bq_client.query(query= check_record_exists_query).result().total_rows)
 
-        print(f"Record doesn't exists?: {record_doesnt_exists}")
+        print(
+            f"Record can be appended?: {record_can_be_appended}",
+            f"Record exists?: {record_exists}",
+            sep= '\n'
+        )
 
-        if record_can_be_appended and record_doesnt_exists:
+        if record_can_be_appended and not record_exists:
             append_rows.append(row)
 
     return append_rows
