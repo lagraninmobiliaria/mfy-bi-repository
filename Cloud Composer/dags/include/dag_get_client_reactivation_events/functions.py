@@ -1,11 +1,22 @@
 import os
 
+from datetime import timedelta
+
 from pandas import DataFrame
 
 from google.cloud.bigquery import Client
 from google.cloud.bigquery import LoadJobConfig
 
 from google.cloud.bigquery import WriteDisposition, CreateDisposition
+
+def previous_dagrun_successful(**context):
+    prev_data_interval_start_success= context["prev_data_interval_start_success"]
+    data_interval_start= context['data_interval_start']
+
+    return (
+            prev_data_interval_start_success is None 
+        or  prev_data_interval_start_success == (data_interval_start - timedelta(days= 1))
+    )
 
 class DAGQueriesManager:
     
