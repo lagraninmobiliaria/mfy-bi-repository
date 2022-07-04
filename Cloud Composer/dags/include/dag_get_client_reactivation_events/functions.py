@@ -125,7 +125,8 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
         record_doesnt_exists= bq_client.query(
             query= check_record_exists_query
         ).result().total_rows == 0
-
+        print(f"Record doesn't exists?: {record_doesnt_exists}")
+        
         if record_can_be_appended and record_doesnt_exists:
             append_rows.append(row)
 
