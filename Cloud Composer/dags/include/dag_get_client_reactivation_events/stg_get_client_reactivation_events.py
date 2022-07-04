@@ -32,7 +32,7 @@ with DAG(
         task_id= "check_dag_closed_clients_events",
         poke_interval= 30,
         timeout= 30*20,
-        external_dag_id= "{{ params.env_prefix }}" + 'get_closed_client_events',
+        external_dag_id= "{{ params.env_prefix }}" + '_get_closed_client_events',
         external_task_id= "end_dag"
     )
 
@@ -40,7 +40,7 @@ with DAG(
         task_id= "check_dag_search_reactivations_events",
         poke_interval= 30,
         timeout= 30*20,
-        external_dag_id= "{{ params.env_prefix }}" + "get_search_reactivation_events",
+        external_dag_id= "{{ params.env_prefix }}" + "_get_search_reactivation_events",
         external_task_id= "end_dag"
     )
 
