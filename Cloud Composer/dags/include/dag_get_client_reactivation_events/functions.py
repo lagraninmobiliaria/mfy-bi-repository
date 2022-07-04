@@ -60,10 +60,6 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
             client_id= row.get('client_id'), 
             created_at= row.get('created_at')
         )
-        print(   
-            '',
-            client_last_closed_event_query,
-        )
 
         last_closed_client_event_record= bq_client.query(
             query= client_last_closed_event_query
@@ -76,6 +72,9 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
 
         # Si hay evento me quedo con el evento y no con la lista
         last_closed_client_event_record= last_closed_client_event_record.pop()
+        print(
+            f"Last closed client event: {last_closed_client_event_record}"
+        )
 
         # Creo la query para ir a buscar el último evento de reactivacion del cliente 
         # cuyo timestamp sea previo al evento de reapertura que está siendo iterado.
@@ -92,7 +91,7 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
         ).result().to_dataframe().to_dict('records')
 
         print(
-            f"Last reactivation event: {last_client_last_reactivation_event_record}"
+            f"Last client reactivation event: {last_client_last_reactivation_event_record}"
         )
 
         # La primera opcion para appendear es si no hay un evento de reactivación previo.
@@ -126,7 +125,7 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
             query= check_record_exists_query
         ).result().total_rows == 0
         print(f"Record doesn't exists?: {record_doesnt_exists}")
-        
+
         if record_can_be_appended and record_doesnt_exists:
             append_rows.append(row)
 
