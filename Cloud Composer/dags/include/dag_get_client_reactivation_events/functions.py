@@ -60,6 +60,11 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
             client_id= row.get('client_id'), 
             created_at= row.get('created_at')
         )
+        print(   
+            '',
+            client_last_closed_event_query
+        )
+
         last_closed_client_event_record= bq_client.query(
             query= client_last_closed_event_query
         ).result().to_dataframe().to_dict('records')
