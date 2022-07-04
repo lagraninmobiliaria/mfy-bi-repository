@@ -100,8 +100,7 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
         to_append_option_1= not len(last_client_last_reactivation_event_record)
         to_append_option_2= (
                 len(last_client_last_reactivation_event_record)
-            and last_closed_client_event_record.get('created_at') >= \
-                last_client_last_reactivation_event_record[0].get('created_at')
+            and last_closed_client_event_record.get('created_at') >= last_client_last_reactivation_event_record[0].get('created_at')
         )
         print(
             f"First viable option to append: {to_append_option_1}",
@@ -121,7 +120,7 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
             field_name= 'event_id',
             field_value= row.get('event_id')
         )
-        record_doesnt_exists= (bq_client.query(query= check_record_exists_query).result().to_dataframe().shape[0] == 0)
+        record_doesnt_exists= not bool(bq_client.query(query= check_record_exists_query).result().total_rows)
 
         print(f"Record doesn't exists?: {record_doesnt_exists}")
 
