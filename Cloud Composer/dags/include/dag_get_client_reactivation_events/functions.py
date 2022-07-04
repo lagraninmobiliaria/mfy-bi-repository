@@ -61,7 +61,6 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
         
         # Si no hay eventos de resultados, paso al siguiente evento de busqueda
         if not len(last_closed_client_event_record):
-            print("There is no previous closing event")
             continue
 
         # Si hay evento me quedo con el evento y no con la lista
@@ -102,16 +101,7 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
             field_name= 'event_id',
             field_value= row.get('event_id')
         )
-        print(
-            check_record_exists_query
-        )
         record_exists= bool(bq_client.query(query= check_record_exists_query).result().total_rows)
-
-        print(
-            f"Record can be appended?: {record_can_be_appended}",
-            f"Record exists?: {record_exists}",
-            sep= '\n'
-        )
 
         if record_can_be_appended and not record_exists:
             append_rows.append(row)
