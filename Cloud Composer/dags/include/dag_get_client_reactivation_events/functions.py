@@ -13,13 +13,7 @@ def previous_dagrun_successful(**context):
     prev_data_interval_start_success= context["prev_data_interval_start_success"]
     data_interval_start= context['data_interval_start']
     dag_start_date= context['dag'].start_date
-    print(
-        f"prev_data_interval_start_success: {prev_data_interval_start_success}",
-        f"data_interval_start: {data_interval_start}",
-        f"dag_start_date: {dag_start_date}",
-        sep= "\n"
-    )
-
+    
     return (
             dag_start_date == data_interval_start
         or  prev_data_interval_start_success == (data_interval_start - timedelta(days= 1))

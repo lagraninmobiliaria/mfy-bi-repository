@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from dependencies.keys_and_constants import STG_DATASET_MUDATA_RAW, PROJECT_ID
 
-from include.dag_get_client_reactivation_events.functions import validate_search_reactivation_as_client_reactivation, previous_dagrun_successful
+from include.dag_get_client_reactivation_events.functions   import validate_search_reactivation_as_client_reactivation, previous_dagrun_successful
 
 from airflow import DAG
 from airflow.sensors.external_task                          import ExternalTaskSensor
