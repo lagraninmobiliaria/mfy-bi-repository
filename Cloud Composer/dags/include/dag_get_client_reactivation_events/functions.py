@@ -102,6 +102,9 @@ def define_rows_to_append(df_search_reactivation_events: DataFrame, bq_client: C
             field_name= 'event_id',
             field_value= row.get('event_id')
         )
+        print(
+            check_record_exists_query
+        )
         record_exists= bool(bq_client.query(query= check_record_exists_query).result().total_rows)
 
         print(
