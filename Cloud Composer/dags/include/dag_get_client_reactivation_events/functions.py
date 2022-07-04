@@ -22,7 +22,7 @@ class DAGQueriesManager:
         client_last_reactivation_event_query_path= os.path.join(
             os.path.dirname(__file__),
             'queries',
-            'client_last_closed_event.sql'
+            'client_last_reactivation_event.sql'
         )
         with open(client_last_reactivation_event_query_path, 'r') as sql_file:
             self.client_last_reactivation_event_query_template = sql_file.read()
