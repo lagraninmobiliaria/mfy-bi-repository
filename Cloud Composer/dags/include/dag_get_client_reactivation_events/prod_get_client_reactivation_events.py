@@ -20,6 +20,7 @@ with DAG(
     schedule_interval= '@daily',
     max_active_runs= 1, 
     start_date= datetime(2021, 10, 19),
+    tags= ['production'],
     params= {
         'project_id': PROJECT_ID,
         'mudata_raw': PROD_DATASET_MUDATA_RAW,
