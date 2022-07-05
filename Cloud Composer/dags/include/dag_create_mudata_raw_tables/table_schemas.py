@@ -41,7 +41,7 @@ BUYING_OPPORTUNITY_CASES = {
         {"name": "client_id", "type": schemaTypes.INTEGER},
         {"name": "ticket_id", "type": schemaTypes.INTEGER},
         {"name": "property_id", "type": schemaTypes.INTEGER},
-        {"name": "develompent_id", "type": schemaTypes.INTEGER},
+        {"name": "development_id", "type": schemaTypes.INTEGER},
         {"name": "source", "type": schemaTypes.STRING},
         {"name": "reference", "type": schemaTypes.STRING},
         {"name": "is_new", "type": schemaTypes.BOOL}
@@ -69,7 +69,7 @@ TASKS = {
         {"name":"completed_by_id", "type":schemaTypes.INTEGER},
         {"name":"created_by_id", "type":schemaTypes.INTEGER},
         {"name":"deadline_type", "type": schemaTypes.STRING},
-        {"name":"develompent_id", "type": schemaTypes.INTEGER},
+        {"name":"development_id", "type": schemaTypes.INTEGER},
         {"name":"opportunity_id", "type": schemaTypes.INTEGER},
         {"name":"is_completed", "type": schemaTypes.BOOL},
         {"name":"status", "type": schemaTypes.STRING},

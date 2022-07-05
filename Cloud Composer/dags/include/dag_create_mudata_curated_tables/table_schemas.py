@@ -83,7 +83,7 @@ LOOK_PROPERTIES = {
         {"name":"is_active", "type": schemaTypes.BOOL},
         {"name":"listed_date", "type": schemaTypes.DATE},
         {"name":"unlisted_date", "type": schemaTypes.DATE},
-        {"name":"comercial_advisor_id", "type": schemaTypes.INTEGER},
+        {"name":"commercial_advisor_id", "type": schemaTypes.INTEGER},
         {"name":"producer_advisor_id", "type": schemaTypes.INTEGER},
         {"name":"client_id", "type": schemaTypes.INTEGER},
         {"name":"alliance_id", "type": schemaTypes.INTEGER},
