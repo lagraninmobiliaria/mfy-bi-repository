@@ -19,6 +19,23 @@ LOOK_CLIENTS = {
     "cluster_fields": ['client_id', 'country', 'email']
 }
 
+FACT_CLIENTS = {
+    "table_id": "fact_clients",
+    "schema_fields": {
+        {"name": "client_id", "type": schemaTypes.INTEGER},   
+        {"name": "from_datetime_z", "type": schemaTypes.DATETIME},
+        {"name": "to_datetime_z", "type": schemaTypes.DATETIME},
+        {"name": "is_active", "type": schemaTypes.BOOL},
+        {"name": "is_reactive", "type": schemaTypes.BOOL},
+        {"name": "last_modified_datetime_z", "type": schemaTypes.DATETIME},
+    },
+    "time_partitioning": {
+        "field": "from_datetime_z",
+        "type": TimePartitioningType.DAY
+    },
+    "cluster_fields": ['client_id']
+}
+
 LOOK_USERS = {
     "table_id": "look_users",
     "schema_fields": [
