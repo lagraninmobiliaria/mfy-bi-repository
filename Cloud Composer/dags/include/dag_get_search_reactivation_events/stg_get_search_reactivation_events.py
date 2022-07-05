@@ -17,6 +17,7 @@ with DAG(
     end_date= datetime(2021, 11, 1),
     max_active_runs= 5,
     is_paused_upon_creation= True,
+    tags= ['staging'],
     params= {
         "polymorphic_ctype_id": 94,
         "project_id": PROJECT_ID,
