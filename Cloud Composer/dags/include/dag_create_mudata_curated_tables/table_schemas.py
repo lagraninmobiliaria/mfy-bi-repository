@@ -21,14 +21,14 @@ LOOK_CLIENTS = {
 
 FACT_CLIENTS = {
     "table_id": "fact_clients",
-    "schema_fields": {
+    "schema_fields": [
         {"name": "client_id", "type": schemaTypes.INTEGER},   
         {"name": "from_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "to_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "is_active", "type": schemaTypes.BOOL},
         {"name": "is_reactive", "type": schemaTypes.BOOL},
         {"name": "last_modified_datetime_z", "type": schemaTypes.DATETIME},
-    },
+    ],
     "time_partitioning": {
         "field": "from_datetime_z",
         "type": TimePartitioningType.DAY
