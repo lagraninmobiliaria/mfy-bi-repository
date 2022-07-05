@@ -11,8 +11,6 @@ from airflow.operators.dummy import DummyOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
-from google.cloud.bigquery import WriteDisposition, CreateDisposition
-
 with DAG(
     dag_id= 'stg_fill_closed_client_events',
     start_date= datetime(2021, 1, 1),
