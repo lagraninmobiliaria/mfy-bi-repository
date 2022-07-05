@@ -20,6 +20,7 @@ with DAG(
     schedule_interval= None,
     start_date= datetime(2021, 1, 1),
     is_paused_upon_creation= True,
+    tags= ['production'],
     params= {
         'project_id': PROJECT_ID,
         'mudata_raw': PROD_DATASET_MUDATA_CURATED
