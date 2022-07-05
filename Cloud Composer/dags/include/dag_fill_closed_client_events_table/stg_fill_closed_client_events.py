@@ -36,7 +36,11 @@ with DAG(
     )
 
     with open(get_inferred_closed_client_events_query_path, 'r') as sql_file:
-        get_inferred_closed_client_events_query= sql_file.read()
+        get_inferred_closed_client_events_query= sql_file.read().format(
+            project_id= "{{ params.project_id }}",
+            dataset_id= "{{ params.mudata_raw }}",
+            table_id= "closed_client_events"
+        )
 
     task_get_inferred_closed_client_events= BigQueryInsertJobOperator(
         task_id= 'get_inferred_closed_client_events',

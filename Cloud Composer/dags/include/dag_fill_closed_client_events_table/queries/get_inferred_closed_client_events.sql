@@ -52,5 +52,13 @@ SELECT
 FROM closed_clients_without_closure 
   LEFT JOIN closed_clients_last_closed_case
     ON closed_clients_last_closed_case.client_id = closed_clients_without_closure.client_id
- 
+
+WHERE 
+    NOT EXISTS(
+      SELECT
+        event_id
+      FROM `{project_id}.{dataset_id}.{table_id}` closed_client_events
+      WHERE 
+        closed_client_events.event_id = closed_clients_last_closed_case.event_id
+  )
   
