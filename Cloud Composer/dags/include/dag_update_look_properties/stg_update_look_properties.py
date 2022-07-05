@@ -12,6 +12,7 @@ with DAG(
     dag_id= 'stg_update_look_properties',
     schedule_interval= None,
     start_date= datetime(2021, 1, 1),
+    tags= ['staging'],
     params= {
         'mudata_raw': STG_DATASET_MUDATA_RAW,
         'mudata_curated': STG_DATASET_MUDATA_CURATED,
