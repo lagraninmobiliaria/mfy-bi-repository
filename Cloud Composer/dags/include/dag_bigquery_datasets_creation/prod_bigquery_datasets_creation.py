@@ -18,6 +18,7 @@ with DAG(
     schedule_interval= None,
     default_args= default_args,
     is_paused_upon_creation= True,
+    tags= ['production'],
     params= {
         'project_id': PROJECT_ID
     }  
