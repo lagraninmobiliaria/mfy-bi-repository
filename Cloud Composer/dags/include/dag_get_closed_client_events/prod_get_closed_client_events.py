@@ -15,6 +15,7 @@ with DAG(
     schedule_interval= "@daily",
     start_date= datetime(2021, 10, 19),
     is_paused_upon_creation= True,
+    tags= ['production'],
     params= {
         "polymorphic_ctype_id": 120,
         "project_id": PROJECT_ID,
