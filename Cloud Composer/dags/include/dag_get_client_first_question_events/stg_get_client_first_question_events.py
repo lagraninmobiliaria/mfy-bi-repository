@@ -37,6 +37,7 @@ with DAG(
     end_date= datetime(2020, 4, 20),
     max_active_runs= 1,
     is_paused_upon_creation= True,
+    tags= ['staging'],
     params= {
         'project_id': PROJECT_ID,
         'mudata_raw': STG_DATASET_MUDATA_RAW,

@@ -36,6 +36,7 @@ with DAG(
     start_date= datetime(2020, 4, 13),
     max_active_runs= 1,
     is_paused_upon_creation= True,
+    tags= ['production'],
     params= {
         'project_id': PROJECT_ID,
         'mudata_raw': PROD_DATASET_MUDATA_RAW,
