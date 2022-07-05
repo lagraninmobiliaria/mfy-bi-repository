@@ -17,6 +17,7 @@ with DAG(
     max_active_runs=5,
     is_paused_upon_creation= True, 
     catchup= True,
+    tags= ['staging'],
     params= {
         'project_id': PROJECT_ID, 
         'mudata_raw': STG_DATASET_MUDATA_RAW,
