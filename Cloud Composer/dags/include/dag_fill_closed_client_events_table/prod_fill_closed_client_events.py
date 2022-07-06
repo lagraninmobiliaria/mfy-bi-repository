@@ -2,7 +2,7 @@ import os
 
 from datetime import datetime
 
-from dependencies.keys_and_constants                        import PROJECT_ID, STG_DATASET_MUDATA_RAW
+from dependencies.keys_and_constants import PROJECT_ID, PROD_DATASET_MUDATA_RAW
 
 from include.dag_fill_closed_client_events_table.functions  import load_inferred_closed_client_events
 
@@ -12,7 +12,7 @@ from airflow.operators.python                               import PythonOperato
 from airflow.providers.google.cloud.operators.bigquery      import BigQueryInsertJobOperator
 
 with DAG(
-    dag_id= 'stg_fill_closed_client_events',
+    dag_id= 'prod_fill_closed_client_events',
     start_date= datetime(2021, 1, 1),
     schedule_interval= None,
     catchup= False,
@@ -20,8 +20,8 @@ with DAG(
     tags= ['staging'],
     params= {
         'project_id': PROJECT_ID,
-        'mudata_raw': STG_DATASET_MUDATA_RAW,
-        'env_prefix': 'stg'
+        'mudata_raw': PROD_DATASET_MUDATA_RAW,
+        'env_prefix': 'prod'
     }
 ) as dag:
     
