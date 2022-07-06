@@ -43,3 +43,20 @@ std_default_args_dag = dict(
     retries= 1,
     retry_delay= timedelta(minutes= 1)
 )
+
+STG_PARAMS= {
+    "env_prefix": "stg",
+    "project_id": PROJECT_ID,
+    "mudata_raw": STG_DATASET_MUDATA_RAW,
+    "mudata_curated": STG_DATASET_MUDATA_CURATED,
+    "mudata_aggregated": STG_DATASET_MUDATA_AGGREGATED
+}
+
+
+PROD_PARAMS= {
+    "env_prefix": "prod",
+    "project_id": PROJECT_ID,
+    "mudata_raw": PROD_DATASET_MUDATA_RAW,
+    "mudata_curated": PROD_DATASET_MUDATA_CURATED,
+    "mudata_aggregated": PROD_DATASET_MUDATA_AGGREGATED
+}
