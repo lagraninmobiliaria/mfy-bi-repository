@@ -52,3 +52,5 @@ with DAG(
     task_end_dag= DummyOperator(
         task_id= "end_dag"
     )
+
+    task_start_dag >> [task_get_client_creation_events, task_get_client_reactivation_events, task_get_closed_client_events] >> task_end_dag
