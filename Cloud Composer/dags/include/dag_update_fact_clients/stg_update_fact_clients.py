@@ -2,12 +2,13 @@ from datetime import datetime
 
 from dependencies.keys_and_constants import STG_PARAMS
 
-from include.dag_update_fact_clients.functions import DAGQueriesManager
+from include.dag_update_fact_clients.functions          import DAGQueriesManager
 
-from airflow import DAG
-from airflow.utils.trigger_rule import TriggerRule
-from airflow.operators.dummy import DummyOperator
-from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from airflow                                            import DAG
+from airflow.utils.trigger_rule                         import TriggerRule
+from airflow.operators.dummy                            import DummyOperator
+from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
+
 with DAG(
     dag_id= 'stg_update_fact_clients',
     start_date= datetime(2020, 4, 13),
@@ -17,7 +18,7 @@ with DAG(
     catchup= True,
     tags= ['staging'],
     params= STG_PARAMS
-):
+) as dag:
 
     queries_manager= DAGQueriesManager()
 
