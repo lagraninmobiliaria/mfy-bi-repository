@@ -4,5 +4,5 @@ SELECT
 
 FROM `{{ params.project_id }}.{{ params.mudata_raw }}.client_reactivation_events` client_reactivation_events
 WHERE
-    client_reactivation_events.created_at >= TIMESTAMP("{{ data_interval_start }}")
-    client_reactivation_events.created_at <  TIMESTAMP("{{ data_interval_end }}")
+        client_reactivation_events.created_at >= TIMESTAMP("{{ data_interval_start }}")
+    AND client_reactivation_events.created_at <  TIMESTAMP("{{ data_interval_end }}")
