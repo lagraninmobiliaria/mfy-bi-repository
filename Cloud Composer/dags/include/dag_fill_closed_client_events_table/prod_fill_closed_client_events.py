@@ -17,7 +17,7 @@ with DAG(
     schedule_interval= None,
     catchup= False,
     is_paused_upon_creation= True,
-    tags= ['staging'],
+    tags= ['production'],
     params= {
         'project_id': PROJECT_ID,
         'mudata_raw': PROD_DATASET_MUDATA_RAW,
