@@ -2,8 +2,14 @@ from google.cloud.bigquery import Client, LoadJobConfig, CreateDisposition, Writ
 
 def load_inferred_closed_client_events(**context):
 
-    bq_client= Client(project= context['params'].get('project_id'))
-    bq_job_id= context['task_instance'].xcom_pull('get_inferred_closed_client_events')
+    bq_client= Client(
+        project= context['params'].get('project_id'), 
+        location= 'us-central1'
+    )
+
+    bq_job_id= context['task_instance'] \
+        .xcom_pull('get_inferred_closed_client_events')
+        
     bq_job= bq_client.get_job(job_id= bq_job_id)
 
     df_iferred_closed_client_events= bq_job.to_dataframe()
