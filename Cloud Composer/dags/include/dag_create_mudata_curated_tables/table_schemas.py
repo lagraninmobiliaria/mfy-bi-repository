@@ -22,12 +22,12 @@ LOOK_CLIENTS = {
 FACT_CLIENTS = {
     "table_id": "fact_clients",
     "schema_fields": [
-        {"name": "client_id", "type": schemaTypes.INTEGER},   
-        {"name": "from_datetime_z", "type": schemaTypes.DATETIME},
-        {"name": "to_datetime_z", "type": schemaTypes.DATETIME},
-        {"name": "is_active", "type": schemaTypes.BOOL},
-        {"name": "is_reactive", "type": schemaTypes.BOOL},
-        {"name": "last_modified_datetime_z", "type": schemaTypes.DATETIME},
+        {"name": "client_id", "type": schemaTypes.INTEGER, "description": "Client identifier on Mudafy"},   
+        {"name": "from_datetime_z", "type": schemaTypes.DATETIME, "description": "Datetime since the user is active"},
+        {"name": "to_datetime_z", "type": schemaTypes.DATETIME, "description": "Datetime until the user is active"},
+        {"name": "is_active", "type": schemaTypes.BOOL, "description": "Defines if the period during 'from_datetime_z' - 'to_datetime_z' period is a client activation"},
+        {"name": "is_reactive", "type": schemaTypes.BOOL, "description": "Defines if the period during 'from_datetime_z' - 'to_datetime_z' period is a client reactivation"},
+        {"name": "last_modified_datetime_z", "type": schemaTypes.DATETIME, "description": "Last event modification datetime"},
     ],
     "time_partitioning": {
         "field": "from_datetime_z",
