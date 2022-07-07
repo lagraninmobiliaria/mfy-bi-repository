@@ -88,11 +88,11 @@ def get_df_new_clients(df_creation_events: DataFrame, bq_client: Client, **conte
         .reset_index(drop= True)\
         [['client_id', 'creation_datetime_z']]
     
-    df_creation_events_to_append['from_datetime_z'] = [datetime.fromtimestamp(x) for x in df_creation_events_to_append['creation_datetime_z']]
+    df_creation_events_to_append['from_datetime_z'] = df_creation_events_to_append['creation_datetime_z'].apply(lambda x: x.to_pydatetime())
     df_creation_events_to_append.drop(columns=['creation_datetime_z'], inplace= True)
     df_creation_events_to_append['to_datetime_z'] = nan
     df_creation_events_to_append['is_active']= True
     df_creation_events_to_append['is_reactive']= False
-    df_creation_events_to_append['registered_datetime_z']= context['params'].get('data_interval_start')
+    df_creation_events_to_append['last_modified_datetime_z']= context['params'].get('data_interval_start')
 
     return df_creation_events_to_append
