@@ -1,6 +1,7 @@
 import os
 
 from datetime import datetime
+from webbrowser import get
 
 from google.cloud.bigquery import Client, LoadJobConfig, WriteDisposition, CreateDisposition
 
@@ -73,8 +74,8 @@ def get_df_new_clients(df_creation_events: DataFrame, bq_client: Client, **conte
     )
     with open(client_that_already_exists_query_path) as sql_file:
         client_that_already_exists_query= sql_file.read().format(
-            project_id= context['params'].project_id,
-            dataset_id= context['params'].dataset_id,
+            project_id= context['params'].get("project_id"),
+            dataset_id= context['params'].get("dataset_id"),
             list_client_ids= tuple(df_creation_events.client_id.unique())
         )
     
