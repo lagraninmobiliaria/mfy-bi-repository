@@ -78,6 +78,7 @@ FROM EXTERNAL_QUERY(
 
     FROM properties_property pp
     WHERE
-        pp.source_kind = '{}'
+            pp.source_kind = '{}'
+        AND pp.created_at IS NULL
     """
 )

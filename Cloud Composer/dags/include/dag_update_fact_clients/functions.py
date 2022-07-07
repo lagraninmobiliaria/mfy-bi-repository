@@ -83,7 +83,9 @@ def get_df_new_clients(df_creation_events: DataFrame, bq_client: Client, **conte
         query= client_that_already_exists_query
     ).to_dataframe().client_id.unique()
 
-    df_creation_events_to_append= df_creation_events[~df_creation_events.client_id.isin(client_that_already_exists_results)]\
+    mask_clients_dont_exist= ~df_creation_events.client_id.isin(client_that_already_exists_results)
+
+    df_creation_events_to_append= df_creation_events[mask_clients_dont_exist]\
         .copy() \
         .reset_index(drop= True)\
         [['client_id', 'creation_datetime_z']]
@@ -93,6 +95,6 @@ def get_df_new_clients(df_creation_events: DataFrame, bq_client: Client, **conte
     df_creation_events_to_append['to_datetime_z'] = nan
     df_creation_events_to_append['is_active']= True
     df_creation_events_to_append['is_reactive']= False
-    df_creation_events_to_append['last_modified_datetime_z']= context['params'].get('data_interval_start')
+    df_creation_events_to_append['last_modified_datetime_z']= context['data_interval_start']
 
     return df_creation_events_to_append
