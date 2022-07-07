@@ -1,14 +1,11 @@
-from genericpath import exists
 import os
-from posixpath import dirname
 
-from google.cloud.bigquery import Client
-from grpc import Status
+from datetime import datetime
+
+from google.cloud.bigquery import Client, LoadJobConfig, WriteDisposition, CreateDisposition
 
 from pandas import DataFrame
 from numpy import nan
-
-from datetime import datetime
 
 class DAGQueriesManager:
 
@@ -43,63 +40,58 @@ class DAGQueriesManager:
         with open(closed_client_events_query_path, 'r') as sql_file:
             self.closed_client_events_query= sql_file.read()
 
-def update_fact_clients_table(**context):
+def load_new_clients_to_fact_table(**context):
     
     bq_client= Client(project= context['params'].get('project_id'), location= 'us-central1')
     
-    bq_job_id_get_client_creation_events= context['task_instance'].xcom_pull('get_client_creation_events')
-    bq_job_get_client_creation_events= bq_client.get_job(job_id= bq_job_id_get_client_creation_events)
-    df_creation_events= bq_job_get_client_creation_events.to_dataframe()
+    bq_job_id= context['task_instance'].xcom_pull('get_client_creation_events')
+    bq_job= bq_client.get_job(job_id= bq_job_id)
+    df_creation_events= bq_job.to_dataframe()
 
-    creation_clients_rows= rows_for_new_clients(df_creation_events= df_creation_events, bq_client= bq_client, **context)
-    print(creation_clients_rows)
+    df_new_clients= get_df_new_clients(df_creation_events= df_creation_events, bq_client= bq_client, **context)
     
-    bq_job_id_get_client_reactivation_events= context['task_instance'].xcom_pull('get_client_reactivation_events')
-    bq_job_get_client_reactivation_events= bq_client.get_job(job_id= bq_job_id_get_client_reactivation_events)
-    df_reactivation_events= bq_job_get_client_reactivation_events.to_dataframe()
-    
-    bq_job_id_get_closed_client_events= context['task_instance'].xcom_pull('get_closed_client_events')
-    bq_job_get_closed_client_events= bq_client.get_job(job_id= bq_job_id_get_closed_client_events)
-    df_closed_client_events= bq_job_get_closed_client_events.to_dataframe()
+    print(
+        df_new_clients
+    )
+    # load_job= bq_client.load_table_from_dataframe(
+    #     dataframe= df_new_clients,
+    #     destination= f"{context['params'].get('project_id')}.{context['params'].get('mudata_curated')}.fact_clients", 
+    #     job_config= LoadJobConfig(
+    #         create_disposition= CreateDisposition.CREATE_NEVER,
+    #         write_disposition= WriteDisposition.WRITE_APPEND
+    #     )
+    # )
 
-def rows_for_new_clients(df_creation_events: DataFrame, bq_client: Client, **context) -> list:
-    
-    rows= []
+    # return load_job.job_id
 
-    for index in range(df_creation_events.shape[0]):
-        row= dict(
-            client_id= df_creation_events.iloc[index].client_id,
-            from_datetime_z= df_creation_events.iloc[index].creation_datetime_z
-                .to_pydatetime(),
-            to_datetime_z= nan,
-            is_active= True,
-            is_reactive=False,
-            last_modified_datetime_z= context['data_interval_start'],
+def get_df_new_clients(df_creation_events: DataFrame, bq_client: Client, **context) -> DataFrame:
+    
+    client_that_already_exists_query_path= os.path.join(
+        os.path.dirname(__file__),
+        'queries',
+        'client_that_already_exists.sql'
+    )
+    with open(client_that_already_exists_query_path) as sql_file:
+        client_that_already_exists_query= sql_file.read().format(
+            project_id= context['params'].project_id,
+            dataset_id= context['params'].dataset_id,
+            list_client_ids= tuple(df_creation_events.client_id.unique())
         )
-
-        check_record_existance_query_path= os.path.join(
-            dirname(__file__),
-            'queries',
-            'client_creation_already_exists.sql'
-        )
-        with open(check_record_existance_query_path, 'r') as sql_file:
-            check_record_existance_query= sql_file.read().format(
-                project_id= context['params'].get('project_id'),
-                dataset_id= context['params'].get('mudata_curated'),
-                table_id= 'fact_clients',
-                field_name= 'client_id',
-                field_value= row.get('client_id')
-            )
-
-        record_exists= bq_client\
-            .query(query= check_record_existance_query)\
-            .result()\
-            .total_rows >= 1
-
-        if not record_exists:
-            rows.append(row)
     
-    return rows
-    
+    client_that_already_exists_results= bq_client.query(
+        query= client_that_already_exists_query
+    ).to_dataframe().client_id.unique()
 
+    df_creation_events_to_append= df_creation_events[~df_creation_events.client_id.isin(client_that_already_exists_results)]\
+        .copy() \
+        .reset_index(drop= True)\
+        [['client_id', 'creation_datetime_z']]
     
+    df_creation_events_to_append['from_datetime_z'] = [datetime.fromtimestamp(x) for x in df_creation_events_to_append['creation_datetime_z']]
+    df_creation_events_to_append.drop(columns=['creation_datetime_z'], inplace= True)
+    df_creation_events_to_append['to_datetime_z'] = nan
+    df_creation_events_to_append['is_active']= True
+    df_creation_events_to_append['is_reactive']= False
+    df_creation_events_to_append['registered_datetime_z']= context['params'].get('data_interval_start')
+
+    return df_creation_events_to_append
