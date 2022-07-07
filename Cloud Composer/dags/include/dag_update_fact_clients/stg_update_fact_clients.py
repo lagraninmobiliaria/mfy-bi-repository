@@ -60,9 +60,6 @@ with DAG(
     task_process_data_to_update_fact_clients= PythonOperator(
         task_id= 'process_data_to_update_fact_clients',
         python_callable= update_fact_clients_table,
-        op_kwargs= dict(
-            upstream_task_ids= [task_get_client_creation_events.task_id, task_get_client_reactivation_events.task_id, task_get_closed_client_events.task_id]
-        )
     )
 
     task_end_dag= DummyOperator(
