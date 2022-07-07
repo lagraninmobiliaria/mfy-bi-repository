@@ -50,8 +50,6 @@ def load_new_clients_to_fact_table(**context):
     df_creation_events= bq_job.to_dataframe()
 
     df_new_clients= get_df_new_clients(df_creation_events= df_creation_events, bq_client= bq_client, **context)
-    
-    print(df_new_clients.info())
 
     load_job= bq_client.load_table_from_dataframe(
         dataframe= df_new_clients,
