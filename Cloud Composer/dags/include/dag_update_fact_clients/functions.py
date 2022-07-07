@@ -35,11 +35,8 @@ class DAGQueriesManager:
         with open(closed_client_events_query_path, 'r') as sql_file:
             self.closed_client_events_query= sql_file.read()
 
-def update_fact_clients_table(**context):
+def update_fact_clients_table(upstream_task_ids, **context):
     
     bq_client= Client(project= context['params'].get('project_id'), location= 'us-central1')
     
-    upstream_task_ids= context['task_instance'].upstream_task_ids
-
     print(upstream_task_ids)
-
