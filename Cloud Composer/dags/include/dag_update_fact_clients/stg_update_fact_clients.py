@@ -2,11 +2,12 @@ from datetime import datetime
 
 from dependencies.keys_and_constants import STG_PARAMS
 
-from include.dag_update_fact_clients.functions          import DAGQueriesManager
+from include.dag_update_fact_clients.functions          import DAGQueriesManager, update_fact_clients_table
 
 from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
 from airflow.operators.dummy                            import DummyOperator
+from airflow.operators.python                           import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJobOperator
 
 with DAG(
@@ -56,8 +57,14 @@ with DAG(
         }
     )
 
+    task_process_data_to_update_fact_clients= PythonOperator(
+        task_id= 'process_data_to_update_fact_clients',
+        python_callable= update_fact_clients_table
+    )
+
     task_end_dag= DummyOperator(
         task_id= "end_dag"
     )
 
-    task_start_dag >> [task_get_client_creation_events, task_get_client_reactivation_events, task_get_closed_client_events] >> task_end_dag
+    task_start_dag >> [task_get_client_creation_events, task_get_client_reactivation_events, task_get_closed_client_events] \
+    >> task_process_data_to_update_fact_clients >>task_end_dag

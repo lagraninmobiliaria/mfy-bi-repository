@@ -1,5 +1,7 @@
 import os
 
+from google.cloud.bigquery import Client
+
 class DAGQueriesManager:
 
     def __init__(
@@ -32,3 +34,12 @@ class DAGQueriesManager:
         )
         with open(closed_client_events_query_path, 'r') as sql_file:
             self.closed_client_events_query= sql_file.read()
+
+def update_fact_clients_table(**context):
+    
+    bq_client= Client(project= context['params'].get('project_id'), location= 'us-central1')
+    
+    upstream_task_ids= context['task_instance'].upstrem_task_ids
+
+    print(upstream_task_ids)
+
