@@ -16,6 +16,6 @@ with DAG(
 
     for table in list_tables:
         task= DummyOperator(
-            task_id= f'transfer_data_{table}',
+            task_id= f'transfer_data_{table.table_id}',
         )
 
