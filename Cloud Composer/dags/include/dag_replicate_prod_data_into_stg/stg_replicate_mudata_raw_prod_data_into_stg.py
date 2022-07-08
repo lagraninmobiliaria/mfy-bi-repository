@@ -4,7 +4,6 @@ from dependencies.keys_and_constants import PROD_DATASET_MUDATA_RAW_TABLES, STG_
 
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
-from airflow.operators.bash import BashOperator
 from airflow.providers.google.cloud.transfers.bigquery_to_bigquery import BigQueryToBigQueryOperator
 
 from google.cloud.bigquery import WriteDisposition, CreateDisposition
@@ -23,6 +22,11 @@ with DAG(
     }
 ) as dag:
 
+    task_start_dag= DummyOperator(
+        task_id= 'start_dag'
+    )
+
+    transfer_tasks= []
     for table in list_tables:
         task= BigQueryToBigQueryOperator(
             task_id= f"transfer_data_{table.table_id}",
@@ -40,3 +44,10 @@ with DAG(
             write_disposition= WriteDisposition.WRITE_TRUNCATE
         )
 
+        transfer_tasks.append(task)
+
+    task_end_dag= DummyOperator(
+        task_id= 'end_dag'
+    )
+
+    task_start_dag >> transfer_tasks >> task_end_dag
