@@ -34,6 +34,11 @@ class schemaTypes:
     INTEGER= "INTEGER"
     FLOAT= "FLOAT64"
 
+class CLIENT_EVENTS:
+    CREATION= "create_client_event"
+    REACTIVATION= "reactivate_client_event"
+    CLOSURE= "close_client_event"
+
 std_default_args_dag = dict(
     is_paused_upon_creation= True,
     owner= 'airflow',
