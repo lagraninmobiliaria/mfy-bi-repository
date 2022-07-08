@@ -29,6 +29,7 @@ with DAG(
     transfer_tasks= []
     for table in list_tables:
         task= BigQueryToBigQueryOperator(
+            gcp_conn_id= 'google_cloud_default',
             task_id= f"transfer_data_{table.table_id}",
             source_project_dataset_tables= '.'.join([
                 "{{ params.prod_params['mudata_raw'] }}", 
