@@ -1,11 +1,12 @@
 import os
 
 from datetime import datetime
-from webbrowser import get
+
+from dependencies.keys_and_constants import CLIENT_EVENTS
 
 from google.cloud.bigquery import Client, LoadJobConfig, WriteDisposition, CreateDisposition
 
-from pandas import DataFrame
+from pandas import DataFrame, concat
 from numpy import nan
 
 class DAGQueriesManager:
@@ -94,3 +95,47 @@ def get_df_new_clients(df_creation_events: DataFrame, bq_client: Client, **conte
     df_creation_events_to_append['last_modified_datetime_z']= context['data_interval_start']
 
     return df_creation_events_to_append
+
+def load_clients_closures_and_reactivations_to_fact_table(**context):
+    
+    bq_client= Client(project= context['params'].get('project_id'), location= 'us-central1')
+    
+    bq_job_id_reactivations= context['task_instance'].xcom_pull('get_client_reactivation_events')
+    bq_job_reactivations= bq_client.get_job(job_id= bq_job_id_reactivations)
+    df_reactivations= bq_job_reactivations.to_dataframe()
+
+    bq_job_id_closures= context['task_instance'].xcom_pull('get_closed_client_events')
+    bq_job_closures= bq_client.get_job(job_id= bq_job_id_closures)
+    df_closures= bq_job_closures.to_dataframe()
+
+    df_reactivations_closures= concat(
+        objs= [df_reactivations, df_closures], 
+        ignore_index= True, 
+        join= 'inner'
+    )\
+        .sort_values(by= 'event_id', ascending= True)\
+        .reset_index(drop= True)
+    
+    client_ids_list= list(df_reactivations_closures.client_id.unique())
+    for client_id in client_ids_list:
+        df_client_reactivations_closures= df_reactivations_closures[
+            df_reactivations_closures.client_id == client_id
+        ]\
+            .copy()
+
+        update_client_fact_table_record(
+            client_id= client_id, 
+            df_client_reactivations_closures= df_client_reactivations_closures
+        )
+
+def update_client_fact_table_record(client_id, df_client_reactivations_closures):
+
+    for row in df_client_reactivations_closures:
+        if row.kind == CLIENT_EVENTS.REACTIVATION:
+            print(
+                f"!{client_id} - {row.kind}!"
+            )
+        elif row.kind == CLIENT_EVENTS.CLOSURE:
+            print(
+                f"¡{client_id} - {row.kind}¡"
+            )

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from dependencies.keys_and_constants import STG_PARAMS
 
-from include.dag_update_fact_clients.functions          import DAGQueriesManager, load_new_clients_to_fact_table
+from include.dag_update_fact_clients.functions          import DAGQueriesManager, load_new_clients_to_fact_table, load_clients_closures_and_reactivations_to_fact_table
 
 from airflow                                            import DAG
 from airflow.utils.trigger_rule                         import TriggerRule
@@ -62,9 +62,15 @@ with DAG(
         python_callable= load_new_clients_to_fact_table,
     )
 
+    task_load_clients_closures_and_reactivations_to_fact_table= PythonOperator(
+        task_id= 'load_clients_closures_and_reactivations_to_fact_table',
+        python_callable= load_clients_closures_and_reactivations_to_fact_table
+    )
+
     task_end_dag= DummyOperator(
         task_id= "end_dag"
     )
 
     task_start_dag >> [task_get_client_creation_events, task_get_client_reactivation_events, task_get_closed_client_events] \
-    >> task_load_new_clients_to_fact_table >> task_end_dag
+    >> task_load_new_clients_to_fact_table \
+    >> task_load_clients_closures_and_reactivations_to_fact_table >> task_end_dag
