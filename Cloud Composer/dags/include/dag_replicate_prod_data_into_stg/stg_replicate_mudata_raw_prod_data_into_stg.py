@@ -31,12 +31,10 @@ with DAG(
         task= BigQueryToBigQueryOperator(
             task_id= f"transfer_data_{table.table_id}",
             source_project_dataset_tables= '.'.join([
-                "{{ params.prod_params['project_id'] }}", 
                 "{{ params.prod_params['mudata_raw'] }}", 
                 table.table_id
             ]),
             destination_project_dataset_table='.'.join([
-                "{{ params.stg_params['project_id'] }}", 
                 "{{ params.stg_params['mudata_raw'] }}",
                 table.table_id
             ]),
