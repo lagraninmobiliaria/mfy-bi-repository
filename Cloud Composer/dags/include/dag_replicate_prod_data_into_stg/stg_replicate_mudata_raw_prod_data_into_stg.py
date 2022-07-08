@@ -8,7 +8,7 @@ from airflow.providers.google.cloud.transfers.bigquery_to_bigquery import BigQue
 
 from google.cloud.bigquery import WriteDisposition, CreateDisposition
 
-list_tables= PROD_DATASET_MUDATA_RAW_TABLES[-1]
+list_tables= PROD_DATASET_MUDATA_RAW_TABLES
 
 with DAG(
     dag_id= 'stg_replicate_mudata_raw_prod_data_into_stg',
