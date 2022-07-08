@@ -4,9 +4,9 @@ from dependencies.keys_and_constants import PROD_DATASET_MUDATA_RAW_TABLES, STG_
 
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
-from airflow.providers.google.cloud.transfers.bigquery_to_bigquery import BigQueryToBigQueryOperator
+from airflow.operators.python import PythonOperator
 
-from google.cloud.bigquery import WriteDisposition, CreateDisposition
+from include.dag_replicate_mudata_raw_prod_data_into_stg.functions import transfer_data
 
 list_tables= PROD_DATASET_MUDATA_RAW_TABLES
 
@@ -28,20 +28,12 @@ with DAG(
 
     transfer_tasks= []
     for table in list_tables:
-        task= BigQueryToBigQueryOperator(
-            gcp_conn_id= 'google_cloud_default',
+        task= PythonOperator(
             task_id= f"transfer_data_{table.table_id}",
-            source_project_dataset_tables= '.'.join([
-                "{{ params.prod_params['mudata_raw'] }}", 
-                table.table_id
-            ]),
-            destination_project_dataset_table='.'.join([
-                "{{ params.stg_params['mudata_raw'] }}",
-                table.table_id
-            ]),
-            create_disposition= CreateDisposition.CREATE_IF_NEEDED,
-            write_disposition= WriteDisposition.WRITE_TRUNCATE,
-            location= 'us-central1'
+            python_callable= transfer_data,
+            op_kwargs={
+                'table_id': table.table_id
+            }
         )
 
         transfer_tasks.append(task)
