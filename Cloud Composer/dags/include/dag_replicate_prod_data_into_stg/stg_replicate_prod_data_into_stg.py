@@ -1,10 +1,11 @@
 from datetime import datetime
+from turtle import back
 
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
+from airflow.operators.bash import BashOperator
 from airflow.providers.google.cloud.transfers.bigquery_to_bigquery import BigQueryToBigQueryOperator
 from dependencies.keys_and_constants import STG_DATASET_MUDATA_RAW_TABLES
-from google.cloud.bigquery import Client
 
 list_tables= STG_DATASET_MUDATA_RAW_TABLES
 
@@ -14,8 +15,7 @@ with DAG(
     schedule_interval= "@once"
 ) as dag:
 
-    for table in list_tables:
-        task= DummyOperator(
-            task_id= f'transfer_data_{table.table_id}',
-        )
+    BashOperator(
+        bash_command= f"echo {[table.table_id for table in list_tables]}"
+    )
 
