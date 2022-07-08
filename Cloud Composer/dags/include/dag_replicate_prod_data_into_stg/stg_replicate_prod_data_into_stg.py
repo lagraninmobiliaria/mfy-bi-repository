@@ -3,11 +3,10 @@ from datetime import datetime
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
 from airflow.providers.google.cloud.transfers.bigquery_to_bigquery import BigQueryToBigQueryOperator
-
+from dependencies.keys_and_constants import STG_DATASET_MUDATA_RAW_TABLES
 from google.cloud.bigquery import Client
 
-bq_client= Client(project= 'infrastructure-lgi', location= 'us-central1')
-list_tables= bq_client.list_tables(dataset= 'prod_mudata_raw')
+list_tables= STG_DATASET_MUDATA_RAW_TABLES
 
 with DAG(
     dag_id= 'stg_replicate_prod_data_into_stg',
