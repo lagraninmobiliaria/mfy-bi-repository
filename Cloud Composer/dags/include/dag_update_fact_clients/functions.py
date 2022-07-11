@@ -212,7 +212,7 @@ def define_client_status(client_id, bq_client: Client, **context):
     )
     with open(define_client_status_query_path, 'r') as sql_file:
         define_client_status_query= sql_file.read().format(
-            project_id= context['params'].get('client_id'),
+            project_id= context['params'].get('project_id'),
             dataset_id= context['params'].get('mudata_curated'),
             client_id= client_id
         )
