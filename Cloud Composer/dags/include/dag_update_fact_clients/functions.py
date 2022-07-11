@@ -7,7 +7,7 @@ from dependencies.keys_and_constants import CLIENT_EVENTS
 from google.cloud.bigquery import Client, LoadJobConfig, WriteDisposition, CreateDisposition
 
 from pandas import DataFrame, concat
-from numpy import nan
+from numpy import isnat
 
 class DAGQueriesManager:
 
@@ -236,7 +236,7 @@ def define_client_status(client_id, bq_client: Client, **context):
         print(
             client_last_fact_record
         )
-        is_record_closed= isinstance(client_last_fact_record.get('to_datetime_z'), datetime)
+        is_record_closed= not isnat(client_last_fact_record.get('to_datetime_z'))
         is_reactivation_record= client_last_fact_record.get('is_reactive')
 
         if is_record_closed:
