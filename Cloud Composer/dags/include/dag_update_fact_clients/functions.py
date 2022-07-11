@@ -196,7 +196,6 @@ def update_client_fact_table_record(client_id: int, df_client_reactivations_clos
                     'queries',
                     'update_field_with_closure.sql'
                 ) 
-
                 with open(update_field_with_closure_query_path, 'r') as sql_file:
                     update_field_with_closure_query= sql_file.read().format(
                         project_id= context['params'].get('project_id'),
@@ -204,6 +203,8 @@ def update_client_fact_table_record(client_id: int, df_client_reactivations_clos
                         client_id= row.client_id,
                         to_datetime_z= row.created_at,
                     )
+                
+                print(update_field_with_closure_query)
 
                 bq_job= bq_client.query(query= update_field_with_closure_query)
                 bq_job.result()
