@@ -233,7 +233,9 @@ def define_client_status(client_id, bq_client: Client, **context):
     
     if len(query_results):
         client_last_fact_record= query_results.pop()
-
+        print(
+            client_last_fact_record
+        )
         is_record_closed= isinstance(client_last_fact_record.get('to_datetime_z'), datetime)
         is_reactivation_record= client_last_fact_record.get('is_reactive')
 
