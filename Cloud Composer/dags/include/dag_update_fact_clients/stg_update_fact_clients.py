@@ -15,6 +15,7 @@ with DAG(
     start_date= datetime(2022, 1, 1),
     end_date= datetime(2022, 2, 1),
     schedule_interval= "@daily",
+    max_active_runs= 1,
     is_paused_upon_creation= True,
     catchup= True,
     tags= ['staging'],

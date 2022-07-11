@@ -163,7 +163,7 @@ def update_client_fact_table_record(client_id: int, df_client_reactivations_clos
                         from_datetime_z= row.created_at,
                         is_active= True,
                         is_reactive= True,
-                        last_modified_datetime_z= context['interval_data_start']
+                        last_modified_datetime_z= context['data_interval_start']
                     )]
                 )
                 bq_client.load_table_from_dataframe(
