@@ -50,16 +50,17 @@ def load_new_clients_to_fact_table(**context):
     bq_job= bq_client.get_job(job_id= bq_job_id)
     df_creation_events= bq_job.to_dataframe()
 
-    df_new_clients= get_df_new_clients(df_creation_events= df_creation_events, bq_client= bq_client, **context)
+    if df_creation_events.shape[0]:
+        df_new_clients= get_df_new_clients(df_creation_events= df_creation_events, bq_client= bq_client, **context)
 
-    load_job= bq_client.load_table_from_dataframe(
-        dataframe= df_new_clients,
-        destination= f"{context['params'].get('project_id')}.{context['params'].get('mudata_curated')}.fact_clients", 
-        job_config= LoadJobConfig(
-            create_disposition= CreateDisposition.CREATE_NEVER,
-            write_disposition= WriteDisposition.WRITE_APPEND
+        load_job= bq_client.load_table_from_dataframe(
+            dataframe= df_new_clients,
+            destination= f"{context['params'].get('project_id')}.{context['params'].get('mudata_curated')}.fact_clients", 
+            job_config= LoadJobConfig(
+                create_disposition= CreateDisposition.CREATE_NEVER,
+                write_disposition= WriteDisposition.WRITE_APPEND
+            )
         )
-    )
 
     return load_job.job_id
 
