@@ -149,8 +149,11 @@ def update_client_fact_table_record(client_id: int, df_client_reactivations_clos
     if client_last_status is not None:
         for index, row in df_client_reactivations_closures.iterrows():
             print(
+                f"Client ID: {row.client_id}",
+                f"Previous status: {client_last_status}",
                 f"Row kind: {row.kind}", 
-                f"Row created_at: {row.created_at}"
+                f"Row created_at: {row.created_at}",
+                sep='\n'
             )
 
             if (
@@ -166,6 +169,11 @@ def update_client_fact_table_record(client_id: int, df_client_reactivations_clos
                         last_modified_datetime_z= context['data_interval_start']
                     )]
                 )
+
+                print(
+                    load_row.values
+                )
+
                 bq_client.load_table_from_dataframe(
                     dataframe= load_row,
                     destination= f"{context['params'].get('project_id')}.{context['params'].get('mudata_curated')}.fact_clients",
