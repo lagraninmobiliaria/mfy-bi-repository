@@ -142,7 +142,7 @@ def load_clients_closures_and_reactivations_to_fact_table(**context):
                 df_client_reactivations_closures= df_client_reactivations_closures,
                 client_last_status= client_last_status,
                 bq_client= bq_client,
-
+                **context
             )
 
 def update_client_fact_table_record(client_id: int, df_client_reactivations_closures: DataFrame, client_last_status: str, bq_client: Client,  **context):
