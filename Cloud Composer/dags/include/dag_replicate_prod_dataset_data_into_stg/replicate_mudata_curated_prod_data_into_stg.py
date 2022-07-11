@@ -16,7 +16,7 @@ with DAG(
     schedule_interval= None,
     is_paused_upon_creation= True,
     catchup= False,
-    # tags=[DAGTags.DATA_TRANSFER],
+    tags=[DAGTags.DATA_TRANSFER],
     params= {
         'stg_params': STG_PARAMS,
         'prod_params': PROD_PARAMS
