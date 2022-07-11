@@ -117,25 +117,119 @@ def load_clients_closures_and_reactivations_to_fact_table(**context):
         .reset_index(drop= True)
     
     client_ids_list= list(df_reactivations_closures.client_id.unique())
+
     for client_id in client_ids_list:
+
         df_client_reactivations_closures= df_reactivations_closures[
             df_reactivations_closures.client_id == client_id
         ]\
             .copy()
 
-        update_client_fact_table_record(
+        client_last_status= define_client_status(
             client_id= client_id, 
-            df_client_reactivations_closures= df_client_reactivations_closures
+            bq_client= bq_client, 
+            **context
         )
 
-def update_client_fact_table_record(client_id, df_client_reactivations_closures):
+        if (
+                client_last_status is not None 
+            and df_client_reactivations_closures.shape[0]
+        ):
+            update_client_fact_table_record(
+                client_id= client_id,
+                df_client_reactivations_closures= df_client_reactivations_closures,
+                client_last_status= client_last_status,
+                bq_client= bq_client,
 
-    for row in df_client_reactivations_closures:
-        if row.kind == CLIENT_EVENTS.REACTIVATION:
-            print(
-                f"!{client_id} - {row.kind}!"
             )
-        elif row.kind == CLIENT_EVENTS.CLOSURE:
+
+def update_client_fact_table_record(client_id: int, df_client_reactivations_closures: DataFrame, client_last_status: str, bq_client: Client,  **context):
+
+
+    if client_last_status is not None:
+        for index, row in df_client_reactivations_closures.iterrows():
             print(
-                f"¡{client_id} - {row.kind}¡"
+                f"Row kind: {row.kind}", 
+                f"Row created_at: {row.created_at}"
             )
+
+            if (
+                    (row.kind==CLIENT_EVENTS.REACTIVATION) 
+                and (client_last_status==CLIENT_EVENTS.CLOSURE)
+            ):
+                load_row= DataFrame(
+                    data= [dict(
+                        client_id= client_id,
+                        from_datetime_z= row.created_at,
+                        is_active= True,
+                        is_reactive= True,
+                        last_modified_datetime_z= context['interval_data_start']
+                    )]
+                )
+                bq_client.load_table_from_dataframe(
+                    dataframe= load_row,
+                    destination= f"{context['params'].get('project_id')}.{context['params'].get('mudata_curated')}.fact_clients",
+                    job_config= LoadJobConfig(
+                        create_disposition= CreateDisposition.CREATE_NEVER,
+                        write_disposition= WriteDisposition.WRITE_APPEND
+                    )
+                )
+                
+                client_last_status= CLIENT_EVENTS.REACTIVATION
+
+            elif (
+                    (row.kind == CLIENT_EVENTS.CLOSURE) 
+                and (client_last_status in (CLIENT_EVENTS.CREATION, CLIENT_EVENTS.REACTIVATION))
+            ):
+                update_field_with_closure_query_path= os.path.join(
+                    os.path.dirname(__file__),
+                    'queries',
+                    'update_field_with_closure.sql'
+                ) 
+
+                with open(update_field_with_closure_query_path, 'r') as sql_file:
+                    update_field_with_closure_query= sql_file.read().format(
+                        project_id= context['params'].get('project_id'),
+                        dataset_id= context['params'].get('mudata_curated'),
+                        client_id= row.client_id,
+                        to_datetime_z= row.created_at,
+                    )
+
+                bq_job= bq_client.query(query= update_field_with_closure_query)
+                bq_job.result()
+
+                client_last_status= CLIENT_EVENTS.CLOSURE
+
+    else:
+        print(f"{client_id} is not in fact_clients and reactivation or closure events appear")
+    
+def define_client_status(client_id, bq_client: Client, **context):
+
+    define_client_status_query_path= os.path.join(
+        os.path.dirname(__file__),
+        'queries',
+        'define_client_status.sql'
+    )
+    with open(define_client_status_query_path, 'r') as sql_file:
+        define_client_status_query= sql_file.read().format(
+            project_id= context['params'].get('client_id'),
+            dataset_id= context['params'].get('mudata_curated'),
+            client_id= client_id
+        )
+
+    query_results= bq_client.query(query= define_client_status_query)\
+        .to_dataframe()\
+        .to_dict('records')
+    
+    if len(query_results):
+        client_last_fact_record= query_results.pop()
+
+        is_record_closed= isinstance(client_last_fact_record.get('to_datetime_z'), datetime)
+        is_reactivation_record= client_last_fact_record.get('is_reactive')
+
+        if is_record_closed:
+            return CLIENT_EVENTS.CLOSURE
+        elif is_reactivation_record:
+            return CLIENT_EVENTS.REACTIVATION
+        else:
+            return CLIENT_EVENTS.CREATION

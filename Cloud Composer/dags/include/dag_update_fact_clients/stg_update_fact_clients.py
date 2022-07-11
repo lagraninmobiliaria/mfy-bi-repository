@@ -12,8 +12,8 @@ from airflow.providers.google.cloud.operators.bigquery  import BigQueryInsertJob
 
 with DAG(
     dag_id= 'stg_update_fact_clients',
-    start_date= datetime(2020, 4, 13),
-    end_date= datetime(2020, 4, 20),
+    start_date= datetime(2022, 1, 1),
+    end_date= datetime(2022, 2, 1),
     schedule_interval= "@daily",
     is_paused_upon_creation= True,
     catchup= True,
