@@ -75,7 +75,7 @@ def get_df_new_clients(df_creation_events: DataFrame, bq_client: Client, **conte
         client_that_already_exists_query= sql_file.read().format(
             project_id= context['params'].get("project_id"),
             dataset_id= context['params'].get("mudata_curated"),
-            list_client_ids= tuple(df_creation_events.client_id.unique())
+            list_client_ids= list(df_creation_events.client_id.unique())
         )
     print(client_that_already_exists_query)
     
