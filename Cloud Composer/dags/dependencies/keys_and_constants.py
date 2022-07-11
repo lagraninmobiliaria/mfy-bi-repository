@@ -53,10 +53,9 @@ class CLIENT_EVENTS:
     CLOSURE= "close_client_event"
 
 class DAGTags:
-    PRODUCTION= 'production',
-    STAGING= 'staging',
-    DATA_TRANSFER= 'data_transfer',
-    CLIENTS_MODELS= 'clients_models'
+    PRODUCTION= 'production'
+    STAGING= 'staging'
+    DATA_TRANSFER= 'data_transfer'
 
 std_default_args_dag = dict(
     is_paused_upon_creation= True,
