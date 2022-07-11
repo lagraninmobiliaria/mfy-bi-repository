@@ -62,7 +62,7 @@ def load_new_clients_to_fact_table(**context):
             )
         )
 
-    return load_job.job_id
+        return load_job.job_id
 
 def get_df_new_clients(df_creation_events: DataFrame, bq_client: Client, **context) -> DataFrame:
     
