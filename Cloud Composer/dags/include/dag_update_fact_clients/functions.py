@@ -236,12 +236,12 @@ def define_client_status(client_id, bq_client: Client, **context):
         print(
             client_last_fact_record
         )
-        is_record_closed= not isnat(client_last_fact_record.get('to_datetime_z'))
-        is_reactivation_record= client_last_fact_record.get('is_reactive')
+        is_record_active= client_last_fact_record.get('is_active')
+        is_record_reactive= client_last_fact_record.get('is_reactive')
 
-        if is_record_closed:
+        if not is_record_active:
             return CLIENT_EVENTS.CLOSURE
-        elif is_reactivation_record:
+        elif is_record_reactive:
             return CLIENT_EVENTS.REACTIVATION
         else:
             return CLIENT_EVENTS.CREATION
