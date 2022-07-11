@@ -1,6 +1,5 @@
 from google.cloud.bigquery import Client, CopyJobConfig, WriteDisposition, CreateDisposition
 
-
 def transfer_data(table_id, **context):
     
     bq_client= Client(
