@@ -4,9 +4,10 @@ from datetime import timedelta
 
 from google.cloud.bigquery import Client
 
-bq_client= Client()
 
 PROJECT_ID = os.getenv('_PROJECT_ID')
+bq_client= Client(project= PROJECT_ID)
+
 DATASET_MUDATA_RAW = os.getenv('_DATASET_MUDATA_RAW')
 DATASET_MUDATA_CURATED = os.getenv('_DATASET_MUDATA_CURATED')
 DATASET_MUDATA_AGGREGATED = os.getenv('_DATASET_MUDATA_AGGREGATED')
@@ -50,6 +51,12 @@ class CLIENT_EVENTS:
     CREATION= "create_client_event"
     REACTIVATION= "reactivate_client_event"
     CLOSURE= "close_client_event"
+
+class DAGTags:
+    PRODUCTION= 'production',
+    STAGING= 'staging',
+    DATA_TRANSFER= 'data_transfer',
+    CLIENTS_MODELS= 'clients_models'
 
 std_default_args_dag = dict(
     is_paused_upon_creation= True,
