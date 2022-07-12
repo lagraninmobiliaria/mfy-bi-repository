@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from dependencies.keys_and_constants import STG_PARAMS
 
@@ -29,7 +29,8 @@ with DAG(
         poke_interval= 30,
         timeout= 30*60,
         external_dag_id= "{{ params.env_prefix }}" + "_update_fact_clients",
-        external_task_id= "end_dag"
+        external_task_id= "end_dag",
+        execution_delta= timedelta(days= 1)
     )
 
     # sensor_check_clients_creations_dagrun= ExternalTaskSensor(
