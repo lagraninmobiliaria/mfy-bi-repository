@@ -27,7 +27,7 @@ with DAG(
     sensor_check_previous_dagrun_successful= ExternalTaskSensor(
         task_id= "check_previous_dagrun_successful",
         poke_interval= 30,
-        timeour= 30*60,
+        timeout= 30*60,
         external_dag_id= "{{ params.env_prefix }}" + "_update_fact_clients",
         external_task_id= "end_dag"
     )
