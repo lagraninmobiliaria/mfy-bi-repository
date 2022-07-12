@@ -24,6 +24,14 @@ with DAG(
 
     queries_manager= DAGQueriesManager()
 
+    sensor_check_previous_dagrun_successful= ExternalTaskSensor(
+        task_id= "check_previous_dagrun_successful",
+        poke_interval= 30,
+        timeour= 30*60,
+        external_dag_id= "{{ params.env_prefix }}" + "_update_fact_clients",
+        external_task_id= "end_dag"
+    )
+
     # sensor_check_clients_creations_dagrun= ExternalTaskSensor(
     #     task_id= 'check_clients_creations',
     #     poke_interval= 30,
@@ -49,7 +57,8 @@ with DAG(
     # )
 
     task_start_dag= DummyOperator(
-        task_id= "start_dag"
+        task_id= "start_dag",
+        trigger_rule= TriggerRule.ALL_SUCCESS
     )
 
     task_get_client_creation_events= BigQueryInsertJobOperator(
@@ -96,6 +105,7 @@ with DAG(
         task_id= "end_dag"
     )
 
+    sensor_check_previous_dagrun_successful >> task_start_dag
     # [sensor_check_clients_creations_dagrun, sensor_check_clients_reactivations_dagrun, sensor_check_clients_closure_dagrun] >> task_start_dag
     task_start_dag >> [task_get_client_creation_events, task_get_client_reactivation_events, task_get_closed_client_events] \
     >> task_load_new_clients_to_fact_table \

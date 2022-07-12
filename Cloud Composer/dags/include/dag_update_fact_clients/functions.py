@@ -202,6 +202,7 @@ def update_client_fact_table_record(client_id: int, df_client_reactivations_clos
                         dataset_id= context['params'].get('mudata_curated'),
                         client_id= row.client_id,
                         to_datetime_z= row.created_at,
+                        last_modified_datetime_z= context['data_interval_start']
                     )
                 
                 print(update_field_with_closure_query)
