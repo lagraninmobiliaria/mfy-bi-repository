@@ -5,6 +5,6 @@ FROM EXTERNAL_QUERY(
     """
     SELECT
         {string_for_select}
-    FROM properties_developments
+    FROM properties_development
     """
 )
