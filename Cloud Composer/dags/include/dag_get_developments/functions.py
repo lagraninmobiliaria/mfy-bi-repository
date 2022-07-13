@@ -15,21 +15,18 @@ def build_query_to_get_developments(schema_fields, **context):
         table_schema.columns
     )
 
-    for _, row in table_schema.iterrows():
-        print(row)
+    for index, row in table_schema.iterrows():
 
         if row.name == 'latitude':
-            row.name_for_query= "ST_Y (ST_Transform (coordinates, 4326))" 
+            table_schema.iloc[index, 'name_for_query']= "ST_Y (ST_Transform (coordinates, 4326))" 
         elif row.name == 'longitude':
-            row.name_for_query= "ST_X (ST_Transform (coordinates, 4326))"
+            table_schema.iloc[index, 'name_for_query']= "ST_X (ST_Transform (coordinates, 4326))"
         else:
-            row.name_for_query= row.name
+            table_schema.iloc[index, 'name_for_query']= row.name
 
         columns_for_select\
-            .append(f"{row.name_for_query} AS {row.name}")
-    
-        print(row)
-        
+            .append(f"{ table_schema.iloc[index, 'name_for_query']} AS {row.name}")
+
     string_for_select= ',\n'.join(columns_for_select)
     get_developments_query_path= os.path.join(
         os.path.dirname(__file__),
