@@ -1,3 +1,4 @@
+from webbrowser import get
 from pendulum import datetime
 
 from dependencies.keys_and_constants import STG_PARAMS
@@ -9,6 +10,8 @@ from airflow import DAG
 from airflow.operators.dummy import DummyOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+
+from google.cloud.bigquery import WriteDisposition, CreateDisposition
 
 with DAG(
     dag_id= 'stg_get_developments',
@@ -28,19 +31,30 @@ with DAG(
         schema_fields= DEVELOPMENTS.get('schema_fields')
     )
 
-    task_get_developments_from_mudafy_db= BigQueryInsertJobOperator(
+    task_query_developments_from_mudafy_db= BigQueryInsertJobOperator(
         task_id= 'get_developments_from_mudafy_db',
         configuration= {
             "query": {
                 "query": query_to_get_developments,
-                "useLegacySql": False
+                "useLegacySql": False,
+                 "jobReference": {
+                    "projectId": "{{ params.project_id }}",
+                },
+                "destinationTable": {
+                    "projectId": "{{ params.project_id }}",
+                    "datasetId": "{{ params.mudata_raw }}",
+                    "tableId": DEVELOPMENTS.get('table_id')
+                }, 
+                "writeDisposition": WriteDisposition.WRITE_TRUNCATE,
+                "createDisposition": CreateDisposition.CREATE_NEVER,
             }
         }
     )
+
 
     task_end_dag= DummyOperator(
         task_id= 'end_dag'
     )
 
-    task_start_dag >> task_get_developments_from_mudafy_db >> task_end_dag
+    task_start_dag >> task_query_developments_from_mudafy_db >> task_end_dag
 
