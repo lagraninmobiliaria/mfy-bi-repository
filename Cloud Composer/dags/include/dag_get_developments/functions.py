@@ -21,7 +21,7 @@ def build_query_to_get_developments(schema_fields, **context):
             table_schema.loc[index, 'name_for_query']= row['name']
 
         columns_for_select\
-            .append(f"{ table_schema.loc[index, 'name_for_query']} AS {row['name'] if row['name'] != 'id' else 'development_id'}")
+            .append(f"{ table_schema.loc[index, 'name_for_query']  if row['name'] != 'development_id' else 'id'} AS {row['name']}")
 
     string_for_select= ',\n'.join(columns_for_select)
     get_developments_query_path= os.path.join(
