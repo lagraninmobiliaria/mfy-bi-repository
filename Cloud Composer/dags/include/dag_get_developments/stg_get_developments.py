@@ -8,6 +8,7 @@ from include.dag_get_developments.functions import build_query_to_get_developmen
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
 from airflow.operators.python import PythonOperator
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
 with DAG(
     dag_id= 'stg_get_developments',
@@ -23,11 +24,17 @@ with DAG(
         task_id= 'start_dag'
     )
 
-    task_build_query_to_get_developments= PythonOperator(
-        task_id= "build_query_to_get_developments",
-        python_callable= build_query_to_get_developments,
-        op_kwargs= {
-            'schema_fields': DEVELOPMENTS.get('schema_fields')
+    query_to_get_developments= build_query_to_get_developments(
+        schema_fields= DEVELOPMENTS.get('schema_fields')
+    )
+
+    task_get_developments_from_mudafy_db= BigQueryInsertJobOperator(
+        task_id= 'get_developments_from_mudafy_db',
+        configuration= {
+            "query": {
+                "query": query_to_get_developments,
+                "useLegacySql": False
+            }
         }
     )
 
@@ -35,5 +42,5 @@ with DAG(
         task_id= 'end_dag'
     )
 
-    task_start_dag >> task_build_query_to_get_developments >> task_end_dag
+    task_start_dag >> task_get_developments_from_mudafy_db >> task_end_dag
 
