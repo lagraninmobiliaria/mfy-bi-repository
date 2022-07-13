@@ -11,18 +11,14 @@ def build_query_to_get_developments(schema_fields, **context):
     table_schema= DataFrame(data= schema_fields)
     columns_for_select= []
 
-    print(
-        table_schema.columns
-    )
-
     for index, row in table_schema.iterrows():
 
         if row.name == 'latitude':
-            table_schema.iloc[index, 'name_for_query']= "ST_Y (ST_Transform (coordinates, 4326))" 
+            table_schema.loc[index, 'name_for_query']= "ST_Y (ST_Transform (coordinates, 4326))" 
         elif row.name == 'longitude':
-            table_schema.iloc[index, 'name_for_query']= "ST_X (ST_Transform (coordinates, 4326))"
+            table_schema.loc[index, 'name_for_query']= "ST_X (ST_Transform (coordinates, 4326))"
         else:
-            table_schema.iloc[index, 'name_for_query']= row.name
+            table_schema.loc[index, 'name_for_query']= row.name
 
         columns_for_select\
             .append(f"{ table_schema.iloc[index, 'name_for_query']} AS {row.name}")
