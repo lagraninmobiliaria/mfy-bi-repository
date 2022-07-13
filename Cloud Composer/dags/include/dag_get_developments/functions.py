@@ -14,14 +14,14 @@ def build_query_to_get_developments(schema_fields, **context):
     for index, row in table_schema.iterrows():
 
         if row['name'] == 'latitude':
-            table_schema.loc[index, 'name_for_query']= "ST_Y (ST_Transform (coordinates, 4326))" 
+            table_schema.loc[index, 'name_for_query']= "ST_Y (ST_Transform (coordinates, 4326))"
         elif row['name'] == 'longitude':
             table_schema.loc[index, 'name_for_query']= "ST_X (ST_Transform (coordinates, 4326))"
         else:
             table_schema.loc[index, 'name_for_query']= row['name']
 
         columns_for_select\
-            .append(f"{ table_schema.loc[index, 'name_for_query']} AS {row['name']}")
+            .append(f"{ table_schema.loc[index, 'name_for_query']} AS {row['name'] if row['name'] != 'id' else 'development_id'}")
 
     string_for_select= ',\n'.join(columns_for_select)
     get_developments_query_path= os.path.join(
