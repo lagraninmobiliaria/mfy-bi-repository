@@ -14,6 +14,7 @@ with DAG(
     start_date= datetime(2021, 1, 1),
     schedule_interval= "@once",
     is_paused_upon_creation= True,
+    tags= ['staging'], 
     catchup= False,
     params= STG_PARAMS
 ) as dag:

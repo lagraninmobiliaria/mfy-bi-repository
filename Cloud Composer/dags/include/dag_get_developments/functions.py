@@ -11,7 +11,13 @@ def build_query_to_get_developments(schema_fields, **context):
     table_schema= DataFrame(data= schema_fields)
     columns_for_select= []
 
+    print(
+        table_schema.columns
+    )
+
     for _, row in table_schema.iterrows():
+        print(row)
+
         if row.name == 'latitude':
             row.name_for_query= "ST_Y (ST_Transform (coordinates, 4326))" 
         elif row.name == 'longitude':
@@ -22,6 +28,8 @@ def build_query_to_get_developments(schema_fields, **context):
         columns_for_select\
             .append(f"{row.name_for_query} AS {row.name}")
     
+        print(row)
+        
     string_for_select= ',\n'.join(columns_for_select)
     get_developments_query_path= os.path.join(
         os.path.dirname(__file__),
