@@ -2,7 +2,6 @@ import os
 
 from pandas import DataFrame
 
-
 def build_query_to_get_developments(schema_fields, **context):
     
     if schema_fields is None:

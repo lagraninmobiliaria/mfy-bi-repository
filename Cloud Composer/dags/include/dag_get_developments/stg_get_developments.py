@@ -46,7 +46,7 @@ with DAG(
                     "tableId": DEVELOPMENTS.get('table_id')
                 }, 
                 "writeDisposition": WriteDisposition.WRITE_TRUNCATE,
-                "createDisposition": CreateDisposition.CREATE_NEVER,
+                "createDisposition": CreateDisposition.CREATE_IF_NEEDED,
             }
         }
     )
