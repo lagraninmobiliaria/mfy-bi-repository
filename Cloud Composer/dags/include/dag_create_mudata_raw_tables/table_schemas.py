@@ -187,7 +187,7 @@ DEVELOPMENTS= {
 }
 
 TICKETS = {
-    "table_id": "tickets_creation",
+    "table_id": "tickets",
     "schema_fields": [
         {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "ticket_id", "type": schemaTypes.INTEGER},
