@@ -185,3 +185,20 @@ DEVELOPMENTS= {
         "type": TimePartitioningType.DAY 
     },
 }
+
+TICKETS = {
+    "table_id": "tickets_creation",
+    "schema_fields": [
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
+        {"name": "ticket_id", "type": schemaTypes.INTEGER},
+        {"name": "client_id", "type": schemaTypes.INTEGER},
+        {"name": "country_code_iso2", "type": schemaTypes.STRING},
+        {"name": "opportunity_id", "type": schemaTypes.INTEGER},
+        {"name": "user_id", "type": schemaTypes.INTEGER},
+        {"name": "created_datetime_z", "type": schemaTypes.DATETIME},
+    ],
+    "time_partitioning": {
+        "field": "registered_datetime_z", 
+        "type": TimePartitioningType.DAY 
+    },
+}
