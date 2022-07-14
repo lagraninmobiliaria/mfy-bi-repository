@@ -7,7 +7,7 @@ FROM EXTERNAL_QUERY(
         us.first_name   AS name,
         us.email        AS email,
         prof.phone      AS phone,
-        oc.country      AS country
+        oc.country      AS country_code_iso2
 
     FROM accounts_profile prof
         LEFT JOIN auth_user us
