@@ -9,7 +9,7 @@ CLIENTS_CREATION = {
         {"name": "name", "type": schemaTypes.STRING},
         {"name": "email", "type": schemaTypes.STRING},
         {"name": "phone", "type": schemaTypes.STRING},
-        {"name": "country", "type": schemaTypes.STRING},
+        {"name": "country_code_iso2", "type": schemaTypes.STRING},
         {"name": "creation_datetime_z", "type": schemaTypes.DATETIME},
     ],
     "time_partitioning": {
@@ -43,11 +43,26 @@ BUYING_OPPORTUNITY_CASES = {
         {"name": "property_id", "type": schemaTypes.INTEGER},
         {"name": "development_id", "type": schemaTypes.INTEGER},
         {"name": "source", "type": schemaTypes.STRING},
-        {"name": "reference", "type": schemaTypes.STRING},
-        {"name": "is_new", "type": schemaTypes.BOOL}
+        {"name": "kind", "type": schemaTypes.STRING},
+        {"name": "previous_kind", "type": schemaTypes.STRING}
     ],
     "time_partitioning": {
         "field": "registered_datetime_z", 
+        "type": TimePartitioningType.DAY 
+    },
+}
+
+BUYING_OPPORTUNITY_REACTIVATION_EVENTS= {
+    "table_id": "BUYING_OPPORTUNITY_REACTIVATION_EVENTS".lower(),
+    "schema_fields": [
+        {"name": "event_id", "type": schemaTypes.INTEGER},
+        {"name": "opportunity_id", "type": schemaTypes.INTEGER},
+        {"name": "created_datetime_z", "type": schemaTypes.TIMESTAMP},
+        {"name": "kind", "type": schemaTypes.STRING},
+        {"name": "previous_kind", "type": schemaTypes.STRING},
+    ],
+    "time_partitioning": {
+        "field": "created_datetime_z", 
         "type": TimePartitioningType.DAY 
     },
 }
@@ -91,11 +106,8 @@ USER_ASSIGNMENTS = {
         {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "event_id", "type": schemaTypes.INTEGER},
         {"name": "client_id", "type": schemaTypes.INTEGER},
-        {"name": "ticket_id", "type": schemaTypes.INTEGER},
         {"name": "new_owner_id", "type": schemaTypes.INTEGER},
         {"name": "old_owner_id", "type": schemaTypes.INTEGER},
-        {"name": "from_datetime_z", "type": schemaTypes.DATETIME},
-        {"name": "to_datetime_z", "type": schemaTypes.DATETIME},
     ],
     "time_partitioning": {
         "field": "registered_datetime_z", 
@@ -103,20 +115,16 @@ USER_ASSIGNMENTS = {
     },
 }
 
-TICKETS = {
-    "table_id": "tickets",
+TICKETS_CREATION = {
+    "table_id": "tickets_creation",
     "schema_fields": [
         {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "ticket_id", "type": schemaTypes.INTEGER},
         {"name": "client_id", "type": schemaTypes.INTEGER},
-        {"name": "country_id", "type": schemaTypes.INTEGER},
+        {"name": "country_code_iso2", "type": schemaTypes.STRING},
         {"name": "opportunity_id", "type": schemaTypes.INTEGER},
         {"name": "user_id", "type": schemaTypes.INTEGER},
         {"name": "created_datetime_z", "type": schemaTypes.DATETIME},
-        {"name": "last_update_datetime_z", "type": schemaTypes.DATETIME},
-        {"name": "last_update_by", "type": schemaTypes.INTEGER},
-        {"name": "status", "type": schemaTypes.STRING},
-        {"name": "is_new", "type": schemaTypes.BOOL},
     ],
     "time_partitioning": {
         "field": "registered_datetime_z", 
@@ -173,7 +181,7 @@ DEVELOPMENTS= {
         {"name": "raw_description", "type": schemaTypes.STRING},
     ],
     "time_partitioning": {
-        "field": "", 
+        "field": "created_at", 
         "type": TimePartitioningType.DAY 
     },
 }
