@@ -10,7 +10,7 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryCreateEmpt
 tables_to_create= [
     CLIENTS_CREATION, CLIENTS_MAIL_SUBSCRIPTION, 
     BUYING_OPPORTUNITY_CASES, USER_ASSIGNMENTS,
-    TASKS, TICKETS, DEVELOPMENTS
+    TASKS, TICKETS_CREATION
 ]
 
 with DAG(
