@@ -1,5 +1,7 @@
 import os
 
+from textwrap import dedent
+
 from pandas import DataFrame
 
 from dependencies.keys_and_constants import schemaTypes
@@ -43,6 +45,25 @@ def get_select_row(row):
             else f"ST_X (ST_Transform (coordinates, 4326)) AS {row.NAME}"
     elif row.NAME == 'development_id':
         select_row= f"id AS {row.NAME}"
+    elif row.NAME == 'summary':
+        select_row= dedent("""
+            summary -> 'max_price' AS summary_max_price,
+            summary -> 'min_price' AS summary_min_price,
+            summary -> 'min_garages' AS summary_min_garages,
+            summary -> 'max_garages' AS summary_max_garages,
+            summary -> 'min_bedrooms' AS summary_min_bedrooms,
+            summary -> 'max_bedrooms' AS summary_max_bedrooms,
+            summary -> 'min_bathrooms' AS summary_min_bathrooms,
+            summary -> 'max_bathrooms' AS summary_max_bathrooms,
+            summary -> 'min_toilettes' AS summary_min_toilettes,
+            summary -> 'max_toilettes' AS summary_max_toilettes,
+            summary -> 'min_room_count' AS summary_min_room_count,
+            summary -> 'max_room_count' AS summary_max_room_count,
+            summary -> 'min_total_area' AS summary_min_total_area,
+            summary -> 'max_total_area' AS summary_max_total_area,
+            summary -> 'min_roofed_area' AS summary_min_roofed_area,
+            summary -> 'max_roofed_area' AS summary_max_roofed_area
+        """)
     else:
         select_row= f"{row.NAME} AS {row.NAME}"
     
