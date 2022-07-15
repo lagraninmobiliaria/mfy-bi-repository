@@ -1,4 +1,5 @@
 SELECT 
+    CURRENT_DATETIME() as registered_datetime_z, 
     * EXCEPT(
       summary_max_price,
       summary_min_price,
@@ -35,7 +36,7 @@ SELECT
       summary_min_roofed_area AS min_roofed_area,
       summary_max_roofed_area AS max_roofed_area
     ) AS summary
-    
+
 FROM EXTERNAL_QUERY(
     "projects/infrastructure-lgi/locations/us-central1/connections/mudafy-prod-replic-us-central",
     """
