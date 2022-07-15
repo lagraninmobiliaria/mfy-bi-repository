@@ -45,3 +45,5 @@ def get_select_row(row):
         select_row= f"id AS {row.NAME}"
     else:
         select_row= f"{row.NAME} AS {row.NAME}"
+    
+    return select_row
