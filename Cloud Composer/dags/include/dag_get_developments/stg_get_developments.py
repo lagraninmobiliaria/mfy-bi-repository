@@ -40,13 +40,13 @@ with DAG(
                  "jobReference": {
                     "projectId": "{{ params.project_id }}",
                 },
-                "destinationTable": {
-                    "projectId": "{{ params.project_id }}",
-                    "datasetId": "{{ params.mudata_raw }}",
-                    "tableId": DEVELOPMENTS.get('table_id')
-                }, 
-                "writeDisposition": WriteDisposition.WRITE_APPEND,
-                "createDisposition": CreateDisposition.CREATE_NEVER,
+                # "destinationTable": {
+                #     "projectId": "{{ params.project_id }}",
+                #     "datasetId": "{{ params.mudata_raw }}",
+                #     "tableId": DEVELOPMENTS.get('table_id')
+                # }, 
+                # "writeDisposition": WriteDisposition.WRITE_APPEND,
+                # "createDisposition": CreateDisposition.CREATE_NEVER,
             }
         }
     )
