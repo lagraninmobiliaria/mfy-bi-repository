@@ -45,7 +45,7 @@ with DAG(
                     "datasetId": "{{ params.mudata_raw }}",
                     "tableId": DEVELOPMENTS.get('table_id')
                 }, 
-                "writeDisposition": WriteDisposition.WRITE_TRUNCATE,
+                "writeDisposition": WriteDisposition.WRITE_APPEND,
                 "createDisposition": CreateDisposition.CREATE_NEVER,
             }
         }
