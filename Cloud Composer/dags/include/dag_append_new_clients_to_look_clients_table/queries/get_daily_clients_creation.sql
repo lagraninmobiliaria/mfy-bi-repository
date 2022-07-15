@@ -4,7 +4,7 @@ SELECT
     clients_creation.creation_datetime_z       AS creation_datetime_z,		
     clients_creation.phone                     AS phone,		            
     clients_creation.email                     AS email,		            
-    clients_creation.country                   AS country,		        
+    clients_creation.country_code_iso2         AS country_code_iso2,		        
     false                                      AS is_mail_subscription  
 
 FROM `{{ params.project_id }}.{{ params.mudata_raw }}.clients_creation` clients_creation
