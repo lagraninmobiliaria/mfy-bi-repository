@@ -165,6 +165,23 @@ LOOK_DEVELOPMENTS = {
         {"name": "min_listed_currency", "type": schemaTypes.STRING},
         {"name": "max_listed_price", "type": schemaTypes.INTEGER},
         {"name": "max_listed_currency", "type": schemaTypes.INTEGER},
-        {"name": "development_additionals", "type": schemaTypes.STRUCT}
+        {"name": "development_additionals", "type": schemaTypes.STRUCT, "fields": [
+            {"name": "max_price", "type": schemaTypes.INTEGER},
+            {"name": "min_price", "type": schemaTypes.INTEGER},
+            {"name": "min_garages", "type": schemaTypes.INTEGER},
+            {"name": "max_garages", "type": schemaTypes.INTEGER},
+            {"name": "min_bedrooms", "type": schemaTypes.INTEGER},
+            {"name": "max_bedrooms", "type": schemaTypes.INTEGER},
+            {"name": "min_bathrooms", "type": schemaTypes.INTEGER},
+            {"name": "max_bathrooms", "type": schemaTypes.INTEGER},
+            {"name": "min_toilettes", "type": schemaTypes.INTEGER},
+            {"name": "max_toilettes", "type": schemaTypes.INTEGER},
+            {"name": "min_room_count", "type": schemaTypes.INTEGER},
+            {"name": "max_room_count", "type": schemaTypes.INTEGER},
+            {"name": "min_total_area", "type": schemaTypes.FLOAT},
+            {"name": "max_total_area", "type": schemaTypes.FLOAT},
+            {"name": "min_roofed_area", "type": schemaTypes.FLOAT},
+            {"name": "max_roofed_area", "type": schemaTypes.FLOAT},
+        ]}
     ]
 }
