@@ -7,6 +7,7 @@ from dependencies.keys_and_constants import STG_PARAMS
 from google.cloud.bigquery import WriteDisposition, CreateDisposition
 
 from airflow import DAG
+from airflow.sensors.external_task import ExternalTaskSensor
 from airflow.operators.dummy import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 with DAG(
@@ -19,6 +20,14 @@ with DAG(
     params= STG_PARAMS
 ) as dag:
     
+    sensor_check_get_developments_successful_dagrun= ExternalTaskSensor(
+        task_id= 'check_get_developments_successful_dagrun',
+        poke_interval= 30,
+        timeout= 30*5,
+        external_dag_id= "{{ params.env_prefix }}" + "_get_developments",
+        external_task_id= "end_dag"
+    )
+
     task_start_dag= DummyOperator(
         task_id= 'start_dag'
     )
@@ -56,4 +65,4 @@ with DAG(
         task_id= 'end_dag'
     )
 
-    task_start_dag >> task_update_look_developments >> task_end_dag
+    sensor_check_get_developments_successful_dagrun >> task_start_dag >> task_update_look_developments >> task_end_dag
