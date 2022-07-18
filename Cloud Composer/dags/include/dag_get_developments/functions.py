@@ -17,6 +17,9 @@ def build_query_to_get_developments(schema_fields, **context):
 
     for index, row in table_schema.iterrows():
 
+        if row.name == "registered_datetime_z":
+            continue
+
         select_row= get_select_row(row= row)
 
         columns_for_select\
