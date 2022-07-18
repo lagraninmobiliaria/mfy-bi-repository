@@ -12,12 +12,12 @@ broker_agent_id                         AS alliance_id,
 developer_id,
 DATETIME(TIMESTAMP(last_modified_at))   AS update_datetime_z,
 CASE
-    WHEN summary.min_price != 'null' THEN INTEGER(summary.min_price)
+    WHEN summary.min_price != 'null' THEN CAST(summary.min_price AS INT64)
     ELSE NULL
 END                                     AS min_listed_price,
 currency                                AS min_listed_currency,
 CASE
-    WHEN summary.max_price != 'null' THEN INTEGER(summary.max_price)
+    WHEN summary.max_price != 'null' THEN CAST(summary.max_price AS INT64)
     ELSE NULL
 END                                     AS max_listed_price,
 currency                                AS max_listed_currency,
