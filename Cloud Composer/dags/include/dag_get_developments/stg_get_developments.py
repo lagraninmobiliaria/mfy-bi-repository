@@ -16,7 +16,7 @@ from google.cloud.bigquery import WriteDisposition, CreateDisposition
 with DAG(
     dag_id= 'stg_get_developments',
     start_date= datetime(2021, 1, 1),
-    schedule_interval= "@once",
+    schedule_interval= "@daily",
     is_paused_upon_creation= True,
     tags= ['staging'], 
     catchup= False,
