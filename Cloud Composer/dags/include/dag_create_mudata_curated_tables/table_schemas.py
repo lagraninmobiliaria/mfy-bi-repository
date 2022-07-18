@@ -160,16 +160,11 @@ LOOK_DEVELOPMENTS = {
         {"name": "development_status", "type": schemaTypes.STRING},
         {"name": "alliance_id", "type": schemaTypes.INTEGER},
         {"name": "developer_id", "type": schemaTypes.INTEGER},
-        {"name": "update_date", "type": schemaTypes.DATE},
+        {"name": "update_datetime_z", "type": schemaTypes.DATE},
         {"name": "min_listed_price", "type": schemaTypes.INTEGER},
         {"name": "min_listed_currency", "type": schemaTypes.STRING},
-        {"name": "min_number_rooms", "type": schemaTypes.INTEGER},
-        {"name": "min_total_area", "type": schemaTypes.FLOAT},
-        {"name": "min_covered_area", "type": schemaTypes.FLOAT},
         {"name": "max_listed_price", "type": schemaTypes.INTEGER},
         {"name": "max_listed_currency", "type": schemaTypes.INTEGER},
-        {"name": "max_number_room", "type": schemaTypes.INTEGER},
-        {"name": "max_total_area", "type": schemaTypes.FLOAT},
-        {"name": "max_covered_area", "type": schemaTypes.FLOAT},
+        {"name": "development_additionals", "type": schemaTypes.STRUCT}
     ]
 }
