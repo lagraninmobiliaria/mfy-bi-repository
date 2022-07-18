@@ -4,6 +4,8 @@ from datetime import datetime
 
 from dependencies.keys_and_constants import STG_PARAMS
 
+from google.cloud.bigquery import WriteDisposition, CreateDisposition
+
 from airflow import DAG
 from airflow.operators.dummy import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
@@ -38,7 +40,14 @@ with DAG(
         configuration= {
             "query": {
                 "query": update_look_developments_query,
-                "useLegacySql": False
+                "useLegacySql": False,
+                "destinationTable": {
+                    "projectId": "{{ params.project_id }}",
+                    "datasetId": "{{ params.mudata_curated }}",
+                    "tableId": "look_developments"
+                }, 
+                "writeDisposition": WriteDisposition.WRITE_TRUNCATE,
+                "createDisposition": CreateDisposition.CREATE_NEVER,
             }
         }
     )
