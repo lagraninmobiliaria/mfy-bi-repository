@@ -12,7 +12,7 @@ from airflow.operators.dummy import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 with DAG(
     dag_id= 'stg_update_look_developments',
-    schedule_interval= None,
+    schedule_interval= "@daily",
     start_date= datetime(2021, 1, 1),
     tags= ['staging'],
     is_paused_upon_creation= True,
