@@ -6,4 +6,5 @@ SET
 
 WHERE
         client_id= {client_id}
+    AND is_active
     AND to_datetime_z IS NULL
