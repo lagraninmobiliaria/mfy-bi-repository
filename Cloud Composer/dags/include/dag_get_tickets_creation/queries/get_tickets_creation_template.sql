@@ -1,5 +1,5 @@
 SELECT
-    TIMESTAMP({{ data_interval_start }})    AS registered_datetime_z,
+    TIMESTAMP('{{ data_interval_start }}')    AS registered_datetime_z,
     tt.id                                   AS ticket_id,
     tt.client_id                            AS client_id,
     tt.country                              AS country_code_iso2,
@@ -8,4 +8,4 @@ SELECT
 
 FROM tickets_ticket tt
 WHERE
-    DATE(tt.created_at) = DATE({{ data_interval_start.date() }})
+    DATE(tt.created_at) = DATE('{{ data_interval_start.date() }}')
