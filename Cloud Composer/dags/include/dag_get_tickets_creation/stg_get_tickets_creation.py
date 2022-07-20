@@ -8,6 +8,8 @@ from airflow import DAG
 from airflow.operators.dummy import DummyOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
+from google.cloud.bigquery import WriteDisposition, CreateDisposition
+
 with DAG(
     dag_id= "stg_get_tickets_creation",
     schedule_interval= "@daily",
@@ -30,7 +32,14 @@ with DAG(
         configuration= {
             "query": {
                 "query": get_tickets_creation_query,
-                "useLegacySql": False
+                "useLegacySql": False,
+                "destinationTable": {
+                    "projectId": dag.params.project_id,
+                    "datasetId": dag.params.mudata_raw,
+                    "tableId": 'tickets_creation'
+                },
+                "writeDisposition": WriteDisposition.WRITE_APPEND,
+                "createDisposition": CreateDisposition.CREATE_NEVER
             }
         }
     )
