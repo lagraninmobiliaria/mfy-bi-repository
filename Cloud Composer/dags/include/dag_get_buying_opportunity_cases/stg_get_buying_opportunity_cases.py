@@ -50,4 +50,4 @@ with DAG(
     )
 
     sensor_check_tickets_creation_dagrun \
-    >> task_start_dag >> task_end_dag
+    >> task_start_dag >> task_get_buying_opportunity_cases >> task_end_dag
