@@ -34,8 +34,8 @@ with DAG(
                 "query": get_tickets_creation_query,
                 "useLegacySql": False,
                 "destinationTable": {
-                    "projectId": dag.params.project_id,
-                    "datasetId": dag.params.mudata_raw,
+                    "projectId": dag.params['project_id'],
+                    "datasetId": dag.params['mudata_raw'],
                     "tableId": 'tickets_creation'
                 },
                 "writeDisposition": WriteDisposition.WRITE_APPEND,
