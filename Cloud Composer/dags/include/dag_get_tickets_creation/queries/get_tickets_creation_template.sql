@@ -1,10 +1,10 @@
 SELECT 
+    TIMESTAMP('{{ data_interval_start }}')      AS registered_datetime_z,
     *
 FROM EXTERNAL_QUERY(
     "projects/infrastructure-lgi/locations/us-central1/connections/mudafy-prod-replic-us-central",
     """
     SELECT
-        TIMESTAMP('{{ data_interval_start }}')      AS registered_datetime_z,
         tt.id                                       AS ticket_id,
         tt.client_id                                AS client_id,
         tt.country                                  AS country_code_iso2,
