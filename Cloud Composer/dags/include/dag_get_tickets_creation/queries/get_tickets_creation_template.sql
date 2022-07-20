@@ -1,6 +1,7 @@
 SELECT 
-    DATETIME(TIMESTAMP('{{ data_interval_start }}'))      AS registered_datetime_z,
-    *
+    DATETIME(TIMESTAMP('{{ data_interval_start }}'))        AS registered_datetime_z,
+    * EXCEPT(created_datetime_z),                           
+    DATETIME(TIMESTAMP(created_datetime_z))                 AS created_datetime_z
 FROM EXTERNAL_QUERY(
     "projects/infrastructure-lgi/locations/us-central1/connections/mudafy-prod-replic-us-central",
     """
