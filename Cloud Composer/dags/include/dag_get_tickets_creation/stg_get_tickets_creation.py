@@ -1,0 +1,42 @@
+from datetime import datetime
+
+from dependencies.keys_and_constants import STG_PARAMS
+
+from include.dag_get_tickets_creation.functions import DAGQueriesManager
+
+from airflow import DAG
+from airflow.operators.dummy import DummyOperator
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+
+with DAG(
+    dag_id= "stg_get_tickets_creation",
+    schedule_interval= "@daily",
+    start_date= datetime(2021, 12, 28),
+    end_date= datetime(2022, 1, 1),
+    tags= ['staging'],
+    params= STG_PARAMS,
+    is_paused_upon_creation= True
+) as dag:
+
+    task_start_dag= DummyOperator(
+        task_id= 'start_dag'
+    )
+    
+    queries_manager= DAGQueriesManager()
+    get_tickets_creation_query= queries_manager.get_tickets_creation_query_template
+
+    task_get_tickets_creation= BigQueryInsertJobOperator(
+        task_id= "get_tickets_creation",
+        configuration= {
+            "query": {
+                "query": get_tickets_creation_query,
+                "useLegacySql": False
+            }
+        }
+    )
+
+    task_end_dag= DummyOperator(
+        task_id= 'end_dag'
+    )
+
+    task_start_dag >> task_get_tickets_creation >> task_end_dag
