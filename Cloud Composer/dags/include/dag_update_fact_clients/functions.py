@@ -2,12 +2,16 @@ import os
 
 from datetime import datetime
 
+from psycopg2 import Time
+
 from dependencies.keys_and_constants import CLIENT_EVENTS
 
 from google.cloud.bigquery import Client, LoadJobConfig, WriteDisposition, CreateDisposition
 
 from pandas import DataFrame, concat
 from numpy import isnat
+
+from time import perf_counter
 
 class DAGQueriesManager:
 
@@ -102,14 +106,21 @@ def load_clients_closures_and_reactivations_to_fact_table(**context):
     
     bq_client= Client(project= context['params'].get('project_id'), location= 'us-central1')
     
+    start= perf_counter()
     bq_job_id_reactivations= context['task_instance'].xcom_pull('get_client_reactivation_events')
     bq_job_reactivations= bq_client.get_job(job_id= bq_job_id_reactivations)
     df_reactivations= bq_job_reactivations.to_dataframe()
+    stop= perf_counter()
+    print(f"Get clients reactivation takes: {stop - start:0.4f} seconds")
 
+    start= perf_counter()
     bq_job_id_closures= context['task_instance'].xcom_pull('get_closed_client_events')
     bq_job_closures= bq_client.get_job(job_id= bq_job_id_closures)
     df_closures= bq_job_closures.to_dataframe()
+    stop= perf_counter()
+    print(f"Get clients closures takes: {stop - start:0.4f} seconds")
 
+    start= perf_counter()
     df_reactivations_closures= concat(
         objs= [df_reactivations, df_closures], 
         ignore_index= True, 
@@ -118,7 +129,10 @@ def load_clients_closures_and_reactivations_to_fact_table(**context):
         .sort_values(by= 'event_id', ascending= True)\
         .reset_index(drop= True)\
         .drop_duplicates(subset= ['client_id'], keep= 'last')
-    
+    stop= perf_counter()
+    print(f"Sort events takes: {stop - start:0.4f} seconds")
+
+    start= perf_counter()
     for _, row in df_reactivations_closures.iterrows():
 
         # Close the last record with row.created_at 
@@ -127,7 +141,8 @@ def load_clients_closures_and_reactivations_to_fact_table(**context):
         #If its a reactivation event, create a new record
         if row.kind == CLIENT_EVENTS.REACTIVATION:
             load_reactivation_record(row= row, bq_client= bq_client, **context)
-            
+    stop= perf_counter() 
+    print(f"Updating fact table takes: {stop - start:0.4f} seconds")
 
 def close_the_last_record(row, bq_client, **context):
 
