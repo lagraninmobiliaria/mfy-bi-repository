@@ -3,11 +3,12 @@ from datetime import datetime
 
 from dependencies.keys_and_constants import STG_PARAMS
 
-from include.dag_get_buying_opportunity_cases.functions import DAGQueriesManager
+from include.dag_get_buying_opportunity_cases.functions import DAGQueriesManager, get_ticket_id_for_buying_opportunity_cases
 
 from airflow import DAG
 from airflow.sensors.external_task import ExternalTaskSensor
 from airflow.operators.dummy import DummyOperator
+from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
 with DAG(
@@ -45,9 +46,15 @@ with DAG(
         }
     )
 
+    task_get_ticket_id_and_load_buying_opp_case= PythonOperator(
+        task_id= "get_ticket_id_and_load_buying_opp_case",
+        python_callable= get_ticket_id_for_buying_opportunity_cases
+    )
+
     task_end_dag= DummyOperator(
         task_id= 'end_dag'
     )
 
     sensor_check_tickets_creation_dagrun \
-    >> task_start_dag >> task_get_buying_opportunity_cases >> task_end_dag
+    >> task_start_dag >> task_get_buying_opportunity_cases \
+    >> task_get_ticket_id_and_load_buying_opp_case >> task_end_dag
