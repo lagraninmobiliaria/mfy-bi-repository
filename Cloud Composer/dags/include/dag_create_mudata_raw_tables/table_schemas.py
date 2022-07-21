@@ -233,3 +233,149 @@ TICKETS = {
         "type": TimePartitioningType.DAY 
     },
 }
+
+SMITH_CLIENTS_CREATION = {
+    "table_id": "smith_clients_creation",
+    "schema_fields": [
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
+        {"name": "client_id", "type": schemaTypes.INTEGER},
+        {"name": "name", "type": schemaTypes.STRING},
+        {"name": "email", "type": schemaTypes.STRING},
+        {"name": "phone", "type": schemaTypes.STRING},
+        {"name": "country_code_iso2", "type": schemaTypes.STRING},
+        {"name": "creation_datetime_z", "type": schemaTypes.DATETIME},
+        {"name": "client_origin", "type": schemaTypes.STRING}
+    ],
+    "time_partitioning": {
+        "field": "registered_datetime_z", 
+        "type": TimePartitioningType.DAY 
+    },
+}
+
+SMITH_CLIENTS_MAIL_SUBSCRIPTION = {
+    "table_id": "smith_clients_mail_subscription",
+    "schema_fields": [
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
+        {"name": "client_id", "type": schemaTypes.INTEGER},
+        {"name": "subscription_datetime_z", "type": schemaTypes.DATETIME},
+        {"name": "condition", "type": schemaTypes.STRING}
+    ],
+    "time_partitioning": {
+        "field": "registered_datetime_z", 
+        "type": TimePartitioningType.DAY 
+    },
+}
+
+SMITH_BUYING_OPPORTUNITY_CASES = {
+    "table_id": "smith_buying_opportunity_cases",
+    "schema_fields": [
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
+        {"name": "event_id", "type": schemaTypes.INTEGER},
+        {"name": "opportunity_id", "type": schemaTypes.INTEGER},
+        {"name": "client_id", "type": schemaTypes.INTEGER},
+        {"name": "ticket_id", "type": schemaTypes.INTEGER},
+        {"name": "property_id", "type": schemaTypes.INTEGER},
+        {"name": "development_id", "type": schemaTypes.INTEGER},
+        {"name": "source", "type": schemaTypes.STRING},
+        {"name": "kind", "type": schemaTypes.STRING},
+        {"name": "previous_kind", "type": schemaTypes.STRING}
+    ],
+    "time_partitioning": {
+        "field": "registered_datetime_z", 
+        "type": TimePartitioningType.DAY 
+    },
+}
+
+SMITH_BUYING_OPPORTUNITY_REACTIVATION_EVENTS= {
+    "table_id": "smith_BUYING_OPPORTUNITY_REACTIVATION_EVENTS".lower(),
+    "schema_fields": [
+        {"name": "event_id", "type": schemaTypes.INTEGER},
+        {"name": "opportunity_id", "type": schemaTypes.INTEGER},
+        {"name": "created_datetime_z", "type": schemaTypes.TIMESTAMP},
+        {"name": "kind", "type": schemaTypes.STRING},
+        {"name": "previous_kind", "type": schemaTypes.STRING},
+    ],
+    "time_partitioning": {
+        "field": "created_datetime_z", 
+        "type": TimePartitioningType.DAY 
+    },
+}
+
+SMITH_TASKS = {
+    "table_id": "smith_tasks",
+    "schema_fields": [
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
+        {"name":"task_id", "type": schemaTypes.INTEGER},
+        {"name":"creation_datetime_z", "type": schemaTypes.DATETIME},
+        {"name":"deadline_datetime_z", "type": schemaTypes.DATETIME},
+        {"name":"completion_datetime_z", "type": schemaTypes.DATETIME},
+        {"name":"title", "type": schemaTypes.STRING},
+        {"name":"description", "type": schemaTypes.STRING},
+        {"name":"assignee_id", "type": schemaTypes.INTEGER},
+        {"name":"client_id", "type":schemaTypes.INTEGER},
+        {"name":"property_id", "type":schemaTypes.INTEGER},
+        {"name":"kind", "type": schemaTypes.STRING},
+        {"name":"completed_by_id", "type":schemaTypes.INTEGER},
+        {"name":"created_by_id", "type":schemaTypes.INTEGER},
+        {"name":"deadline_type", "type": schemaTypes.STRING},
+        {"name":"development_id", "type": schemaTypes.INTEGER},
+        {"name":"opportunity_id", "type": schemaTypes.INTEGER},
+        {"name":"is_completed", "type": schemaTypes.BOOL},
+        {"name":"status", "type": schemaTypes.STRING},
+        {"name":"process_step_id", "type": schemaTypes.INTEGER},
+        {"name":"last_modified_at", "type": schemaTypes.DATETIME},
+        {"name":"next_priority_check", "type": schemaTypes.DATETIME},
+        {"name":"sla", "type": schemaTypes.DATETIME},
+        {"name":"booking_id", "type": schemaTypes.INTEGER}
+    ],
+    "time_partitioning": {
+        "field": "registered_datetime_z", 
+        "type": TimePartitioningType.DAY 
+    },
+}
+
+SMITH_USER_ASSIGNMENTS = {
+    "table_id": "smith_user_assignments",
+    "schema_fields": [
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
+        {"name": "event_id", "type": schemaTypes.INTEGER},
+        {"name": "client_id", "type": schemaTypes.INTEGER},
+        {"name": "opportunity_id", "type": schemaTypes.INTEGER},
+        {"name": "new_owner_id", "type": schemaTypes.INTEGER},
+        {"name": "old_owner_id", "type": schemaTypes.INTEGER},
+    ],
+    "time_partitioning": {
+        "field": "registered_datetime_z", 
+        "type_": TimePartitioningType.DAY 
+    },
+}
+
+SMITH_TICKETS_CREATION = {
+    "table_id": "smith_tickets_creation",
+    "schema_fields": [
+        {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
+        {"name": "ticket_id", "type": schemaTypes.INTEGER},
+        {"name": "client_id", "type": schemaTypes.INTEGER},
+        {"name": "country_code_iso2", "type": schemaTypes.STRING},
+        {"name": "user_id", "type": schemaTypes.INTEGER},
+        {"name": "created_datetime_z", "type": schemaTypes.DATETIME},
+    ],
+    "time_partitioning": {
+        "field": "registered_datetime_z", 
+        "type": TimePartitioningType.DAY 
+    },
+}
+
+SMITH_TICKET_REACTIVATION_EVENTS = {
+    "table_id": "smith_ticket_reactivation_events",
+    "schema_fields": [
+        {"name": "ticket_id", "type": schemaTypes.INTEGER},
+        {"name": "client_id", "type": schemaTypes.INTEGER},
+        {"name": "created_datetime_z", "type": schemaTypes.TIMESTAMP},
+    ],
+    "time_partitioning": {
+        "field": "created_datetime_z", 
+        "type": TimePartitioningType.DAY 
+    },
+}
+
