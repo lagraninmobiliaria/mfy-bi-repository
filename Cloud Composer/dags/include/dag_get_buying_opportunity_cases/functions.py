@@ -35,31 +35,19 @@ def get_ticket_id_for_buying_opportunity_cases(**context):
     stop= perf_counter()
     print(f"Get buying opportunity cases takes: {stop - start:0.4f} seconds")
 
-    get_client_ticket_id_query_template= queries_manager.get_client_ticket_id_query_template
+    client_ids= ','.join([str(client_id) for client_id in df_buying_op_cases.client_id.unique()])
+
     start= perf_counter()
-    for index, row in df_buying_op_cases.iterrows():
-        
-        client_id= row.client_id
-        get_client_ticket_id_query= get_client_ticket_id_query_template.format(
-            client_id= client_id,
-            project_id= context['params'].get('project_id'),
-            dataset_id= context['params'].get('mudata_raw')
-        )
-        get_client_ticket_id_query_result= bq_client\
-            .query(query= get_client_ticket_id_query)\
-            .to_dataframe()
-        
-        if get_client_ticket_id_query_result.shape[0]:
-            ticket_id= get_client_ticket_id_query_result.iloc[0].ticket_id
-            df_buying_op_cases.loc[index, 'ticket_id']= ticket_id
-    
-    bq_load_job= bq_client.load_table_from_dataframe(
-        dataframe= df_buying_op_cases, 
-        destination= f"{context['params'].get('project_id')}.buying_opportunity_cases",
-        job_config= LoadJobConfig(
-            write_disposition= WriteDisposition.WRITE_APPEND,
-            create_disposition= CreateDisposition.CREATE_NEVER
-        )
+    get_client_ticket_id_query= queries_manager.get_client_ticket_id_query_template.format(
+        project_id= context['params'].get('project_id'),
+        dataset_id= context['params'].get('mudata_raw'),
+        client_ids= client_ids,
     )
+    df_tickets_creation= bq_client.query(
+        query= get_client_ticket_id_query
+    ).to_dataframe()
+
+    print(df_tickets_creation.shape)
+
     stop= perf_counter()
     print(f"Getting ticket_ids takes: {stop - start:0.4f} seconds")
