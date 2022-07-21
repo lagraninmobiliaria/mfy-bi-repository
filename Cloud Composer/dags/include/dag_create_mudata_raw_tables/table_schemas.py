@@ -11,6 +11,7 @@ CLIENTS_CREATION = {
         {"name": "phone", "type": schemaTypes.STRING},
         {"name": "country_code_iso2", "type": schemaTypes.STRING},
         {"name": "creation_datetime_z", "type": schemaTypes.DATETIME},
+        {"name": "client_origin", "type": schemaTypes.STRING}
     ],
     "time_partitioning": {
         "field": "registered_datetime_z", 
@@ -106,6 +107,7 @@ USER_ASSIGNMENTS = {
         {"name": "registered_datetime_z", "type": schemaTypes.DATETIME},
         {"name": "event_id", "type": schemaTypes.INTEGER},
         {"name": "client_id", "type": schemaTypes.INTEGER},
+        {"name": "opportunity_id", "type": schemaTypes.INTEGER},
         {"name": "new_owner_id", "type": schemaTypes.INTEGER},
         {"name": "old_owner_id", "type": schemaTypes.INTEGER},
     ],
