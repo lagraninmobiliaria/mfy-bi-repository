@@ -122,12 +122,24 @@ TICKETS_CREATION = {
         {"name": "ticket_id", "type": schemaTypes.INTEGER},
         {"name": "client_id", "type": schemaTypes.INTEGER},
         {"name": "country_code_iso2", "type": schemaTypes.STRING},
-        {"name": "opportunity_id", "type": schemaTypes.INTEGER},
         {"name": "user_id", "type": schemaTypes.INTEGER},
         {"name": "created_datetime_z", "type": schemaTypes.DATETIME},
     ],
     "time_partitioning": {
         "field": "registered_datetime_z", 
+        "type": TimePartitioningType.DAY 
+    },
+}
+
+TICKET_REACTIVATION_EVENTS = {
+    "table_id": "ticket_reactivation_events",
+    "schema_fields": [
+        {"name": "ticket_id", "type": schemaTypes.INTEGER},
+        {"name": "client_id", "type": schemaTypes.INTEGER},
+        {"name": "created_datetime_z", "type": schemaTypes.TIMESTAMP},
+    ],
+    "time_partitioning": {
+        "field": "created_datetime_z", 
         "type": TimePartitioningType.DAY 
     },
 }
