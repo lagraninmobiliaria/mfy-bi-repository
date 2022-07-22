@@ -64,7 +64,7 @@ def get_ticket_id_for_buying_opportunity_cases(**context):
     start= perf_counter()
     bq_client.load_table_from_dataframe(
         dataframe= df_buying_op_cases,
-        destination= f"{context['params'].get('dataset_id')}.{context['params'].get('mudata_raw')}.smith_buying_opportunity_cases",
+        destination= f"{context['params'].get('project_id')}.{context['params'].get('mudata_raw')}.smith_buying_opportunity_cases",
         job_config= LoadJobConfig(
             write_disposition= WriteDisposition.WRITE_APPEND,
             create_disposition= CreateDisposition.CREATE_NEVER
