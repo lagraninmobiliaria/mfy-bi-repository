@@ -17,6 +17,7 @@ with DAG(
     schedule_interval= "@daily",
     start_date= datetime(2020, 4, 13),
     end_date= datetime(2020, 5, 1),
+    max_active_runs= 3, 
     tags=['staging'],
     params= STG_PARAMS,
     is_paused_upon_creation= True
