@@ -45,9 +45,32 @@ def get_ticket_id_for_buying_opportunity_cases(**context):
     )
     df_tickets_creation= bq_client.query(
         query= get_client_ticket_id_query
-    ).to_dataframe()
-
-    print(df_tickets_creation.shape)
+    )\
+        .to_dataframe()\
+        .set_index(keys= "client_id")
 
     stop= perf_counter()
     print(f"Getting ticket_ids takes: {stop - start:0.4f} seconds")
+
+    start= perf_counter()
+    df_buying_op_cases= df_buying_op_cases.join(
+        other= df_tickets_creation, 
+        on= "client_id", 
+        how="left"
+    )
+    stop= perf_counter()
+    print(f"Joining tickets with buying opportunity cases: {stop - start:0.4f} seconds")
+
+    start= perf_counter()
+    bq_client.load_table_from_dataframe(
+        dataframe= df_buying_op_cases,
+        destination= f"{context['params'].get('dataset_id')}.{context['params'].get('mudata_raw')}.smith_buying_opportunity_cases",
+        job_config= LoadJobConfig(
+            write_disposition= WriteDisposition.WRITE_APPEND,
+            create_disposition= CreateDisposition.CREATE_NEVER
+        )
+    )
+    stop= perf_counter()
+    print(f"Loading buying opportunity cases with ticket_id: {stop - start:0.4f} seconds")
+
+
