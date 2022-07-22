@@ -1,6 +1,5 @@
 from __future__ import with_statement
 from datetime import datetime
-from dags.dependencies.keys_and_constants import PROD_PARAMS
 
 from dependencies.keys_and_constants import PROD_PARAMS
 
