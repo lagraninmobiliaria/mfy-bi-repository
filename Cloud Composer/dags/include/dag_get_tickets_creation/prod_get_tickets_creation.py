@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from dependencies.keys_and_constants import STG_PARAMS
+from dependencies.keys_and_constants import PROD_PARAMS
 
 from include.dag_get_tickets_creation.functions import DAGQueriesManager
 
@@ -11,13 +11,12 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 from google.cloud.bigquery import WriteDisposition, CreateDisposition
 
 with DAG(
-    dag_id= "stg_get_tickets_creation",
+    dag_id= "prod_get_tickets_creation",
     schedule_interval= "@daily",
     start_date= datetime(2020, 4, 13),
-    end_date= datetime(2020, 5, 1),
+    tags= ['production'],
     max_active_runs= 3,
-    tags= ['staging'],
-    params= STG_PARAMS,
+    params= PROD_PARAMS,
     is_paused_upon_creation= True
 ) as dag:
 
