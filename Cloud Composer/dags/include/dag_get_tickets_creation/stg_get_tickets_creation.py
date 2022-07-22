@@ -13,8 +13,8 @@ from google.cloud.bigquery import WriteDisposition, CreateDisposition
 with DAG(
     dag_id= "stg_get_tickets_creation",
     schedule_interval= "@daily",
-    start_date= datetime(2021, 12, 28),
-    end_date= datetime(2022, 1, 1),
+    start_date= datetime(2020,4,13),
+    end_date= datetime(2020, 5, 1),
     tags= ['staging'],
     params= STG_PARAMS,
     is_paused_upon_creation= True
@@ -36,7 +36,7 @@ with DAG(
                 "destinationTable": {
                     "projectId": dag.params['project_id'],
                     "datasetId": dag.params['mudata_raw'],
-                    "tableId": 'tickets_creation'
+                    "tableId": 'smith_tickets_creation'
                 },
                 "writeDisposition": WriteDisposition.WRITE_APPEND,
                 "createDisposition": CreateDisposition.CREATE_NEVER

@@ -14,8 +14,8 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 with DAG(
     dag_id= 'stg_get_buying_opportunity_cases',
     schedule_interval= "@daily",
-    start_date= datetime(2021, 12, 28),
-    end_date= datetime(2022, 1, 1),
+    start_date= datetime(2020,4,13),
+    end_date= datetime(2020, 5, 1),
     tags=['staging'],
     params= STG_PARAMS,
     is_paused_upon_creation= True
