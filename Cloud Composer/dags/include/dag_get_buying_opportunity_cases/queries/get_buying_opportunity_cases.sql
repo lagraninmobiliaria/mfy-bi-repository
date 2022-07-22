@@ -8,7 +8,7 @@ FROM EXTERNAL_QUERY(
             ee.id                       AS event_id,
             ee.opportunity_case_id      AS opportunity_id,
             ee.client_id                AS client_id,
-            ee.prop_id                  AS prop_id,
+            ee.prop_id                  AS property_id,
             ebce.kind                   AS kind,
             ebce.previous_kind          AS previous_kind
 
