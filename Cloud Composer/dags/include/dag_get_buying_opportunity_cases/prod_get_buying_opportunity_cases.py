@@ -16,7 +16,7 @@ with DAG(
     dag_id= 'prod_get_buying_opportunity_cases',
     schedule_interval= "@daily",
     start_date= datetime(2020, 4, 13),
-    max_active_runs= 3, 
+    max_active_runs= 1, 
     tags=['production'],
     params= PROD_PARAMS,
     is_paused_upon_creation= True
