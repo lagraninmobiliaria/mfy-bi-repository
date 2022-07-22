@@ -1,7 +1,8 @@
 from __future__ import with_statement
 from datetime import datetime
+from dags.dependencies.keys_and_constants import PROD_PARAMS
 
-from dependencies.keys_and_constants import STG_PARAMS
+from dependencies.keys_and_constants import PROD_PARAMS
 
 from include.dag_get_buying_opportunity_cases.functions import DAGQueriesManager, get_ticket_id_for_buying_opportunity_cases, previous_dagrun_successful
 
@@ -13,12 +14,12 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
 with DAG(
-    dag_id= 'stg_get_buying_opportunity_cases',
+    dag_id= 'prod_get_buying_opportunity_cases',
     schedule_interval= "@daily",
     start_date= datetime(2020, 4, 13),
     end_date= datetime(2020, 5, 1),
-    tags=['staging'],
-    params= STG_PARAMS,
+    tags=['production'],
+    params= PROD_PARAMS,
     is_paused_upon_creation= True
 ) as dag:
     

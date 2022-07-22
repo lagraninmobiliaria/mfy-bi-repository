@@ -2,6 +2,8 @@ import os
 
 from time import perf_counter
 
+from datetime import timedelta
+
 from google.cloud.bigquery import Client, LoadJobConfig, WriteDisposition, CreateDisposition
 
 class DAGQueriesManager:
@@ -22,6 +24,17 @@ class DAGQueriesManager:
         )
         with open(get_client_ticket_id_query_path, 'r') as sql_file:
             self.get_client_ticket_id_query_template= sql_file.read()
+
+
+def previous_dagrun_successful(**context):
+    prev_data_interval_start_success= context["prev_data_interval_start_success"]
+    data_interval_start= context['data_interval_start']
+    dag_start_date= context['dag'].start_date
+    
+    return (
+            dag_start_date == data_interval_start
+        or  prev_data_interval_start_success == (data_interval_start - timedelta(days= 1))
+    )
 
 def get_ticket_id_for_buying_opportunity_cases(**context):
 
